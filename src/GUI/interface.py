@@ -8,33 +8,34 @@ label = Label(root, text="Hello RO!")
 label.pack()
 
 def openFileName():
-    filename = filedialog.askopenfilename(title='"pen')
-    return filename
+    file_name = filedialog.askopenfilename(title='Choose image')
+    if file_name:
+        return file_name
+    else:
+        return ""
 
-def loadImage():
-    fileName = openFileName()
-    # opens the image
-    image = Image.open(fileName)
 
-    # resize the image and apply a high-quality down sampling filter
-    image = image.resize((512, 512), Image.ANTIALIAS)
+def load_image():
+    file_name = openFileName()
+    if file_name:
+        # opens the image
+        image = Image.open(file_name)
 
-    # PhotoImage class is used to add image to widgets, icons etc
-    image = ImageTk.PhotoImage(image)
+        # resize the image and apply a high-quality down sampling filter
+        image = image.resize((512, 512), Image.ANTIALIAS)
 
-    # create a label
-    panel = Label(root, image=image)
+        # PhotoImage class is used to add image to widgets, icons etc
+        image = ImageTk.PhotoImage(image)
 
-    # set the image as img
-    panel.image = image
-    panel.pack()
+        # create a label
+        panel = Label(root, image=image)
 
-addImageButton = Button(root, text="Load Image", fg="blue", command=loadImage).pack()
+        # set the image as img
+        panel.image = image
+        panel.pack()
 
-# #image
-# image = ImageTk.PhotoImage(Image.open('../../images/Lenaclor.ppm'))
-# imageLabel = Label(image=image)
-# imageLabel.pack()
 
-#main loop
+add_image_button = Button(root, text="Load Image", fg="blue", command=load_image).pack()
+
+# main loop
 root.mainloop()
