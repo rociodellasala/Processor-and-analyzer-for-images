@@ -10,7 +10,7 @@ label.pack()
 def openFileName():
     file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
                                                                             ("jpg", "*.jpg"), ("png", "*.png"),
-                                                                            ("raw", "*.RAW")])
+                                                                            ("jpeg", "*.jpeg"),("raw", "*.RAW")])
     if file_name:
         return file_name
     else:
