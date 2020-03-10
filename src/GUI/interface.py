@@ -12,13 +12,12 @@ def openFileName():
     return filename
 
 def loadImage():
-    print("loading image")
     fileName = openFileName()
-    print(fileName)
     # opens the image
     image = Image.open(fileName)
-    # # resize the image and apply a high-quality down sampling filter
-    # img = img.resize((250, 250), Image.ANTIALIAS)
+
+    # resize the image and apply a high-quality down sampling filter
+    image = image.resize((512, 512), Image.ANTIALIAS)
 
     # PhotoImage class is used to add image to widgets, icons etc
     image = ImageTk.PhotoImage(image)
