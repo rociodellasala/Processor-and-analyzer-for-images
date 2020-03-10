@@ -8,7 +8,9 @@ label = Label(root, text="Hello RO!")
 label.pack()
 
 def openFileName():
-    file_name = filedialog.askopenfilename(title='Choose image')
+    file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
+                                                                            ("jpg", "*.jpg"), ("png", "*.png"),
+                                                                            ("raw", "*.RAW")])
     if file_name:
         return file_name
     else:
