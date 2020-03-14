@@ -1,4 +1,4 @@
-from read_raw_image import *
+from read_raw_image import read_raw_image
 from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk,Image
