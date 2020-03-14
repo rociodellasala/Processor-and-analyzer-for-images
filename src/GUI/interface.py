@@ -15,6 +15,9 @@ def load_image():
             image = Image.open(file_name)
         # resize the image and apply a high-quality down sampling filter
         image = image.resize((512, 512), Image.ANTIALIAS)
+        px = image.load()
+        print(px[4, 4])
+        print(px)
 
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
