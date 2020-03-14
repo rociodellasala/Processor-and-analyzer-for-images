@@ -1,6 +1,7 @@
 from read_raw_image import read_raw_image
 from tkinter import *
 from tkinter import filedialog
+from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk,Image
 
 
@@ -30,13 +31,21 @@ def load_image():
         panel.grid(row=0, column=0)
 
 
+def save_image():
+    image = Image.open('../../images/Lenaclor.ppm')
+    print("hola")
+    a = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
+    ('JPEG', ('*.jpg', '*.jpeg', '*.jpe', '*.jfif')), ('PNG', '*.png'), ('BMP', ('*.bmp', '*.jdib')), ('GIF', '*.gif')))
+    image.save(a)
+
+
 def load_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
     file_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Image", menu=file_menu)
     file_menu.add_command(label="Open", command=load_image)
-    file_menu.add_command(label="Save")
+    file_menu.add_command(label="Save", command=save_image)
     file_menu.add_separator()
     file_menu.add_command(label="Salir", command=root.quit)
 
