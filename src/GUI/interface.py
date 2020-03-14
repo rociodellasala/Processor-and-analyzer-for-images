@@ -2,7 +2,7 @@ from read_raw_image import read_raw_image
 from tkinter import *
 from tkinter import filedialog
 from tkinter.filedialog import asksaveasfilename
-from PIL import ImageTk,Image
+from PIL import ImageTk, Image
 
 
 def load_image():
@@ -19,17 +19,14 @@ def load_image():
         px = image.load()
         print(px[4, 4])
         print(px)
-
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
-
         # create a label
         panel = Label(root, image=image)
-
         # set the image as img
         panel.image = image
-        panel.grid(row=2, column=0)
-        current_image = image
+        panel.grid(row=3, column=0)
+        load_pixel_input()
 
 
 def save_image():
@@ -47,7 +44,7 @@ def load_menu():
     file_menu.add_command(label="Open", command=load_image)
     file_menu.add_command(label="Save", command=save_image)
     file_menu.add_separator()
-    file_menu.add_command(label="Salir", command=root.quit)
+    file_menu.add_command(label="Exit", command=root.quit)
 
 
 def open_file_name():
@@ -60,17 +57,20 @@ def open_file_name():
         return ""
 
 
-root = Tk()
-root.state('zoomed')
-current_image = None
-converted_image = None
-load_menu()
-if current_image is not None:
-    Label(root, text="First Name").grid(row=0)
-    Label(root, text="Last Name").grid(row=1)
+def load_pixel_input():
+    Label(root, text="x").grid(row=0, column=0)
+    Label(root, text="y").grid(row=1, column=0)
     height = Entry(root)
     width = Entry(root)
     height.grid(row=0, column=1)
     width.grid(row=1, column=1)
+    Button(root, text="Get Value").grid(row=2, column=0)
+
+
+root = Tk()
+root.state('zoomed')
+load_menu()
+
+
 # main loop
 root.mainloop()
