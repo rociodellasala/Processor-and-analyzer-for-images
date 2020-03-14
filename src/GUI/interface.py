@@ -3,31 +3,6 @@ from tkinter import *
 from tkinter import filedialog
 from PIL import ImageTk,Image
 
-root = Tk()
-menubar = Menu(root)
-root.config(menu=menubar)
-filemenu = Menu(menubar)
-menubar.add_cascade(label="Archivo", menu=filemenu)
-filemenu.add_command(label="Nuevo")
-filemenu.add_command(label="Abrir")
-filemenu.add_command(label="Guardar")
-filemenu.add_command(label="Cerrar")
-filemenu.add_separator()
-filemenu.add_command(label="Salir", command=root.quit)
-# label
-label = Label(root, text="Hello RO!")
-label.pack()
-
-
-def open_file_name():
-    file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
-                                                                            ("jpg", "*.jpg"), ("png", "*.png"),
-                                                                            ("jpeg", "*.jpeg"),("raw", "*.RAW")])
-    if file_name:
-        return file_name
-    else:
-        return ""
-
 
 def load_image():
     file_name = open_file_name()
@@ -49,10 +24,31 @@ def load_image():
 
         # set the image as img
         panel.image = image
-        panel.pack()
+        panel.grid(row=0, column=0)
 
 
-add_image_button = Button(root, text="Load Image", fg="blue", command=load_image).pack()
+def load_menu():
+    menubar = Menu(root)
+    root.config(menu=menubar)
+    file_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Image", menu=file_menu)
+    file_menu.add_command(label="Open", command=load_image)
+    file_menu.add_command(label="Save")
+    file_menu.add_separator()
+    file_menu.add_command(label="Salir", command=root.quit)
 
+
+def open_file_name():
+    file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
+                                                                            ("jpg", "*.jpg"), ("png", "*.png"),
+                                                                            ("jpeg", "*.jpeg"),("raw", "*.RAW")])
+    if file_name:
+        return file_name
+    else:
+        return ""
+
+
+root = Tk()
+load_menu()
 # main loop
 root.mainloop()
