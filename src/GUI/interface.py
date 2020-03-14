@@ -4,6 +4,17 @@ from tkinter import filedialog
 from PIL import ImageTk,Image
 
 root = Tk()
+menubar = Menu(root)
+root.config(menu=menubar)
+filemenu = Menu(menubar)
+editmenu = Menu(menubar)
+helpmenu = Menu(menubar)
+menubar.add_cascade(label="Archivo", menu=filemenu)
+menubar.add_cascade(label="Editar", menu=editmenu)
+menubar.add_cascade(label="Ayuda", menu=helpmenu)
+filemenu = Menu(menubar, tearoff=0)
+editmenu = Menu(menubar, tearoff=0)
+helpmenu = Menu(menubar, tearoff=0)
 # label
 label = Label(root, text="Hello RO!")
 label.pack()
