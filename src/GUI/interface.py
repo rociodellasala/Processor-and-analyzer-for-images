@@ -7,11 +7,37 @@ root = Tk()
 label = Label(root, text="Hello RO!")
 label.pack()
 
+
 def read_raw_image(path):
+    read_lines('info.txt')
     with open(path, "rb") as binary_file:
         # Read the whole file at once
         raw_image = binary_file.read()
         return raw_image
+
+
+def read_lines(filename):
+    file1 = open(filename, 'r')
+    lines = file1.readlines()
+    images = {}
+    count = 0
+    for line in lines:
+        count = count + 1
+        if count > 2:
+
+            imageInfo = get_image_info(line)
+            print(line)
+
+
+def get_image_info(line):
+    info = line.replace('\n', '').split(' ')
+    print(info)
+    count = 0
+    for value in info:
+        if len(value) > 0:
+            count = count + 1;
+            print(value)
+    return [389, 164]
 
 
 def open_file_name():
