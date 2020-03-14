@@ -33,10 +33,9 @@ def load_image():
 
 def save_image():
     image = Image.open('../../images/Lenaclor.ppm')
-    print("hola")
-    a = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
-    ('JPEG', ('*.jpg', '*.jpeg', '*.jpe', '*.jfif')), ('PNG', '*.png'), ('BMP', ('*.bmp', '*.jdib')), ('GIF', '*.gif')))
-    image.save(a)
+    imsge_info = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
+        ('jpg', '*.jpg'), ('jpeg', '*.jpeg') ('png', '*.png'), ('ppm', '*.ppm'), ("pgm", "*.pgm")))
+    image.save(imsge_info)
 
 
 def load_menu():
