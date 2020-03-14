@@ -9,11 +9,17 @@ label.pack()
 
 
 def read_raw_image(path):
-    read_lines('info.txt')
+    last_slash_position = path.rfind('/')
+    info_path = path[0:last_slash_position] + "/info.txt"
+    image_map = read_lines(info_path)
+    raw_image_info = []
+    image_name = path[last_slash_position+1:].replace('.RAW', '')
     with open(path, "rb") as binary_file:
         # Read the whole file at once
         raw_image = binary_file.read()
-        return raw_image
+        raw_image_info.append(raw_image)
+    raw_image_info.append(image_map[image_name])
+    return raw_image_info
 
 
 def read_lines(filename):
@@ -26,12 +32,11 @@ def read_lines(filename):
         if count > 2:
             image_info = get_image_info(line)
             images[image_info[0]] = [image_info[1], image_info[2]]
-    print(images)
+    return images
 
 
 def get_image_info(line):
     info = line.replace('\n', '').replace('.RAW', '').split(' ')
-    print(info)
     image_info = []
     count = 0
     for value in info:
@@ -56,9 +61,7 @@ def load_image():
     if file_name:
         if file_name.endswith(".RAW"):
             raw_image = read_raw_image(file_name)
-            print(raw_image)
-            # TODO if extension is RAW do this
-            image = Image.frombytes('L', (290, 207), raw_image)
+            image = Image.frombytes('L', (int(raw_image[1][0]), int(raw_image[1][1])), raw_image[0])
         else:
             # opens the image
             image = Image.open(file_name)
@@ -74,6 +77,7 @@ def load_image():
         # set the image as img
         panel.image = image
         panel.pack()
+
 
 add_image_button = Button(root, text="Load Image", fg="blue", command=load_image).pack()
 
