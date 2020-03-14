@@ -28,7 +28,8 @@ def load_image():
 
         # set the image as img
         panel.image = image
-        panel.grid(row=0, column=0)
+        panel.grid(row=2, column=0)
+        current_image = image
 
 
 def save_image():
@@ -61,6 +62,15 @@ def open_file_name():
 
 root = Tk()
 root.state('zoomed')
+current_image = None
+converted_image = None
 load_menu()
+if current_image is not None:
+    Label(root, text="First Name").grid(row=0)
+    Label(root, text="Last Name").grid(row=1)
+    height = Entry(root)
+    width = Entry(root)
+    height.grid(row=0, column=1)
+    width.grid(row=1, column=1)
 # main loop
 root.mainloop()
