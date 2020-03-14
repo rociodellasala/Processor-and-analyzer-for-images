@@ -24,20 +24,21 @@ def read_lines(filename):
     for line in lines:
         count = count + 1
         if count > 2:
-
-            imageInfo = get_image_info(line)
-            print(line)
+            image_info = get_image_info(line)
+            images[image_info[0]] = [image_info[1], image_info[2]]
+    print(images)
 
 
 def get_image_info(line):
-    info = line.replace('\n', '').split(' ')
+    info = line.replace('\n', '').replace('.RAW', '').split(' ')
     print(info)
+    image_info = []
     count = 0
     for value in info:
         if len(value) > 0:
-            count = count + 1;
-            print(value)
-    return [389, 164]
+            image_info.append(value)
+            count = count + 1
+    return image_info
 
 
 def open_file_name():
