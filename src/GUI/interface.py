@@ -49,6 +49,7 @@ def open_file_name():
 
 
 root = Tk()
+root.state('zoomed')
 load_menu()
 # main loop
 root.mainloop()
