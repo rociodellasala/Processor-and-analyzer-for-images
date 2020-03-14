@@ -31,7 +31,7 @@ def load_image():
             raw_image = read_raw_image(file_name)
             print(raw_image)
             # TODO if extension is RAW do this
-            image = Image.frombytes('1', (290, 207), raw_image)
+            image = Image.frombytes('L', (290, 207), raw_image)
         else:
             # opens the image
             image = Image.open(file_name)
