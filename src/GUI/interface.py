@@ -112,7 +112,7 @@ root.state('zoomed')
 current_image = None
 converted_image = None
 load_menu()
-generate_rectangle("hola.png", 100, 100, 10, 10, 0)
+generate_rectangle("hola.png", 100, 100, 10, 10, True)
 
 
 # main loop

@@ -8,13 +8,19 @@ def generate_rectangle(image_name, image_width, image_height, rectangle_width, r
     ending_x = int(image_width / 2 + rectangle_width / 2)
     starting_y = int(image_height / 2 - rectangle_height / 2)
     ending_y = int(image_height / 2 + rectangle_height / 2)
-    pixels = draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+    if filled:
+        pixels = draw_filled_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+    else:
+        pixels = draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
     new_image.save(image_name)
     new_image.show()
 
 
-def draw_filled_rectangle(pixels, upper_left, upper_right, lower_left, lower_right):
-    return None
+def draw_filled_rectangle(pixels, left, right, upper, lower):
+    for x in range(left, right + 1):
+        for y in range(upper, lower + 1):
+            pixels[x, y] = 255
+    return pixels
 
 
 def draw_empty_rectangle(pixels, left, right, upper, lower):
