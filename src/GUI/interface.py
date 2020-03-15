@@ -1,8 +1,9 @@
-from read_raw_image import read_raw_image
 from tkinter import *
 from tkinter import filedialog
 from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
+from read_raw_image import read_raw_image
+from image_generator import generate_rectangle
 
 
 def load_image():
@@ -111,6 +112,7 @@ root.state('zoomed')
 current_image = None
 converted_image = None
 load_menu()
+generate_rectangle("hola.png", 100, 100, 10, 10, 0)
 
 
 # main loop
