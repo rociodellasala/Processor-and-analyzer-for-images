@@ -25,7 +25,7 @@ def load_image():
         panel = Label(root, image=image)
         # set the image as img
         panel.image = image
-        panel.grid(row=3, column=0)
+        panel.grid(row=3, column=0, columnspan=4, rowspan=4)
         load_pixel_input()
 
 
