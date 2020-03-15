@@ -16,6 +16,8 @@ def load_image():
             image = Image.open(file_name)
         # resize the image and apply a high-quality down sampling filter
         image = image.resize((512, 512), Image.ANTIALIAS)
+        global current_image
+        current_image = image
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
         # create a label
@@ -23,8 +25,6 @@ def load_image():
         # set the image as img
         panel.image = image
         panel.grid(row=3, column=0, columnspan=4, rowspan=4)
-        global current_image
-        current_image = image
 
 
 def save_image():
@@ -46,7 +46,7 @@ def load_menu():
     image_menu.add_command(label="Exit", command=root.quit)
     menubar.add_cascade(label="Pixel", menu=pixel_menu)
     pixel_menu.add_command(label="Get", command=load_pixel_input)
-    pixel_menu.add_command(label="Modify")
+    pixel_menu.add_command(label="Modify", command=modify_pixel_input)
 
 
 def open_file_name():
@@ -75,7 +75,15 @@ def load_pixel_input():
 def get_pixel_value(x, y):
     global current_image
     px = current_image.load()
-    print(px[y, x])
+    print(px[int(y), int(x)])
+    Label(root, text=px[int(y), int(x)]).grid(row=2, column=1)
+
+
+def modify_pixel_value(x, y):
+    global current_image
+    px = current_image.load()
+    print(px[int(y), int(x)])
+    Label(root, text=px[int(y), int(x)]).grid(row=2, column=1)
 
 
 root = Tk()
