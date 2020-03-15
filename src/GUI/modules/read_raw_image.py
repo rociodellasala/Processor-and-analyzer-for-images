@@ -7,7 +7,7 @@ def read_raw_image(path):
     with open(path, "rb") as binary_file:
         # Read the whole file at once
         raw_image = binary_file.read()
-        raw_image_info.append(raw_image)
+    raw_image_info.append(raw_image)
     raw_image_info.append(image_map[image_name])
     return raw_image_info
 
