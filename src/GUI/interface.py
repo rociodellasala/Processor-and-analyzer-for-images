@@ -94,14 +94,16 @@ def modify_pixel_input():
 
 def modify_pixel_value(x, y):
     global current_image
-    px = current_image.load()
+    global converted_image
+    converted_image = current_image
+    px = converted_image.load()
     px[int(x), int(y)] = 255
-    image = ImageTk.PhotoImage(current_image)
+    image = ImageTk.PhotoImage(converted_image)
     # create a label
-    panel = Label(root, image=image)
+    new_panel = Label(root, image=image)
     # set the image as img
-    panel.image = current_image
-    panel.grid(row=3, column=5, columnspan=4, rowspan=4)
+    new_panel.image = image
+    new_panel.grid(row=3, column=5, columnspan=4, rowspan=4)
 
 
 root = Tk()
