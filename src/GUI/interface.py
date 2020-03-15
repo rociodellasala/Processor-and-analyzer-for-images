@@ -17,8 +17,8 @@ def load_image():
         # resize the image and apply a high-quality down sampling filter
         image = image.resize((512, 512), Image.ANTIALIAS)
         px = image.load()
-        print(px[4, 4])
-        print(px)
+        # print(px[4, 4])
+        # print(px)
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
         # create a label
@@ -26,7 +26,6 @@ def load_image():
         # set the image as img
         panel.image = image
         panel.grid(row=3, column=0, columnspan=4, rowspan=4)
-
 
 
 def save_image():
@@ -64,11 +63,19 @@ def open_file_name():
 def load_pixel_input():
     Label(root, text="x").grid(row=0, column=0)
     Label(root, text="y").grid(row=1, column=0)
-    height = Entry(root)
-    width = Entry(root)
-    height.grid(row=0, column=1)
-    width.grid(row=1, column=1)
-    Button(root, text="Get Value").grid(row=2, column=0)
+    x = Entry(root)
+    y = Entry(root)
+    x.grid(row=0, column=1)
+    y.grid(row=1, column=1)
+    # Button(root, text="Get Value", command=get_pixel_value(x.get(), y.get())).grid(row=2, column=0)
+    get_pixel_button = Button(root, text="Get Value")
+    get_pixel_button['command'] = lambda arg1=x.get(), arg2=y.get(): print(arg1, arg2)
+    get_pixel_button.grid(row=2, column=0)
+
+
+def get_pixel_value(x, y):
+    print("entro")
+    # print(y)
 
 
 root = Tk()
