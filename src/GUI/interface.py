@@ -79,11 +79,29 @@ def get_pixel_value(x, y):
     Label(root, text=px[int(y), int(x)]).grid(row=2, column=1)
 
 
+def modify_pixel_input():
+    Label(root, text="x").grid(row=0, column=0)
+    Label(root, text="y").grid(row=1, column=0)
+    x = Entry(root)
+    y = Entry(root)
+    x.grid(row=0, column=1)
+    y.grid(row=1, column=1)
+    # Button(root, text="Get Value", command=get_pixel_value(x.get(), y.get())).grid(row=2, column=0)
+    modify_pixel_button = Button(root, text="Set Value", command=lambda: modify_pixel_value(x.get(), y.get()))
+    # get_pixel_button['command'] = lambda arg1=x.get(), arg2=y.get(): print(arg1, arg2)
+    modify_pixel_button.grid(row=2, column=0)
+
+
 def modify_pixel_value(x, y):
     global current_image
     px = current_image.load()
-    print(px[int(y), int(x)])
-    Label(root, text=px[int(y), int(x)]).grid(row=2, column=1)
+    px[int(x), int(y)] = 255
+    image = ImageTk.PhotoImage(current_image)
+    # create a label
+    panel = Label(root, image=image)
+    # set the image as img
+    panel.image = current_image
+    panel.grid(row=3, column=5, columnspan=4, rowspan=4)
 
 
 root = Tk()
