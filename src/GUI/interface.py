@@ -26,7 +26,7 @@ def load_image():
         # set the image as img
         panel.image = image
         panel.grid(row=3, column=0, columnspan=4, rowspan=4)
-        load_pixel_input()
+
 
 
 def save_image():
@@ -39,12 +39,16 @@ def save_image():
 def load_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
-    file_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Image", menu=file_menu)
-    file_menu.add_command(label="Open", command=load_image)
-    file_menu.add_command(label="Save", command=save_image)
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.quit)
+    image_menu = Menu(menubar, tearoff=0)
+    pixel_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Image", menu=image_menu)
+    image_menu.add_command(label="Open", command=load_image)
+    image_menu.add_command(label="Save", command=save_image)
+    image_menu.add_separator()
+    image_menu.add_command(label="Exit", command=root.quit)
+    menubar.add_cascade(label="Pixel", menu=pixel_menu)
+    pixel_menu.add_command(label="Get", command=load_pixel_input)
+    pixel_menu.add_command(label="Modify")
 
 
 def open_file_name():
