@@ -117,6 +117,7 @@ def modify_pixel_value(x, y):
 
 
 def generate_rectangle_input():
+    delete_widgets(buttons_frame)
     Label(buttons_frame, text="rectangle width").grid(row=0, column=0)
     Label(buttons_frame, text="rectangle height").grid(row=1, column=0)
     Label(buttons_frame, text="image width").grid(row=0, column=2)
@@ -140,6 +141,7 @@ def generate_rectangle_input():
 
 
 def generate_circle_input():
+    delete_widgets(buttons_frame)
     Label(buttons_frame, text="radius").grid(row=0, column=0)
     Label(buttons_frame, text="image width").grid(row=0, column=2)
     Label(buttons_frame, text="image height").grid(row=1, column=2)
