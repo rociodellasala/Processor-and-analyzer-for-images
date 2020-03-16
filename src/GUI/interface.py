@@ -204,7 +204,7 @@ image_frame = None
 footer_frame = None
 load_frames()
 load_menu()
-color_faded_image(512, 100)
+color_faded_image(512, 100, False, True, True)
 
 
 # main loop

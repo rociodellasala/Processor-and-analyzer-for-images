@@ -99,23 +99,25 @@ def gray_faded_image(image_width, image_height):
     new_image.show()
 
 
-def color_faded_image(image_width, image_height):
+def color_faded_image(image_width, image_height, red, green, blue):
     new_image = Image.new("RGB", (int(image_width), int(image_height)))
     pixels = new_image.load()
-    print(pixels[0, 0])
-    # gray_value = 0
-    # column_length = int(image_width / gui_constants.MAX_COLOR_VALUE)
-    # current_column = 0
-    # for x in range(0, image_width):
-    #     for y in range(0, image_height):
-    #         pixels[x, y] = gray_value
-    #     current_column += 1
-    #     if current_column == column_length:
-    #         current_column = 0
-    #         gray_value += 1
-    # global save_path
-    # new_image.save(save_path + "gray_degrade.png")
-    # new_image.show()
+    color_value = 0
+    column_length = int(image_width / gui_constants.MAX_COLOR_VALUE)
+    current_column = 0
+    for x in range(0, image_width):
+        for y in range(0, image_height):
+            red_value = color_value if red else 0
+            green_value = color_value if green else 0
+            blue_value = color_value if blue else 0
+            pixels[x, y] = (red_value, green_value, blue_value)
+        current_column += 1
+        if current_column == column_length:
+            current_column = 0
+            color_value += 1
+    global save_path
+    new_image.save(save_path + "gray_degrade.png")
+    new_image.show()
 
 
 save_path = "../../draws/"
