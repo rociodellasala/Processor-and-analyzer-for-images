@@ -37,8 +37,11 @@ def load_image_wrapper():
     global current_image, image_tocopy
     if current_image is None:
         current_image = load_image(0, 0)
-    else:
+    elif image_tocopy is None:
         image_tocopy = load_image(0, 1)
+    else:
+        messagebox.showerror(title="Error", message="You can't upload more than two images. If you want to change"
+                                                    " one click on the \"Clean image\" button first")
 
 
 def save_image():
@@ -54,6 +57,7 @@ def load_menu():
     image_menu = Menu(menubar, tearoff=0)
     pixel_menu = Menu(menubar, tearoff=0)
     draw_menu = Menu(menubar, tearoff=0)
+    gradient_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Image", menu=image_menu)
     image_menu.add_command(label="Open", command=load_image_wrapper)
     image_menu.add_command(label="Save", command=save_image)
@@ -66,6 +70,9 @@ def load_menu():
     menubar.add_cascade(label="Draw", menu=draw_menu)
     draw_menu.add_command(label="Rectangle", command=generate_rectangle_input)
     draw_menu.add_command(label="Circle", command=generate_circle_input)
+    # menubar.add_cascade(label="Gradient", menu=gradient_menu)
+    # gradient_menu.add_command(label="Gray", command=gray_faded_image())
+    # gradient_menu.add_command(label="Color", command=color_faded_image())
 
 
 def open_file_name():
@@ -114,16 +121,11 @@ def modify_pixel_input():
 
 
 def modify_pixel_value(x, y):
-    global converted_image
-    converted_image = current_image
-    px = converted_image.load()
+    px = current_image.load()
     px[int(x), int(y)] = 255
-    image = ImageTk.PhotoImage(converted_image)
-    # create a label
-    new_panel = Label(image_frame, image=image)
-    # set the image as img
-    new_panel.image = image
-    new_panel.grid(row=0, column=2)
+    global save_path
+    current_image.save(save_path + "pixel_modification.png")
+    current_image.show()
 
 
 def generate_rectangle_input():
@@ -221,12 +223,9 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
                 pixels[x, y] = copy[x_copy, y_copy]
                 y_copy += 1
 
-    image = ImageTk.PhotoImage(current_image)
-    # create a label
-    new_panel = Label(image_frame, image=image)
-    # set the image as img
-    new_panel.image = image
-    new_panel.grid(row=0, column=2)
+    global save_path
+    current_image.save(save_path + "copy_image.png")
+    current_image.show()
 
 
 
@@ -268,8 +267,7 @@ def load_frames():
 
 
 def clean_images():
-    global converted_image, current_image, image_tocopy
-    converted_image = None
+    global current_image, image_tocopy
     image_tocopy = None
     current_image = None
 
@@ -279,7 +277,6 @@ root.title('ATI interface')
 root.state('zoomed')
 
 current_image = None
-converted_image = None
 image_tocopy = None
 
 buttons_frame = None
@@ -289,7 +286,7 @@ footer_frame = None
 load_frames()
 load_menu()
 
-scroll_bar = Scrollbar(root, orient=HORIZONTAL).pack()
+save_path = "../../draws/"
 
 # main loop
 root.mainloop()
