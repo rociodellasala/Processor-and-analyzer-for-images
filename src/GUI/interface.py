@@ -12,7 +12,7 @@ from src.GUI import gui_constants
 
 
 
-def load_image(row, column, image_instance):
+def load_image(row, column):
     file_name = open_file_name()
     if file_name:
         if file_name.endswith(".RAW"):
@@ -34,11 +34,11 @@ def load_image(row, column, image_instance):
         return image_instance
 
 def load_image_wrapper():
-    global current_image, converted_image
+    global current_image, image_tocopy
     if current_image is None:
-        current_image = load_image(0, 0, current_image)
+        current_image = load_image(0, 0)
     else:
-        converted_image = load_image(0, 1, converted_image)
+        image_tocopy = load_image(0, 1)
 
 
 def save_image():
@@ -176,7 +176,7 @@ def generate_circle_input():
 
 
 def copy_subimage_input():
-    if current_image is not None and converted_image is not None:
+    if current_image is not None and image_tocopy is not None:
         delete_widgets(buttons_frame)
         Label(buttons_frame, text="Original image").grid(row=0, column=0)
         Label(buttons_frame, text="X").grid(row=1, column=0)
@@ -210,7 +210,7 @@ def copy_subimage_input():
 
 def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy):
     pixels = current_image.load()
-    converted = converted_image.load()
+    copy = image_tocopy.load()
     y_copy_aux = y_copy
 
     for x in range(x_original, x_original + width_original):
@@ -218,7 +218,7 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
         y_copy = y_copy_aux
         for y in range(y_original, y_original + height_original):
             if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
-                pixels[x, y] = converted[x_copy, y_copy]
+                pixels[x, y] = copy[x_copy, y_copy]
                 y_copy += 1
 
     image = ImageTk.PhotoImage(current_image)
@@ -226,7 +226,7 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
     new_panel = Label(image_frame, image=image)
     # set the image as img
     new_panel.image = image
-    new_panel.grid(row=0, column=1)
+    new_panel.grid(row=0, column=2)
 
 
 
@@ -268,21 +268,27 @@ def load_frames():
 
 
 def clean_images():
-    global converted_image, current_image
+    global converted_image, current_image, image_tocopy
     converted_image = None
+    image_tocopy = None
     current_image = None
 
 
 root = Tk()
 root.title('ATI interface')
 root.state('zoomed')
+
 current_image = None
 converted_image = None
+image_tocopy = None
+
 buttons_frame = None
 image_frame = None
 footer_frame = None
+
 load_frames()
 load_menu()
+
 scroll_bar = Scrollbar(root, orient=HORIZONTAL).pack()
 
 # main loop
