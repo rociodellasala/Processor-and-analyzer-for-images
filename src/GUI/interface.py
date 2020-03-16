@@ -283,6 +283,7 @@ image_frame = None
 footer_frame = None
 load_frames()
 load_menu()
+scroll_bar = Scrollbar(root, orient=HORIZONTAL).pack()
 
 # main loop
 root.mainloop()
