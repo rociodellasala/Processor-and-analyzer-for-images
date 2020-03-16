@@ -197,22 +197,27 @@ def copy_subimage_input():
         x_copy.grid(row=1, column=5)
         y_copy.grid(row=2, column=5)
         modify_pixel_button = Button(buttons_frame, text="Copy",
-                                     command=lambda: copy_pixels("imagen_copiada.png", int(x_original.get()),
+                                     command=lambda: copy_pixels(int(x_original.get()),
                                                                  int(y_original.get()),
                                                                  int(width_original.get()), int(height_original.get()),
-                                                                 int(x_copy.get()), int(y_copy.get())))
+                                                                 int(x_copy.get())-1, int(y_copy.get())))
         modify_pixel_button.grid(row=3, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload two images")
 
 
-def copy_pixels(image_name, x_original, y_original, width_original, height_original, x_copy, y_copy):
+def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy):
     pixels = current_image.load()
     converted = converted_image.load()
+    y_copy_aux = y_copy
 
     for x in range(x_original, x_original + width_original):
+        x_copy += 1
+        y_copy = y_copy_aux
         for y in range(y_original, y_original + height_original):
-            pixels[x, y] = converted[x_copy + x, y_copy + y]
+            if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
+                pixels[x, y] = converted[x_copy, y_copy]
+                y_copy += 1
 
     image = ImageTk.PhotoImage(current_image)
     # create a label
@@ -260,6 +265,7 @@ def load_frames():
 
 
 def clean_images():
+    global converted_image, current_image
     converted_image = None
     current_image = None
 
