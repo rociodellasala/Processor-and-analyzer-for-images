@@ -95,14 +95,12 @@ def load_pixel_input():
 
 def get_pixel_value(x, y):
     px = current_image.load()
-    print(px[int(y), int(x)])
     Label(buttons_frame, text=px[int(y), int(x)]).grid(row=2, column=1)
 
 
 def modify_pixel_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        clean_images()
         Label(buttons_frame, text="x").grid(row=0, column=0)
         Label(buttons_frame, text="y").grid(row=1, column=0)
         x = Entry(buttons_frame)
@@ -129,7 +127,9 @@ def modify_pixel_value(x, y):
 
 
 def generate_rectangle_input():
+    clean_images()
     delete_widgets(buttons_frame)
+    delete_widgets(image_frame)
     Label(buttons_frame, text="rectangle width").grid(row=0, column=0)
     Label(buttons_frame, text="rectangle height").grid(row=1, column=0)
     Label(buttons_frame, text="image width").grid(row=0, column=2)
@@ -153,7 +153,9 @@ def generate_rectangle_input():
 
 
 def generate_circle_input():
+    clean_images()
     delete_widgets(buttons_frame)
+    delete_widgets(image_frame)
     Label(buttons_frame, text="radius").grid(row=0, column=0)
     Label(buttons_frame, text="image width").grid(row=0, column=2)
     Label(buttons_frame, text="image height").grid(row=1, column=2)
@@ -229,6 +231,7 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
 
 
 def delete_widgets(frame):
+    print(frame)
     for widget in frame.winfo_children():
         widget.destroy()
     if frame is image_frame:
