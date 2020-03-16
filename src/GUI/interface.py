@@ -68,14 +68,17 @@ def open_file_name():
 
 
 def load_pixel_input():
-    Label(buttons_frame, text="x", ).grid(row=0, column=0)
-    Label(buttons_frame, text="y").grid(row=1, column=0)
-    x = Entry(buttons_frame)
-    y = Entry(buttons_frame)
-    x.grid(row=0, column=1)
-    y.grid(row=1, column=1)
-    get_pixel_button = Button(buttons_frame, text="Get Value", command=lambda: get_pixel_value(x.get(), y.get()))
-    get_pixel_button.grid(row=2, column=0)
+    if current_image != None:
+        Label(buttons_frame, text="x", ).grid(row=0, column=0)
+        Label(buttons_frame, text="y").grid(row=1, column=0)
+        x = Entry(buttons_frame)
+        y = Entry(buttons_frame)
+        x.grid(row=0, column=1)
+        y.grid(row=1, column=1)
+        get_pixel_button = Button(buttons_frame, text="Get Value", command=lambda: get_pixel_value(x.get(), y.get()))
+        get_pixel_button.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
 
 
 def get_pixel_value(x, y):
@@ -85,14 +88,17 @@ def get_pixel_value(x, y):
 
 
 def modify_pixel_input():
-    Label(buttons_frame, text="x").grid(row=0, column=0)
-    Label(buttons_frame, text="y").grid(row=1, column=0)
-    x = Entry(buttons_frame)
-    y = Entry(buttons_frame)
-    x.grid(row=0, column=1)
-    y.grid(row=1, column=1)
-    modify_pixel_button = Button(buttons_frame, text="Set Value", command=lambda: modify_pixel_value(x.get(), y.get()))
-    modify_pixel_button.grid(row=2, column=0)
+    if current_image != None:
+        Label(buttons_frame, text="x").grid(row=0, column=0)
+        Label(buttons_frame, text="y").grid(row=1, column=0)
+        x = Entry(buttons_frame)
+        y = Entry(buttons_frame)
+        x.grid(row=0, column=1)
+        y.grid(row=1, column=1)
+        modify_pixel_button = Button(buttons_frame, text="Set Value", command=lambda: modify_pixel_value(x.get(), y.get()))
+        modify_pixel_button.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
 
 
 def modify_pixel_value(x, y):
