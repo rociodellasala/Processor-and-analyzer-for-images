@@ -8,6 +8,7 @@ from image_generator import generate_rectangle
 from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
+from Pmw import *
 from src.GUI import gui_constants
 
 
@@ -32,6 +33,7 @@ def load_image(row, column):
         panel.image = image
         panel.grid(row=row, column=column)
         return image_instance
+
 
 def load_image_wrapper():
     global current_image, image_tocopy
@@ -258,7 +260,7 @@ def load_frames():
     buttons_frame = Frame(root, bg=gui_constants.TOP_COLOR, bd=2,
                           height=root.winfo_screenheight() / 8, width=root.winfo_screenwidth())
     buttons_frame.pack(side=TOP, expand=True, fill=BOTH)
-    image_frame = Frame(root, bg=gui_constants.MIDDLE_COLOR, bd=2,
+    image_frame = Pmw.ScrolledFrame(root, bg=gui_constants.MIDDLE_COLOR, bd=2,
                         height=root.winfo_screenheight() / 1.5, width=root.winfo_screenwidth())
     image_frame.pack(side=TOP, fill=BOTH, expand=True)
     footer_frame = Frame(root, bg=gui_constants.BOTTOM_COLOR,
