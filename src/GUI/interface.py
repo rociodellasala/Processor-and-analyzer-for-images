@@ -4,7 +4,7 @@ from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
 from read_raw_image import read_raw_image
 from image_generator import generate_rectangle
-
+from image_generator import generate_circle
 
 def load_image():
     file_name = open_file_name()
@@ -112,8 +112,8 @@ root.state('zoomed')
 current_image = None
 converted_image = None
 load_menu()
-generate_rectangle("hola.png", 100, 100, 10, 10, True)
-
+#generate_rectangle("hola.png", 100, 100, 10, 10, True)
+generate_circle("circle.png", 100, 100, 10, True)
 
 # main loop
 root.mainloop()
