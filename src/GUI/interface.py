@@ -212,7 +212,7 @@ def copy_pixels(image_name, x_original, y_original, width_original, height_origi
 
     for x in range(x_original, x_original + width_original):
         for y in range(y_original, y_original + height_original):
-            pixels[x, y] = converted[x_copy, y_copy]
+            pixels[x, y] = converted[x_copy + x, y_copy + y]
 
     image = ImageTk.PhotoImage(current_image)
     # create a label
