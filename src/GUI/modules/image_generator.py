@@ -12,12 +12,9 @@ def generate_rectangle(image_name, image_width, image_height, rectangle_width, r
     ending_x = int(image_width / 2 + rectangle_width / 2)
     starting_y = int(image_height / 2 - rectangle_height / 2)
     ending_y = int(image_height / 2 + rectangle_height / 2)
-    print(filled)
-    if filled == 'True':
-        print("aca en filled")
+    if filled:
         draw_filled_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
     else:
-        print("aca en empty")
         draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
     global save_path
     new_image.save(save_path + image_name)
@@ -40,13 +37,13 @@ def draw_empty_rectangle(pixels, left, right, upper, lower):
 
 def draw_horizontal_line(pixels, height, starting_x, ending_x):
     for x in range(starting_x, ending_x + 1):
-        pixels[height, x] = 255
+        pixels[x, height] = 255
     return pixels
 
 
 def draw_vertical_line(pixels, width, starting_y, ending_y):
     for y in range(starting_y, ending_y + 1):
-        pixels[y, width] = 255
+        pixels[width, y] = 255
     return pixels
 
 
@@ -56,7 +53,7 @@ def generate_circle(image_name, image_width, image_height, circle_radius, filled
     pixels = new_image.load()
     medium_x = image_width/2
     medium_y = image_height/2
-    if filled == 'True':
+    if filled:
         draw_filled_circle(pixels, medium_x, medium_y, circle_radius)
     else:
         draw_empty_circle(pixels, medium_x, medium_y, circle_radius)

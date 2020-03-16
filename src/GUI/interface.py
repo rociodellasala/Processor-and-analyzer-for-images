@@ -125,10 +125,10 @@ def generate_rectangle_input():
     height = Entry(buttons_frame)
     image_width = Entry(buttons_frame)
     image_height = Entry(buttons_frame)
-    radio_var = StringVar()
-    radio_var.set(None)
-    Radiobutton(buttons_frame, text="Empty", value="False", variable=radio_var).grid(row=1, column=4)
-    Radiobutton(buttons_frame, text="Filled", value="True", variable=radio_var).grid(row=0, column=4)
+    radio_var = BooleanVar()
+    radio_var.set(True)
+    Radiobutton(buttons_frame, text="Empty", value=False, variable=radio_var).grid(row=1, column=4)
+    Radiobutton(buttons_frame, text="Filled", value=True, variable=radio_var).grid(row=0, column=4)
     width.grid(row=0, column=1)
     height.grid(row=1, column=1)
     image_width.grid(row=0, column=3)
@@ -146,10 +146,10 @@ def generate_circle_input():
     radius = Entry(buttons_frame)
     image_width = Entry(buttons_frame)
     image_height = Entry(buttons_frame)
-    radio_var = StringVar()
-    radio_var.set("True")
-    Radiobutton(buttons_frame, text="Filled", value="True", variable=radio_var).grid(row=0, column=4)
-    Radiobutton(buttons_frame, text="Empty", value="False", variable=radio_var).grid(row=1, column=4)
+    radio_var = BooleanVar()
+    radio_var.set(True)
+    Radiobutton(buttons_frame, text="Filled", value=True, variable=radio_var).grid(row=0, column=4)
+    Radiobutton(buttons_frame, text="Empty", value=False, variable=radio_var).grid(row=1, column=4)
     radius.grid(row=0, column=1)
     image_width.grid(row=0, column=3)
     image_height.grid(row=1, column=3)
@@ -204,8 +204,6 @@ image_frame = None
 footer_frame = None
 load_frames()
 load_menu()
-color_faded_image(512, 100, False, True, True)
-
 
 # main loop
 root.mainloop()
