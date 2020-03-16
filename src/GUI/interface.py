@@ -181,42 +181,46 @@ def copy_subimage_input():
         Label(buttons_frame, text="Y").grid(row=2, column=0)
         Label(buttons_frame, text="width").grid(row=1, column=2)
         Label(buttons_frame, text="height").grid(row=2, column=2)
-        Label(buttons_frame, text="New image").grid(row=0, column=4)
+        Label(buttons_frame, text="Image to copy").grid(row=0, column=4)
         Label(buttons_frame, text="X").grid(row=1, column=4)
         Label(buttons_frame, text="Y").grid(row=2, column=4)
         x_original = Entry(buttons_frame)
         y_original = Entry(buttons_frame)
         width_original = Entry(buttons_frame)
         height_original = Entry(buttons_frame)
-        x_new = Entry(buttons_frame)
-        y_new = Entry(buttons_frame)
+        x_copy = Entry(buttons_frame)
+        y_copy = Entry(buttons_frame)
         x_original.grid(row=1, column=1)
         y_original.grid(row=2, column=1)
         width_original.grid(row=1, column=3)
         height_original.grid(row=2, column=3)
-        x_new.grid(row=1, column=5)
-        y_new.grid(row=2, column=5)
+        x_copy.grid(row=1, column=5)
+        y_copy.grid(row=2, column=5)
         modify_pixel_button = Button(buttons_frame, text="Copy",
                                      command=lambda: copy_pixels("imagen_copiada.png", int(x_original.get()),
                                                                  int(y_original.get()),
                                                                  int(width_original.get()), int(height_original.get()),
-                                                                 int(x_new.get()), int(y_new.get())))
+                                                                 int(x_copy.get()), int(y_copy.get())))
         modify_pixel_button.grid(row=3, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload two images")
 
 
-def copy_pixels(image_name, x_original, y_original, width_original, height_original, x_new, y_new):
-    new_image = current_image
-    pixels = new_image.load()
+def copy_pixels(image_name, x_original, y_original, width_original, height_original, x_copy, y_copy):
+    pixels = current_image.load()
+    converted = converted_image.load()
 
     for x in range(x_original, x_original + width_original):
         for y in range(y_original, y_original + height_original):
-            pixels[x, y] = converted_image[x_new, y_new]
+            pixels[x, y] = converted[x_copy, y_copy]
 
-    global save_path
-    new_image.save(save_path + image_name)
-    new_image.show()
+    image = ImageTk.PhotoImage(current_image)
+    # create a label
+    new_panel = Label(image_frame, image=image)
+    # set the image as img
+    new_panel.image = image
+    new_panel.grid(row=0, column=1)
+
 
 
 def delete_widgets(frame):
