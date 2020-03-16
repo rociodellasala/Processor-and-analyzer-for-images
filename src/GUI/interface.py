@@ -186,8 +186,8 @@ def load_frames():
 
 
 root = Tk()
-root.title("ATI interface")
-root.wm_attributes("-transparentcolor", '#eeefff')
+root.title('ATI interface')
+#root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
 root.state('zoomed')
 current_image = None
 converted_image = None
