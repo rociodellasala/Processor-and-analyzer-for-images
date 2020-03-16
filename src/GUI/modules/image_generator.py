@@ -2,6 +2,8 @@ from PIL import Image
 from math import cos
 from math import sin
 
+
+# Rectangle draw functions
 def generate_rectangle(image_name, image_width, image_height, rectangle_width, rectangle_height, filled):
     new_image = Image.new("L", (int(image_width), int(image_height)))
     pixels = new_image.load()
@@ -9,11 +11,15 @@ def generate_rectangle(image_name, image_width, image_height, rectangle_width, r
     ending_x = int(image_width / 2 + rectangle_width / 2)
     starting_y = int(image_height / 2 - rectangle_height / 2)
     ending_y = int(image_height / 2 + rectangle_height / 2)
-    if filled:
+    print(filled)
+    if filled == 'True':
+        print("aca en filled")
         draw_filled_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
     else:
+        print("aca en empty")
         draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
-    new_image.save(image_name)
+    global save_path
+    new_image.save(save_path + image_name)
     new_image.show()
 
 
@@ -42,16 +48,18 @@ def draw_vertical_line(pixels, width, starting_y, ending_y):
         pixels[y, width] = 255
     return pixels
 
+
+# Circle draw functions
 def generate_circle(image_name, image_width, image_height, circle_radius, filled):
     new_image = Image.new("L", (int(image_width), int(image_height)))
     pixels = new_image.load()
     medium_x = image_width/2
     medium_y = image_height/2
-    if filled:
+    if filled == 'True':
         draw_filled_circle(pixels, medium_x, medium_y, circle_radius)
     else:
         draw_empty_circle(pixels, medium_x, medium_y, circle_radius)
-    new_image.save(image_name)
+    new_image.save(save_path + image_name)
     new_image.show()
 
 
@@ -70,3 +78,6 @@ def draw_filled_circle(pixels, medium_x, medium_y, circle_radius):
             y = medium_y + radius * sin(theta)
             pixels[x, y] = 255
     return pixels
+
+
+save_path = "../../draws/"
