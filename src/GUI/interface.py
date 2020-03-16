@@ -6,6 +6,8 @@ from PIL import ImageTk, Image
 from read_raw_image import read_raw_image
 from image_generator import generate_rectangle
 from image_generator import generate_circle
+from image_generator import gray_faded_image
+from image_generator import color_faded_image
 from src.GUI import gui_constants
 
 
@@ -202,6 +204,8 @@ image_frame = None
 footer_frame = None
 load_frames()
 load_menu()
+color_faded_image(512, 100)
+
 
 # main loop
 root.mainloop()

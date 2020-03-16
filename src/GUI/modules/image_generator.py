@@ -1,6 +1,7 @@
 from PIL import Image
 from math import cos
 from math import sin
+from src.GUI import gui_constants
 
 
 # Rectangle draw functions
@@ -78,6 +79,43 @@ def draw_filled_circle(pixels, medium_x, medium_y, circle_radius):
             y = medium_y + radius * sin(theta)
             pixels[x, y] = 255
     return pixels
+
+
+def gray_faded_image(image_width, image_height):
+    new_image = Image.new("L", (int(image_width), int(image_height)))
+    pixels = new_image.load()
+    gray_value = 0
+    column_length = int(image_width / gui_constants.MAX_COLOR_VALUE)
+    current_column = 0
+    for x in range(0, image_width):
+        for y in range(0, image_height):
+            pixels[x, y] = gray_value
+        current_column += 1
+        if current_column == column_length:
+            current_column = 0
+            gray_value += 1
+    global save_path
+    new_image.save(save_path + "gray_degrade.png")
+    new_image.show()
+
+
+def color_faded_image(image_width, image_height):
+    new_image = Image.new("RGB", (int(image_width), int(image_height)))
+    pixels = new_image.load()
+    print(pixels[0, 0])
+    # gray_value = 0
+    # column_length = int(image_width / gui_constants.MAX_COLOR_VALUE)
+    # current_column = 0
+    # for x in range(0, image_width):
+    #     for y in range(0, image_height):
+    #         pixels[x, y] = gray_value
+    #     current_column += 1
+    #     if current_column == column_length:
+    #         current_column = 0
+    #         gray_value += 1
+    # global save_path
+    # new_image.save(save_path + "gray_degrade.png")
+    # new_image.show()
 
 
 save_path = "../../draws/"
