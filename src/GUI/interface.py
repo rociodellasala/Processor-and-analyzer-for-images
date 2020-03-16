@@ -54,6 +54,7 @@ def load_menu():
     menubar.add_cascade(label="Pixel", menu=pixel_menu)
     pixel_menu.add_command(label="Get", command=load_pixel_input)
     pixel_menu.add_command(label="Modify", command=modify_pixel_input)
+    pixel_menu.add_command(label="Copy", command=copy_subimage_input)
     menubar.add_cascade(label="Draw", menu=draw_menu)
     draw_menu.add_command(label="Rectangle", command=generate_rectangle_input)
     draw_menu.add_command(label="Circle", command=generate_circle_input)
@@ -70,7 +71,8 @@ def open_file_name():
 
 
 def load_pixel_input():
-    if current_image != None:
+    if current_image is not None:
+        delete_widgets(buttons_frame)
         Label(buttons_frame, text="x", ).grid(row=0, column=0)
         Label(buttons_frame, text="y").grid(row=1, column=0)
         x = Entry(buttons_frame)
@@ -90,7 +92,8 @@ def get_pixel_value(x, y):
 
 
 def modify_pixel_input():
-    if current_image != None:
+    if current_image is not None:
+        delete_widgets(buttons_frame)
         Label(buttons_frame, text="x").grid(row=0, column=0)
         Label(buttons_frame, text="y").grid(row=1, column=0)
         x = Entry(buttons_frame)
@@ -159,6 +162,22 @@ def generate_circle_input():
     generate_circle("circle.png", int(image_width.get()), int(image_height.get()),
                     int(radius.get()), radio_var.get()))
     modify_pixel_button.grid(row=3, column=0)
+
+
+def copy_subimage_input():
+    if current_image != None:
+        Label(buttons_frame, text="x").grid(row=0, column=0)
+        Label(buttons_frame, text="y").grid(row=1, column=0)
+        x = Entry(buttons_frame)
+        y = Entry(buttons_frame)
+        x.grid(row=0, column=1)
+        y.grid(row=1, column=1)
+        modify_pixel_button = Button(buttons_frame, text="Set Value",
+                                     command=lambda: modify_pixel_value(x.get(), y.get()))
+        modify_pixel_button.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
+
 
 
 def delete_widgets(frame):
