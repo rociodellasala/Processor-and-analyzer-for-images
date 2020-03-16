@@ -11,7 +11,8 @@ from image_generator import color_faded_image
 from src.GUI import gui_constants
 
 
-def load_image():
+
+def load_image(row, column, image_instance):
     file_name = open_file_name()
     if file_name:
         if file_name.endswith(".RAW"):
@@ -22,15 +23,22 @@ def load_image():
             image = Image.open(file_name)
         # resize the image and apply a high-quality down sampling filter
         image = image.resize((512, 512), Image.ANTIALIAS)
-        global current_image
-        current_image = image
+        image_instance = image
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
         # create a label
         panel = Label(image_frame, image=image)
         # set the image as img
         panel.image = image
-        panel.grid(row=0, column=0)
+        panel.grid(row=row, column=column)
+        return image_instance
+
+def load_image_wrapper():
+    global current_image, converted_image
+    if current_image is None:
+        current_image = load_image(0, 0, current_image)
+    else:
+        converted_image = load_image(0, 1, converted_image)
 
 
 def save_image():
@@ -47,7 +55,7 @@ def load_menu():
     pixel_menu = Menu(menubar, tearoff=0)
     draw_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Image", menu=image_menu)
-    image_menu.add_command(label="Open", command=load_image)
+    image_menu.add_command(label="Open", command=load_image_wrapper)
     image_menu.add_command(label="Save", command=save_image)
     image_menu.add_separator()
     image_menu.add_command(label="Exit", command=root.quit)
@@ -94,6 +102,7 @@ def get_pixel_value(x, y):
 def modify_pixel_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
+        clean_images()
         Label(buttons_frame, text="x").grid(row=0, column=0)
         Label(buttons_frame, text="y").grid(row=1, column=0)
         x = Entry(buttons_frame)
@@ -165,24 +174,56 @@ def generate_circle_input():
 
 
 def copy_subimage_input():
-    if current_image != None:
-        Label(buttons_frame, text="x").grid(row=0, column=0)
-        Label(buttons_frame, text="y").grid(row=1, column=0)
-        x = Entry(buttons_frame)
-        y = Entry(buttons_frame)
-        x.grid(row=0, column=1)
-        y.grid(row=1, column=1)
-        modify_pixel_button = Button(buttons_frame, text="Set Value",
-                                     command=lambda: modify_pixel_value(x.get(), y.get()))
-        modify_pixel_button.grid(row=2, column=0)
+    if current_image is not None and converted_image is not None:
+        delete_widgets(buttons_frame)
+        Label(buttons_frame, text="Original image").grid(row=0, column=0)
+        Label(buttons_frame, text="X").grid(row=1, column=0)
+        Label(buttons_frame, text="Y").grid(row=2, column=0)
+        Label(buttons_frame, text="width").grid(row=1, column=2)
+        Label(buttons_frame, text="height").grid(row=2, column=2)
+        Label(buttons_frame, text="New image").grid(row=0, column=4)
+        Label(buttons_frame, text="X").grid(row=1, column=4)
+        Label(buttons_frame, text="Y").grid(row=2, column=4)
+        x_original = Entry(buttons_frame)
+        y_original = Entry(buttons_frame)
+        width_original = Entry(buttons_frame)
+        height_original = Entry(buttons_frame)
+        x_new = Entry(buttons_frame)
+        y_new = Entry(buttons_frame)
+        x_original.grid(row=1, column=1)
+        y_original.grid(row=2, column=1)
+        width_original.grid(row=1, column=3)
+        height_original.grid(row=2, column=3)
+        x_new.grid(row=1, column=5)
+        y_new.grid(row=2, column=5)
+        modify_pixel_button = Button(buttons_frame, text="Copy",
+                                     command=lambda: copy_pixels("imagen_copiada.png", int(x_original.get()),
+                                                                 int(y_original.get()),
+                                                                 int(width_original.get()), int(height_original.get()),
+                                                                 int(x_new.get()), int(y_new.get())))
+        modify_pixel_button.grid(row=3, column=0)
     else:
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload two images")
 
+
+def copy_pixels(image_name, x_original, y_original, width_original, height_original, x_new, y_new):
+    new_image = current_image
+    pixels = new_image.load()
+
+    for x in range(x_original, x_original + width_original):
+        for y in range(y_original, y_original + height_original):
+            pixels[x, y] = converted_image[x_new, y_new]
+
+    global save_path
+    new_image.save(save_path + image_name)
+    new_image.show()
 
 
 def delete_widgets(frame):
     for widget in frame.winfo_children():
         widget.destroy()
+    if frame is image_frame:
+        clean_images()
 
 
 def ask_quit():
@@ -214,9 +255,13 @@ def load_frames():
     load_footer_buttons()
 
 
+def clean_images():
+    converted_image = None
+    current_image = None
+
+
 root = Tk()
 root.title('ATI interface')
-#root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
 root.state('zoomed')
 current_image = None
 converted_image = None
