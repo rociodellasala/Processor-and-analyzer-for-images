@@ -195,6 +195,11 @@ def load_frames():
     load_footer_buttons()
 
 
+def rgb_to_hsv(rgb_image):
+    hsv_image = rgb_image.convert('HSV')
+    hsv_image.show()
+
+
 root = Tk()
 root.title('ATI interface')
 #root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
@@ -206,6 +211,8 @@ image_frame = None
 footer_frame = None
 load_frames()
 load_menu()
+rgb_image = Image.open('../../images/Lenaclor.ppm')
+rgb_to_hsv(rgb_image)
 
 # main loop
 root.mainloop()
