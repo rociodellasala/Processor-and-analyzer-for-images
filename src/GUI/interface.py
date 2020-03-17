@@ -8,9 +8,7 @@ from image_generator import generate_rectangle
 from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
-from Pmw import *
 from src.GUI import gui_constants
-
 
 
 def load_image(row, column):
@@ -68,6 +66,8 @@ def load_menu():
     menubar.add_cascade(label="Draw", menu=draw_menu)
     draw_menu.add_command(label="Rectangle", command=generate_rectangle_input)
     draw_menu.add_command(label="Circle", command=generate_circle_input)
+    draw_menu.add_command(label="Gray Fading", command=generate_gray_fading_input)
+    draw_menu.add_command(label="Color Fading", command=generate_color_fading_input)
 
 
 def open_file_name():
@@ -177,6 +177,42 @@ def generate_circle_input():
     modify_pixel_button.grid(row=3, column=0)
 
 
+def generate_gray_fading_input():
+    clean_images()
+    delete_widgets(buttons_frame)
+    delete_widgets(image_frame)
+    Label(buttons_frame, text="image width").grid(row=0, column=2)
+    Label(buttons_frame, text="image height").grid(row=1, column=2)
+    image_width = Entry(buttons_frame)
+    image_height = Entry(buttons_frame)
+    image_width.grid(row=0, column=3)
+    image_height.grid(row=1, column=3)
+    generate_gray_fading_button = Button(buttons_frame, text="Show", command=lambda:
+                                         gray_faded_image(int(image_width.get()), int(image_height.get())))
+    generate_gray_fading_button.grid(row=3, column=0)
+
+
+def generate_color_fading_input():
+    clean_images()
+    delete_widgets(buttons_frame)
+    delete_widgets(image_frame)
+    Label(buttons_frame, text="image width").grid(row=0, column=2)
+    Label(buttons_frame, text="image height").grid(row=1, column=2)
+    red = BooleanVar()
+    green = BooleanVar()
+    blue = BooleanVar()
+    Checkbutton(buttons_frame, text="Red", variable=red).grid(row=2, column=1)
+    Checkbutton(buttons_frame, text="Green", variable=green).grid(row=2, column=2)
+    Checkbutton(buttons_frame, text="Blue", variable=blue).grid(row=2, column=3)
+    image_width = Entry(buttons_frame)
+    image_height = Entry(buttons_frame)
+    image_width.grid(row=0, column=3)
+    image_height.grid(row=1, column=3)
+    generate_gray_fading_button = Button(buttons_frame, text="Show", command=lambda:
+    color_faded_image(int(image_width.get()), int(image_height.get()), red.get(), green.get(), blue.get()))
+    generate_gray_fading_button.grid(row=3, column=0)
+
+
 def copy_subimage_input():
     if current_image is not None and image_tocopy is not None:
         delete_widgets(buttons_frame)
@@ -231,7 +267,6 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
     new_panel.grid(row=0, column=2)
 
 
-
 def delete_widgets(frame):
     print(frame)
     for widget in frame.winfo_children():
@@ -260,7 +295,7 @@ def load_frames():
     buttons_frame = Frame(root, bg=gui_constants.TOP_COLOR, bd=2,
                           height=root.winfo_screenheight() / 8, width=root.winfo_screenwidth())
     buttons_frame.pack(side=TOP, expand=True, fill=BOTH)
-    image_frame = Pmw.ScrolledFrame(root, bg=gui_constants.MIDDLE_COLOR, bd=2,
+    image_frame = Frame(root, bg=gui_constants.MIDDLE_COLOR, bd=2,
                         height=root.winfo_screenheight() / 1.5, width=root.winfo_screenwidth())
     image_frame.pack(side=TOP, fill=BOTH, expand=True)
     footer_frame = Frame(root, bg=gui_constants.BOTTOM_COLOR,
@@ -290,8 +325,6 @@ footer_frame = None
 
 load_frames()
 load_menu()
-
-scroll_bar = Scrollbar(root, orient=HORIZONTAL).pack()
 
 # main loop
 root.mainloop()

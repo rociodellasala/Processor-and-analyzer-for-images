@@ -83,6 +83,8 @@ def gray_faded_image(image_width, image_height):
     pixels = new_image.load()
     gray_value = 0
     column_length = int(image_width / gui_constants.MAX_COLOR_VALUE)
+    if column_length == 0:
+        column_length = 1
     current_column = 0
     for x in range(0, image_width):
         for y in range(0, image_height):
@@ -92,7 +94,7 @@ def gray_faded_image(image_width, image_height):
             current_column = 0
             gray_value += 1
     global save_path
-    new_image.save(save_path + "gray_degrade.png")
+    new_image.save(save_path + "gray_fading.png")
     new_image.show()
 
 
@@ -101,6 +103,8 @@ def color_faded_image(image_width, image_height, red, green, blue):
     pixels = new_image.load()
     color_value = 0
     column_length = int(image_width / gui_constants.MAX_COLOR_VALUE)
+    if column_length == 0:
+        column_length = 1
     current_column = 0
     for x in range(0, image_width):
         for y in range(0, image_height):
@@ -113,7 +117,7 @@ def color_faded_image(image_width, image_height, red, green, blue):
             current_column = 0
             color_value += 1
     global save_path
-    new_image.save(save_path + "gray_degrade.png")
+    new_image.save(save_path + "color_fading.png")
     new_image.show()
 
 
