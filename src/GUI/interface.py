@@ -70,12 +70,9 @@ def load_menu():
     menubar.add_cascade(label="Draw", menu=draw_menu)
     draw_menu.add_command(label="Rectangle", command=generate_rectangle_input)
     draw_menu.add_command(label="Circle", command=generate_circle_input)
-    # menubar.add_cascade(label="Gradient", menu=gradient_menu)
-    # gradient_menu.add_command(label="Gray", command=gray_faded_image())
-    # gradient_menu.add_command(label="Color", command=color_faded_image())
-    draw_menu.add_command(label="Gray Fading", command=generate_gray_fading_input)
-    draw_menu.add_command(label="Color Fading", command=generate_color_fading_input)
-
+    menubar.add_cascade(label="Gradient", menu=gradient_menu)
+    gradient_menu.add_command(label="Gray", command=generate_gray_fading_input)
+    gradient_menu.add_command(label="Color", command=generate_color_fading_input)
 
 def open_file_name():
     file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
