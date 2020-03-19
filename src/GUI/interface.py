@@ -8,6 +8,8 @@ from image_generator import generate_rectangle
 from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
+from image_operations import add_grey_images
+from image_operations import subtract_grey_images
 from src.GUI import gui_constants
 
 
@@ -30,6 +32,8 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
+        # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
+        subtract_grey_images(512, 512, image_instance, image_instance)
         return image_instance
 
 
