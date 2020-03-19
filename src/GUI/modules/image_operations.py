@@ -30,6 +30,17 @@ def subtract_grey_images(width, height, image_1, image_2):
     return subtracted_image
 
 
+def multiply_grey_images_with_scalar(width, height, image_1, scalar):
+    pixels_image_1 = image_1.load()
+    multiplied_image = np.zeros((width, height))
+    for y in range(0, height):
+        for x in range(0, width):
+            multiplied_image[y, x] = int(pixels_image_1[x, y] * scalar)
+    img = Image.fromarray(multiplied_image)
+    img.show()
+    return multiplied_image
+
+
 def get_pixel_value(pixels, x, y, width, height):
     if y > height or x > width:
         return 0
