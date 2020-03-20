@@ -37,7 +37,7 @@ def load_image(row, column):
         # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # subtract_grey_images(512, 512, image_instance, image_instance)
         #multiply_grey_images_with_scalar(512, 512, image_instance, 2)
-        add_grey_images(512, 512, image_instance, 512, 512, image_instance)
+        multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
         return image_instance
 
 
