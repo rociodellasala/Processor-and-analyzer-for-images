@@ -11,6 +11,7 @@ from image_generator import color_faded_image
 from image_operations import add_grey_images
 from image_operations import subtract_grey_images
 from image_operations import multiply_grey_images_with_scalar
+from image_operations import multiply_grey_images
 from src.GUI import gui_constants
 
 
@@ -35,7 +36,8 @@ def load_image(row, column):
         panel.grid(row=row, column=column)
         # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # subtract_grey_images(512, 512, image_instance, image_instance)
-        multiply_grey_images_with_scalar(512, 512, image_instance, 2)
+        #multiply_grey_images_with_scalar(512, 512, image_instance, 2)
+        add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         return image_instance
 
 
