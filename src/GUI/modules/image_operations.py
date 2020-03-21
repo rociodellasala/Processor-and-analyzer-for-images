@@ -160,14 +160,7 @@ def colored_image_negative(image, width, height):
 
 
 def grey_level_histogram(image, width, height):
-    pixels = image.load()
-    grey_levels = np.zeros((height * width))
-    i = 0
-    for y in range(0, height):
-        for x in range(0, width):
-            current_value = int(pixels[x, y])
-            grey_levels[i] = current_value
-            i += 1
+    grey_levels = calculate_histogram(image, width, height)
     # histogram = np.histogram(grey_levels, L)
     # print(histogram)
     print(grey_levels)
@@ -179,6 +172,18 @@ def grey_level_histogram(image, width, height):
     plt.show()
 
 
+def calculate_histogram(image, width, height):
+    pixels = image.load()
+    grey_levels = np.zeros((height * width))
+    i = 0
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            grey_levels[i] = current_value
+            i += 1
+    return grey_levels
+
+
 def image_threshold(image, width, height, threshold):
     pixels = image.load()
     new_image = np.zeros((height, width))
@@ -188,3 +193,32 @@ def image_threshold(image, width, height, threshold):
             new_image[y, x] = current_value
     img = Image.fromarray(new_image)
     img.show()
+
+
+def image_equalization(image, width, height):
+    pixels = image.load()
+    grey_levels = np.zeros(L)
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            grey_levels[current_value] += 1
+    total_pixels = width * height
+    equalized_image = np.zeros(L)
+    min_value = L
+    for i in range(0, L):
+        accumulated_value = 0
+        for j in range(0, i + 1):
+            accumulated_value += grey_levels[j]
+        equalized_image[i] = accumulated_value / total_pixels
+        if equalized_image[i] < min_value:
+            min_value = equalized_image[i]
+    for i in range(0, L):
+        equalized_image[i] = int((equalized_image[i] - min_value) / (1 - min_value) + 0.5)
+    print(equalized_image)
+    print(np.sum(equalized_image))
+    plt.hist(equalized_image, bins=L, edgecolor='black')
+    plt.title("Grey level histogram equalized")
+    plt.xlabel("Grey value")
+    plt.ylabel("Quantity")
+    plt.show()
+
