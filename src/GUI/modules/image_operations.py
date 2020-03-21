@@ -109,10 +109,10 @@ def dynamic_range_compression(image, width, height):
     pixels = image.load()
     max_value = get_max_and_min_value(pixels, width, height)[0]
     c = (L - 1) / log10(1 + max_value)
-    compressed_image = pixels
+    compressed_image = np.zeros((width, height))
     for y in range(0, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
-            compressed_image[x, y] = int(c * log10(1 + current_value))
+            compressed_image[y, x] = int(c * log10(1 + current_value))
     img = Image.fromarray(compressed_image)
     img.show()
