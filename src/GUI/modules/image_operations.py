@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
 from math import log10
+from math import pow
 
 MAX_PIXEL_VALUE = 255
 MIN_PIXEL_VALUE = 0
@@ -116,6 +117,20 @@ def dynamic_range_compression(image, width, height):
             compressed_image[y, x] = int(c * log10(1 + current_value))
     img = Image.fromarray(compressed_image)
     img.show()
+
+
+def gamma_pow_function(image, width, height, gamma):
+    pixels = image.load()
+    c = pow((L - 1), 1 - gamma)
+    compressed_image = np.zeros((width, height))
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            compressed_image[y,x] = int(c * pow(current_value, gamma))
+    img = Image.fromarray(compressed_image)
+    img.show()
+
+
 
 
 def grey_image_negative(image, width, height):

@@ -15,6 +15,7 @@ from image_operations import multiply_grey_images
 from image_operations import dynamic_range_compression
 from image_operations import grey_image_negative
 from image_operations import colored_image_negative
+from image_operations import gamma_pow_function
 from src.GUI import gui_constants
 
 
@@ -41,6 +42,8 @@ def load_image(row, column):
         # subtract_grey_images(512, 512, image_instance, image_instance)
         # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
         # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
+        # dynamic_range_compression(image_instance, 512, 512)
+        gamma_pow_function(image_instance, 512, 512, 0.2)
         # dynamic_range_compression(image_instance, 512, 512)
         # grey_image_negative(image_instance, 512, 512)
         colored_image_negative(image_instance, 512, 512)
@@ -73,6 +76,7 @@ def load_menu():
     pixel_menu = Menu(menubar, tearoff=0)
     draw_menu = Menu(menubar, tearoff=0)
     gradient_menu = Menu(menubar, tearoff=0)
+    function_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Image", menu=image_menu)
     image_menu.add_command(label="Open", command=load_image_wrapper)
     image_menu.add_command(label="Save", command=save_image)
@@ -88,6 +92,11 @@ def load_menu():
     menubar.add_cascade(label="Gradient", menu=gradient_menu)
     gradient_menu.add_command(label="Gray", command=generate_gray_fading_input)
     gradient_menu.add_command(label="Color", command=generate_color_fading_input)
+    menubar.add_cascade(label="Function", menu=function_menu)
+    function_menu.add_command(label="Gamma", command=generate_gamma_input)
+    function_menu.add_command(label="Negative") # add command
+    function_menu.add_command(label="Grey Histogram") # add command
+
 
 def open_file_name():
     file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
@@ -225,6 +234,18 @@ def generate_color_fading_input():
     generate_gray_fading_button = Button(buttons_frame, text="Show", command=lambda:
     color_faded_image(int(image_width.get()), int(image_height.get()), red.get(), green.get(), blue.get()))
     generate_gray_fading_button.grid(row=3, column=0)
+
+
+def generate_gamma_input():
+    clean_images()
+    delete_widgets(buttons_frame)
+    delete_widgets(image_frame)
+    Label(buttons_frame, text="Gamma").grid(row=0, column=0)
+    gamma = Entry(buttons_frame)
+    gamma.grid(row=0, column=1)
+    apply_function = Button(buttons_frame, text="Apply", command=gamma_pow_function(current_image,
+            int(current_image.get(), int(current_image.get(), gamma))))
+    apply_function.grid(row=0, column=2)
 
 
 def copy_subimage_input():
