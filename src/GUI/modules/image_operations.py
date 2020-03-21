@@ -145,8 +145,6 @@ def grey_image_negative(image, width, height):
 def colored_image_negative(image, width, height):
     pixels = image.load()
     negative_image = np.zeros((height, width, 3), dtype=np.uint8)
-    # green_negative_image = np.zeros((height, width))
-    # blue_negative_image = np.zeros((height, width))
     for y in range(0, height):
         for x in range(0, width):
             red_value = int(pixels[x, y][0])
