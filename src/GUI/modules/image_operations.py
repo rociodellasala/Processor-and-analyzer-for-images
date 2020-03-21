@@ -116,3 +116,32 @@ def dynamic_range_compression(image, width, height):
             compressed_image[y, x] = int(c * log10(1 + current_value))
     img = Image.fromarray(compressed_image)
     img.show()
+
+
+def grey_image_negative(image, width, height):
+    pixels = image.load()
+    negative_image = np.zeros((height, width))
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            negative_image[y, x] = -current_value + L - 1
+    img = Image.fromarray(negative_image)
+    img.show()
+
+
+def colored_image_negative(image, width, height):
+    pixels = image.load()
+    negative_image = np.zeros((height, width, 3), dtype=np.uint8)
+    # green_negative_image = np.zeros((height, width))
+    # blue_negative_image = np.zeros((height, width))
+    for y in range(0, height):
+        for x in range(0, width):
+            red_value = int(pixels[x, y][0])
+            green_value = int(pixels[x, y][1])
+            blue_value = int(pixels[x, y][2])
+            negative_image[y, x, 0] = np.uint8(-red_value + L - 1)
+            negative_image[y, x, 1] = np.uint8(-green_value + L - 1)
+            negative_image[y, x, 2] = np.uint8(-blue_value + L - 1)
+
+    img = Image.fromarray(negative_image, 'RGB')
+    img.show()
