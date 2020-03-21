@@ -16,6 +16,8 @@ from image_operations import dynamic_range_compression
 from image_operations import grey_image_negative
 from image_operations import colored_image_negative
 from image_operations import gamma_pow_function
+from image_operations import grey_level_histogram
+from image_operations import image_threshold
 from src.GUI import gui_constants
 
 
@@ -46,8 +48,9 @@ def load_image(row, column):
         # gamma_pow_function(image_instance, 512, 512, 0.2)
         # dynamic_range_compression(image_instance, 512, 512)
         # grey_image_negative(image_instance, 512, 512)
-        colored_image_negative(image_instance, 512, 512)
-
+        # colored_image_negative(image_instance, 512, 512)
+        # grey_level_histogram(image_instance, 512, 512)
+        image_threshold(image_instance, 512, 512, 20)
         return image_instance
 
 

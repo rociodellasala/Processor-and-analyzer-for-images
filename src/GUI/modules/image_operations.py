@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 from PIL import Image
 from math import log10
 from math import pow
@@ -6,6 +7,7 @@ from math import pow
 MAX_PIXEL_VALUE = 255
 MIN_PIXEL_VALUE = 0
 L = 256
+
 
 def add_grey_images(image_1_width, image_1_height, image_1, image_2_width, image_2_height, image_2):
     width = int(image_1_width) if int(image_1_width) > int(image_2_width) else int(image_2_width)
@@ -154,4 +156,35 @@ def colored_image_negative(image, width, height):
             negative_image[y, x, 1] = np.uint8(-green_value + L - 1)
             negative_image[y, x, 2] = np.uint8(-blue_value + L - 1)
     img = Image.fromarray(negative_image, 'RGB')
+    img.show()
+
+
+def grey_level_histogram(image, width, height):
+    pixels = image.load()
+    grey_levels = np.zeros((height * width))
+    i = 0
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            grey_levels[i] = current_value
+            i += 1
+    # histogram = np.histogram(grey_levels, L)
+    # print(histogram)
+    print(grey_levels)
+    print(np.sum(grey_levels))
+    plt.hist(grey_levels, bins=L, edgecolor='black')
+    plt.title("Grey level histogram")
+    plt.xlabel("Grey value")
+    plt.ylabel("Quantity")
+    plt.show()
+
+
+def image_threshold(image, width, height, threshold):
+    pixels = image.load()
+    new_image = np.zeros((height, width))
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = 0 if int(pixels[x, y]) <= threshold else MAX_PIXEL_VALUE
+            new_image[y, x] = current_value
+    img = Image.fromarray(new_image)
     img.show()
