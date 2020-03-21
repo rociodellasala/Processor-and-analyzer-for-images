@@ -43,7 +43,7 @@ def load_image(row, column):
         # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
         # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # dynamic_range_compression(image_instance, 512, 512)
-        gamma_pow_function(image_instance, 512, 512, 0.2)
+        # gamma_pow_function(image_instance, 512, 512, 0.2)
         # dynamic_range_compression(image_instance, 512, 512)
         # grey_image_negative(image_instance, 512, 512)
         colored_image_negative(image_instance, 512, 512)

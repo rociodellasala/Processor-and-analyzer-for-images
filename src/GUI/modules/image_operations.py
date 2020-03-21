@@ -131,8 +131,6 @@ def gamma_pow_function(image, width, height, gamma):
     img.show()
 
 
-
-
 def grey_image_negative(image, width, height):
     pixels = image.load()
     negative_image = np.zeros((height, width))
@@ -157,6 +155,5 @@ def colored_image_negative(image, width, height):
             negative_image[y, x, 0] = np.uint8(-red_value + L - 1)
             negative_image[y, x, 1] = np.uint8(-green_value + L - 1)
             negative_image[y, x, 2] = np.uint8(-blue_value + L - 1)
-
     img = Image.fromarray(negative_image, 'RGB')
     img.show()
