@@ -12,6 +12,7 @@ from image_operations import add_grey_images
 from image_operations import subtract_grey_images
 from image_operations import multiply_grey_images_with_scalar
 from image_operations import multiply_grey_images
+from image_operations import dynamic_range_compression
 from src.GUI import gui_constants
 
 
@@ -36,8 +37,9 @@ def load_image(row, column):
         panel.grid(row=row, column=column)
         # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # subtract_grey_images(512, 512, image_instance, image_instance)
-        #multiply_grey_images_with_scalar(512, 512, image_instance, 2)
-        multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
+        # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
+        # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
+        dynamic_range_compression(image_instance, 512, 512)
         return image_instance
 
 

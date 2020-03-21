@@ -1,9 +1,10 @@
 import numpy as np
 from PIL import Image
+from math import log10
 
 MAX_PIXEL_VALUE = 255
 MIN_PIXEL_VALUE = 0
-
+L = 256
 
 def add_grey_images(image_1_width, image_1_height, image_1, image_2_width, image_2_height, image_2):
     width = int(image_1_width) if int(image_1_width) > int(image_2_width) else int(image_2_width)
@@ -102,3 +103,16 @@ def get_max_and_min_value(pixels, width, height):
             if min_value is None or min_value > current_value:
                 min_value = current_value
     return [max_value, min_value]
+
+
+def dynamic_range_compression(image, width, height):
+    pixels = image.load()
+    max_value = get_max_and_min_value(pixels, width, height)[0]
+    c = (L - 1) / log10(1 + max_value)
+    compressed_image = pixels
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            compressed_image[x, y] = int(c * log10(1 + current_value))
+    img = Image.fromarray(compressed_image)
+    img.show()
