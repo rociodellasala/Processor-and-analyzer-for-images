@@ -23,6 +23,8 @@ from noise_generators import gaussian_noise_generator
 from noise_generators import rayleigh_noise_generator
 from noise_generators import exponential_noise_generator
 from noise_generators import salt_and_pepper_noise_generator
+from filters import media_filter
+
 from src.GUI import gui_constants
 
 
@@ -60,7 +62,8 @@ def load_image(row, column):
         # gaussian_noise_generator(0.5, True, image_instance, 512, 512, 0, 30)
         # rayleigh_noise_generator(0.5, False, image_instance, 512, 512, 40)
         # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
-        salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
+        # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
+        media_filter(image_instance, 512, 512, 5)
         return image_instance
 
 
