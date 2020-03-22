@@ -203,22 +203,25 @@ def image_equalization(image, width, height):
             current_value = int(pixels[x, y])
             grey_levels[current_value] += 1
     total_pixels = width * height
-    equalized_image = np.zeros(L)
+    new_grey_levels = np.zeros(L)
     min_value = L
     for i in range(0, L):
         accumulated_value = 0
         for j in range(0, i + 1):
             accumulated_value += grey_levels[j]
-        equalized_image[i] = accumulated_value / total_pixels
-        if equalized_image[i] < min_value:
-            min_value = equalized_image[i]
+        new_grey_levels[i] = accumulated_value / total_pixels
+        if new_grey_levels[i] < min_value:
+            min_value = new_grey_levels[i]
     for i in range(0, L):
-        equalized_image[i] = int((equalized_image[i] - min_value) / (1 - min_value) + 0.5)
-    print(equalized_image)
-    print(np.sum(equalized_image))
-    plt.hist(equalized_image, bins=L, edgecolor='black')
-    plt.title("Grey level histogram equalized")
-    plt.xlabel("Grey value")
-    plt.ylabel("Quantity")
-    plt.show()
+        new_grey_levels[i] = int((L - 1) * (new_grey_levels[i] - min_value) / (1 - min_value) + 0.5)
+    print(new_grey_levels)
+    new_image = np.zeros((height, width))
+    for y in range(0, height):
+        for x in range(0, width):
+            current_value = int(pixels[x, y])
+            new_image[y, x] = new_grey_levels[current_value]
+    img = Image.fromarray(new_image)
+    img.show()
+    grey_level_histogram(img, width, height)
+    # TODO modularize function
 
