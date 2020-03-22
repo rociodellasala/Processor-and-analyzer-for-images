@@ -19,6 +19,7 @@ from image_operations import gamma_pow_function
 from image_operations import grey_level_histogram
 from image_operations import image_threshold
 from image_operations import image_equalization
+from noise_generators import gaussian_noise_generator
 from src.GUI import gui_constants
 
 
@@ -52,7 +53,8 @@ def load_image(row, column):
         # colored_image_negative(image_instance, 512, 512)
         # grey_level_histogram(image_instance, 512, 512)
         # image_threshold(image_instance, 512, 512, 20)
-        image_equalization(image_instance, 512, 512)
+        # image_equalization(image_instance, 512, 512)
+        gaussian_noise_generator(0.5, True, image_instance, 512, 512, 0, 30)
         return image_instance
 
 
