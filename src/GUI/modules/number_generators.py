@@ -5,8 +5,8 @@ def gaussian_generator(mu, sigma, size):
     return np.random.normal(mu, sigma, size)
 
 
-def rayleigh_generator(psi, size):
-    return np.random.rayleigh(psi, size)
+def rayleigh_generator(xi, size):
+    return np.random.rayleigh(xi, size)
 
 
 def exponential_generator(lambda_value, size):

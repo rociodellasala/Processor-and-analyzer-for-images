@@ -20,6 +20,9 @@ from image_operations import grey_level_histogram
 from image_operations import image_threshold
 from image_operations import image_equalization
 from noise_generators import gaussian_noise_generator
+from noise_generators import rayleigh_noise_generator
+from noise_generators import exponential_noise_generator
+from noise_generators import salt_and_pepper_noise_generator
 from src.GUI import gui_constants
 
 
@@ -54,16 +57,19 @@ def load_image(row, column):
         # grey_level_histogram(image_instance, 512, 512)
         # image_threshold(image_instance, 512, 512, 20)
         # image_equalization(image_instance, 512, 512)
-        gaussian_noise_generator(0.5, True, image_instance, 512, 512, 0, 30)
+        # gaussian_noise_generator(0.5, True, image_instance, 512, 512, 0, 30)
+        # rayleigh_noise_generator(0.5, False, image_instance, 512, 512, 40)
+        # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
+        salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         return image_instance
 
 
 def load_image_wrapper():
-    global current_image, image_tocopy
+    global current_image, image_to_copy
     if current_image is None:
         current_image = load_image(0, 0)
-    elif image_tocopy is None:
-        image_tocopy = load_image(0, 1)
+    elif image_to_copy is None:
+        image_to_copy = load_image(0, 1)
     else:
         messagebox.showerror(title="Error", message="You can't upload more than two images. If you want to change"
                                                     " one click on the \"Clean image\" button first")
@@ -256,7 +262,7 @@ def generate_gamma_input():
 
 
 def copy_subimage_input():
-    if current_image is not None and image_tocopy is not None:
+    if current_image is not None and image_to_copy is not None:
         delete_widgets(buttons_frame)
         Label(buttons_frame, text="Original image").grid(row=0, column=0)
         Label(buttons_frame, text="X").grid(row=1, column=0)
@@ -290,7 +296,7 @@ def copy_subimage_input():
 
 def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy):
     pixels = current_image.load()
-    copy = image_tocopy.load()
+    copy = image_to_copy.load()
     y_copy_aux = y_copy
 
     for x in range(x_original, x_original + width_original):
@@ -344,8 +350,8 @@ def load_frames():
 
 
 def clean_images():
-    global current_image, image_tocopy
-    image_tocopy = None
+    global current_image, image_to_copy
+    image_to_copy = None
     current_image = None
 
 
@@ -354,7 +360,7 @@ root.title('ATI interface')
 root.state('zoomed')
 
 current_image = None
-image_tocopy = None
+image_to_copy = None
 
 buttons_frame = None
 image_frame = None
