@@ -10,6 +10,7 @@ from image_generator import gray_faded_image
 from image_generator import color_faded_image
 from image_operations import add_grey_images
 from image_operations import subtract_grey_images
+from image_operations import subtract_colored_images
 from image_operations import multiply_grey_images_with_scalar
 from image_operations import multiply_grey_images
 from image_operations import dynamic_range_compression
@@ -49,6 +50,7 @@ def load_image(row, column):
         panel.grid(row=row, column=column)
         # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # subtract_grey_images(512, 512, image_instance, image_instance)
+        subtract_colored_images(512, 512, image_instance, image_instance)
         # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
         # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # dynamic_range_compression(image_instance, 512, 512)
@@ -63,7 +65,7 @@ def load_image(row, column):
         # rayleigh_noise_generator(0.5, False, image_instance, 512, 512, 40)
         # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
-        media_filter(image_instance, 512, 512, 5)
+        # media_filter(image_instance, 512, 512, 5)
         return image_instance
 
 

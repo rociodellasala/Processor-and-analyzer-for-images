@@ -37,6 +37,25 @@ def subtract_grey_images(width, height, image_1, image_2):
     return subtracted_image
 
 
+def subtract_colored_images(width, height, image_1, image_2):
+    pixels_1 = image_1.load()
+    pixels_2 = image_2.load()
+    subtracted_image = np.zeros((height, width, 3), dtype=np.uint8)
+    for y in range(0, height):
+        for x in range(0, width):
+            red_value_1 = int(pixels_1[x, y][0])
+            red_value_2 = int(pixels_2[x, y][0])
+            green_value_1 = int(pixels_1[x, y][1])
+            green_value_2 = int(pixels_2[x, y][1])
+            blue_value_1 = int(pixels_1[x, y][2])
+            blue_value_2 = int(pixels_2[x, y][2])
+            subtracted_image[y, x, 0] = np.uint8(red_value_1 - red_value_2)
+            subtracted_image[y, x, 1] = np.uint8(green_value_1 - green_value_2)
+            subtracted_image[y, x, 2] = np.uint8(blue_value_1 - blue_value_2)
+    img = Image.fromarray(subtracted_image, 'RGB')
+    img.show()
+
+
 def multiply_grey_images_with_scalar(width, height, image_1, scalar):
     pixels_image_1 = image_1.load()
     multiplied_image = np.zeros((width, height))
