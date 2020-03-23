@@ -27,6 +27,7 @@ from noise_generators import salt_and_pepper_noise_generator
 from filters import media_filter
 from filters import weighted_median_filter
 from filters import median_filter
+from filters import gaussian_filter
 from src.GUI import gui_constants
 
 
@@ -68,7 +69,9 @@ def load_image(row, column):
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
-        weighted_median_filter(image_instance, 512, 512)
+        # weighted_median_filter(image_instance, 512, 512)
+        # median_filter(image_instance, 512, 512, 5)
+        gaussian_filter(image_instance, 512, 512, 3)
         return image_instance
 
 

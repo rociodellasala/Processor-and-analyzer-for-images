@@ -110,9 +110,9 @@ def lineally_adjust_image_values(pixels, width, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
             adjusted_image[x, y] = int(slope * current_value + constant)
-    img = Image.fromarray(adjusted_image)
-    img.show()
-
+    # img = Image.fromarray(adjusted_image)
+    # img.show()
+    return adjusted_image
 
 def get_max_and_min_value(pixels, width, height):
     max_value = None

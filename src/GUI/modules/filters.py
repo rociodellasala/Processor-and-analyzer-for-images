@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from PIL import Image
 from image_operations import lineally_adjust_image_values
 
@@ -31,10 +32,6 @@ def generate_media_window(window_size):
 def get_convolution(pixels, x, y, sliding_window, window_size):
     starting_row = y - window_size / 2
     starting_col = x - window_size / 2
-    # ending_row = starting_row + window_size - 1
-    # ending_col = starting_col + window_size - 1
-    # pixels_projected = pixels [starting_row: ending_row: 1, starting_col: ending_col: 1]
-    # total = sum(sliding_window * pixels_projected)
     total = 0
     for row in range(0, window_size):
         for col in range(0, window_size):
@@ -54,7 +51,6 @@ def median_filter(image, image_height, image_width, window_size):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_median_window(pixels, x, y, window_size)[middle]
     image = Image.fromarray(new_image)
-
     image.show()
     return new_image
 
@@ -103,3 +99,34 @@ def get_weighted_median_window():
     weighted_median_window[2, 2] = 1
     print(weighted_median_window)
     return weighted_median_window
+
+
+def gaussian_filter(image, image_height, image_width, sigma):
+    new_image = np.zeros((image_height, image_width))
+    window_size = 2 * sigma + 1
+    pixels = image.load()
+    window_y_center = int(window_size / 2)
+    window_x_center = int(window_size / 2)
+    sliding_window = get_gaussian_window(window_size, sigma)
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
+
+
+def get_gaussian_window(window_size, sigma):
+    origin_x = int(window_size / 2)
+    origin_y = int(window_size / 2)
+    sliding_window = np.zeros([window_size, window_size])
+    for y in range(0, window_size):
+        for x in range(0, window_size):
+            sliding_window[y, x] = get_gaussian_value(x - origin_x, y - origin_y, sigma)
+    return sliding_window
+
+
+def get_gaussian_value(x, y, sigma):
+    exponent = -(np.power(x, 2) + np.power(y, 2)) / (np.power(sigma, 2))
+    value = (1 / (2 * math.pi * np.power(sigma, 2))) * np.exp(exponent)
+    return value
