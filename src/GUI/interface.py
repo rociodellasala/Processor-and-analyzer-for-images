@@ -25,7 +25,7 @@ from noise_generators import rayleigh_noise_generator
 from noise_generators import exponential_noise_generator
 from noise_generators import salt_and_pepper_noise_generator
 from filters import media_filter
-
+from filters import median_filter
 from src.GUI import gui_constants
 
 
@@ -50,7 +50,7 @@ def load_image(row, column):
         panel.grid(row=row, column=column)
         # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # subtract_grey_images(512, 512, image_instance, image_instance)
-        subtract_colored_images(512, 512, image_instance, image_instance)
+        # subtract_colored_images(512, 512, image_instance, image_instance)
         # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
         # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # dynamic_range_compression(image_instance, 512, 512)
@@ -66,6 +66,7 @@ def load_image(row, column):
         # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
+        median_filter(image_instance, 512, 512, 5)
         return image_instance
 
 

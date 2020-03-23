@@ -12,7 +12,7 @@ def media_filter(image, image_height, image_width, window_size):
     window_x_center = int(window_size / 2)
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
-            new_image[y, x] = get_media_value(pixels, x, y, sliding_window, window_size)
+            new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
     image = Image.fromarray(new_image)
     image.show()
     return new_image
@@ -27,7 +27,7 @@ def generate_media_window(window_size):
     return sliding_window
 
 
-def get_media_value(pixels, x, y, sliding_window, window_size):
+def get_convolution(pixels, x, y, sliding_window, window_size):
     starting_row = y - window_size / 2
     starting_col = x - window_size / 2
     # ending_row = starting_row + window_size - 1
@@ -41,3 +41,35 @@ def get_media_value(pixels, x, y, sliding_window, window_size):
             pixels_col = starting_col + col
             total += (pixels[pixels_col, pixels_row] * sliding_window[row, col])
     return total
+
+
+def median_filter(image, image_height, image_width, window_size):
+    new_image = np.zeros((image_height, image_width))
+    pixels = image.load()
+    window_y_center = int(window_size / 2)
+    window_x_center = int(window_size / 2)
+    middle = int(window_size / 2)
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            new_image[y, x] = get_median_window(pixels, x, y, window_size)[middle]
+    image = Image.fromarray(new_image)
+    image.show()
+    return new_image
+
+
+def get_median_window(pixels, x, y, windows_size):
+    median_window = np.zeros(windows_size * windows_size)
+    if windows_size % 2 == 0:
+        windows_size += 1
+    starting_col = int(x - windows_size / 2)
+    starting_row = int(y - windows_size / 2)
+    ending_col = int(x + windows_size / 2)
+    ending_row = int(y + windows_size / 2)
+    index = 0
+    for i in range(starting_row, ending_row):
+        for j in range(starting_col, ending_col):
+            median_window[index] = pixels[j, i]
+            index += 1
+    median_window = np.sort(median_window)
+    return median_window
+
