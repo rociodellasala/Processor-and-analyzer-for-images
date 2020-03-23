@@ -130,3 +130,30 @@ def get_gaussian_value(x, y, sigma):
     exponent = -(np.power(x, 2) + np.power(y, 2)) / (np.power(sigma, 2))
     value = (1 / (2 * math.pi * np.power(sigma, 2))) * np.exp(exponent)
     return value
+
+
+def border_enhancement_filter(image, image_height, image_width):
+    new_image = np.zeros((image_height, image_width))
+    window_size = 3
+    pixels = image.load()
+    window_y_center = 1
+    window_x_center = 1
+    sliding_window = get_border_enhancement_window()
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
+
+
+def get_border_enhancement_window():
+    sliding_window = np.zeros([3, 3])
+    sliding_window[0, 0] = -1
+    sliding_window[0, 1] = -1
+    sliding_window[1, 0] = -1
+    sliding_window[1, 1] = 8
+    sliding_window[2, 0] = -1
+    sliding_window[2, 1] = -1
+    print(sliding_window)
+    return sliding_window

@@ -28,6 +28,7 @@ from filters import media_filter
 from filters import weighted_median_filter
 from filters import median_filter
 from filters import gaussian_filter
+from filters import border_enhancement_filter
 from src.GUI import gui_constants
 
 
@@ -71,7 +72,8 @@ def load_image(row, column):
         # median_filter(image_instance, 512, 512, 5)
         # weighted_median_filter(image_instance, 512, 512)
         # median_filter(image_instance, 512, 512, 5)
-        gaussian_filter(image_instance, 512, 512, 3)
+        # gaussian_filter(image_instance, 512, 512, 3)
+        border_enhancement_filter(image_instance, 512, 512)
         return image_instance
 
 
