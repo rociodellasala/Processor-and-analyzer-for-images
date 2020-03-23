@@ -30,6 +30,10 @@ def generate_media_window(window_size):
 def get_media_value(pixels, x, y, sliding_window, window_size):
     starting_row = y - window_size / 2
     starting_col = x - window_size / 2
+    # ending_row = starting_row + window_size - 1
+    # ending_col = starting_col + window_size - 1
+    # pixels_projected = pixels [starting_row: ending_row: 1, starting_col: ending_col: 1]
+    # total = sum(sliding_window * pixels_projected)
     total = 0
     for row in range(0, window_size):
         for col in range(0, window_size):
