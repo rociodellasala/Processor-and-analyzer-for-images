@@ -25,6 +25,7 @@ from noise_generators import rayleigh_noise_generator
 from noise_generators import exponential_noise_generator
 from noise_generators import salt_and_pepper_noise_generator
 from filters import media_filter
+from filters import weighted_median_filter
 from filters import median_filter
 from src.GUI import gui_constants
 
@@ -66,7 +67,8 @@ def load_image(row, column):
         # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
-        median_filter(image_instance, 512, 512, 5)
+        # median_filter(image_instance, 512, 512, 5)
+        weighted_median_filter(image_instance, 512, 512)
         return image_instance
 
 

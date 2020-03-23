@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+from image_operations import lineally_adjust_image_values
 
 
 def media_filter(image, image_height, image_width, window_size):
@@ -53,6 +54,7 @@ def median_filter(image, image_height, image_width, window_size):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_median_window(pixels, x, y, window_size)[middle]
     image = Image.fromarray(new_image)
+
     image.show()
     return new_image
 
@@ -73,3 +75,31 @@ def get_median_window(pixels, x, y, windows_size):
     median_window = np.sort(median_window)
     return median_window
 
+
+def weighted_median_filter(image, image_height, image_width):
+    new_image = np.zeros((image_height, image_width))
+    pixels = image.load()
+    window_y_center = 1
+    window_x_center = 1
+    sliding_window = get_weighted_median_window()
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            new_image[y, x] = get_convolution(pixels, x, y, sliding_window, 3)
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
+
+
+def get_weighted_median_window():
+    weighted_median_window = np.zeros([3, 3])
+    weighted_median_window[0, 0] = 1
+    weighted_median_window[0, 1] = 2
+    weighted_median_window[0, 2] = 1
+    weighted_median_window[1, 0] = 2
+    weighted_median_window[1, 1] = 4
+    weighted_median_window[1, 2] = 2
+    weighted_median_window[2, 0] = 1
+    weighted_median_window[2, 1] = 2
+    weighted_median_window[2, 2] = 1
+    print(weighted_median_window)
+    return weighted_median_window
