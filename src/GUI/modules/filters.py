@@ -151,9 +151,12 @@ def get_border_enhancement_window():
     sliding_window = np.zeros([3, 3])
     sliding_window[0, 0] = -1
     sliding_window[0, 1] = -1
+    sliding_window[0, 2] = -1
     sliding_window[1, 0] = -1
     sliding_window[1, 1] = 8
+    sliding_window[1, 2] = -1
     sliding_window[2, 0] = -1
     sliding_window[2, 1] = -1
+    sliding_window[2, 2] = -1
     print(sliding_window)
     return sliding_window
