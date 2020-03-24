@@ -56,6 +56,8 @@ def subtract_colored_images(width, height, image_1, image_2):
             subtracted_image[y, x, 2] = np.uint8(blue_value_1 - blue_value_2)
     img = Image.fromarray(lineally_adjust_colored_image_values(subtracted_image, 512, 512), 'RGB')
     img.show()
+    #TODO save subtracted_image
+
 
 
 def multiply_grey_images_with_scalar(width, height, image_1, scalar):
@@ -97,8 +99,6 @@ def lineally_adjust_image_values(pixels, width, height):
     limits = get_max_and_min_value(pixels, width, height)
     max_value = limits[0]
     min_value = limits[1]
-    print(max_value)
-    print(min_value)
     if max_value == min_value:
         slope = 0
     else:
