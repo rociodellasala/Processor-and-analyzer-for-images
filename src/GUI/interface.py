@@ -65,7 +65,6 @@ def load_image(row, column):
         # grey_image_negative(image_instance, 512, 512)
         # colored_image_negative(image_instance, 512, 512)
         # grey_level_histogram(image_instance, 512, 512)
-        # rayleigh_noise_generator(0.5, False, image_instance, 512, 512, 40)
         # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
@@ -164,8 +163,8 @@ def create_noise_menu(menubar):
     noise_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Noise", menu=noise_menu)
     noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)  # add command
-    noise_menu.add_command(label="Rayleight")  # add command
-    noise_menu.add_command(label="Exponential")  # add command
+    noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)  # add command
+    noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)  # add command
 
 
 def load_menu():
@@ -420,6 +419,47 @@ def generate_gaussian_noise_input():
                                 command=lambda: gaussian_noise_generator(float(percentage.get()), radio_var.get(),
                                                                          current_image, WIDTH, HEIGHT, int(mu.get()),
                                                                          int(sigma.get())))
+        generate_noise.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
+def generate_rayleigh_noise_input():
+    if current_image is not None:
+        Label(buttons_frame, text="Percentage").grid(row=0, column=0)
+        Label(buttons_frame, text="Xi").grid(row=0, column=2)
+        percentage = Entry(buttons_frame)
+        xi = Entry(buttons_frame)
+        percentage.grid(row=0, column=1)
+        xi.grid(row=0, column=3)
+        radio_var = BooleanVar()
+        radio_var.set(True)
+        Radiobutton(buttons_frame, text="Additive", value=True, variable=radio_var).grid(row=0, column=4)
+        Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
+        generate_noise = Button(buttons_frame, text="Generate",
+                                command=lambda: rayleigh_noise_generator(float(percentage.get()), radio_var.get(),
+                                                                         current_image, WIDTH, HEIGHT, int(xi.get())))
+        generate_noise.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
+def generate_exponential_noise_input():
+    if current_image is not None:
+        Label(buttons_frame, text="Percentage").grid(row=0, column=0)
+        Label(buttons_frame, text="Lambda").grid(row=0, column=2)
+        percentage = Entry(buttons_frame)
+        lambda_value = Entry(buttons_frame)
+        percentage.grid(row=0, column=1)
+        lambda_value.grid(row=0, column=3)
+        radio_var = BooleanVar()
+        radio_var.set(True)
+        Radiobutton(buttons_frame, text="Additive", value=True, variable=radio_var).grid(row=0, column=4)
+        Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
+        generate_noise = Button(buttons_frame, text="Generate",
+                                command=lambda: exponential_noise_generator(float(percentage.get()), radio_var.get(),
+                                                                            current_image, WIDTH, HEIGHT,
+                                                                            int(lambda_value.get())))
         generate_noise.grid(row=2, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image")
