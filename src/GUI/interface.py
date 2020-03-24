@@ -31,6 +31,9 @@ from filters import gaussian_filter
 from filters import border_enhancement_filter
 from src.GUI import gui_constants
 
+WIDTH = 512
+HEIGHT = 512
+
 
 def load_image(row, column):
     file_name = open_file_name()
@@ -42,7 +45,7 @@ def load_image(row, column):
             # opens the image
             image = Image.open(file_name)
         # resize the image and apply a high-quality down sampling filter
-        image = image.resize((512, 512), Image.ANTIALIAS)
+        image = image.resize((WIDTH, HEIGHT), Image.ANTIALIAS)
         image_instance = image
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
@@ -62,7 +65,6 @@ def load_image(row, column):
         # grey_image_negative(image_instance, 512, 512)
         # colored_image_negative(image_instance, 512, 512)
         # grey_level_histogram(image_instance, 512, 512)
-        # image_threshold(image_instance, 512, 512, 20)
         # image_equalization(image_instance, 512, 512)
         # gaussian_noise_generator(0.5, True, image_instance, 512, 512, 0, 30)
         # rayleigh_noise_generator(0.5, False, image_instance, 512, 512, 40)
@@ -93,6 +95,7 @@ def save_image():
     image_info = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
         ('jpg', '*.jpg'), ('jpeg', '*.jpeg'), ('png', '*.png'), ('ppm', '*.ppm'), ("pgm", "*.pgm")))
     image.save(image_info)
+
 
 def create_image_menu(menubar):
     image_menu = Menu(menubar, tearoff=0)
@@ -128,9 +131,10 @@ def create_function_menu(menubar):
     function_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Function", menu=function_menu)
     function_menu.add_command(label="Gamma", command=generate_gamma_input)
-    function_menu.add_command(label="Threshold")  # add command
+    function_menu.add_command(label="Threshold", command=generate_image_threshold_input)  # add command
     function_menu.add_command(label="Ecualization")  # add command
     function_menu.add_command(label="Grey Histogram")  # add command
+
 
 def create_operations_menu(menubar):
     operation_menu = Menu(menubar, tearoff=0)
@@ -144,7 +148,7 @@ def create_operations_menu(menubar):
     operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
     multiply_menu.add_command(label="By scalar")  # add command
     multiply_menu.add_command(label="Two images")  # add command
-    operation_menu.add_command(label="Copy", command=copy_subimage_input)
+    operation_menu.add_command(label="Copy", command=copy_sub_image_input)
     operation_menu.add_command(label="Negative")  # add command
 
 
@@ -218,7 +222,8 @@ def modify_pixel_input():
         y = Entry(buttons_frame)
         x.grid(row=0, column=1)
         y.grid(row=1, column=1)
-        modify_pixel_button = Button(buttons_frame, text="Set Value", command=lambda: modify_pixel_value(x.get(), y.get()))
+        modify_pixel_button = Button(buttons_frame, text="Set Value",
+                                     command=lambda: modify_pixel_value(x.get(), y.get()))
         modify_pixel_button.grid(row=2, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image")
@@ -292,7 +297,7 @@ def generate_gray_fading_input():
     image_width.grid(row=0, column=3)
     image_height.grid(row=1, column=3)
     generate_gray_fading_button = Button(buttons_frame, text="Show", command=lambda:
-                                         gray_faded_image(int(image_width.get()), int(image_height.get())))
+    gray_faded_image(int(image_width.get()), int(image_height.get())))
     generate_gray_fading_button.grid(row=3, column=0)
 
 
@@ -324,12 +329,11 @@ def generate_gamma_input():
     Label(buttons_frame, text="Gamma").grid(row=0, column=0)
     gamma = Entry(buttons_frame)
     gamma.grid(row=0, column=1)
-    apply_function = Button(buttons_frame, text="Apply", command=gamma_pow_function(current_image,
-            int(current_image.get(), int(current_image.get(), gamma))))
-    apply_function.grid(row=0, column=2)
+    # call function
+    # apply_function.grid(row=0, column=2)
 
 
-def copy_subimage_input():
+def copy_sub_image_input():
     if current_image is not None and image_to_copy is not None:
         delete_widgets(buttons_frame)
         Label(buttons_frame, text="Original image").grid(row=0, column=0)
@@ -356,7 +360,7 @@ def copy_subimage_input():
                                      command=lambda: copy_pixels(int(x_original.get()),
                                                                  int(y_original.get()),
                                                                  int(width_original.get()), int(height_original.get()),
-                                                                 int(x_copy.get())-1, int(y_copy.get())))
+                                                                 int(x_copy.get()) - 1, int(y_copy.get())))
         modify_pixel_button.grid(row=3, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload two images")
@@ -378,6 +382,18 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
     global save_path
     current_image.save(save_path + "copy_image.png")
     current_image.show()
+
+
+def generate_image_threshold_input():
+    if current_image is not None:
+        Label(buttons_frame, text="Threshold").grid(row=0, column=0)
+        threshold = Entry(buttons_frame)
+        threshold.grid(row=1, column=0)
+        apply_threshold = Button(buttons_frame, text="Apply",
+                                 command=lambda: image_threshold(current_image, WIDTH, HEIGHT, int(threshold.get())))
+        apply_threshold.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
 
 
 def delete_widgets(frame):
