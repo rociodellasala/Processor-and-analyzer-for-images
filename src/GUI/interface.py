@@ -85,6 +85,16 @@ def load_image_wrapper():
                                                     " one click on the \"Clean image\" button first")
 
 
+def load_left_image():
+    global left_image
+    left_image = load_image(0, 0)
+
+
+def load_right_image():
+    global right_image
+    right_image = load_image(0, 1)
+
+
 def save_image():
     image = Image.open('../../images/Lenaclor.ppm')
     image_info = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
@@ -134,7 +144,7 @@ def create_function_menu(menubar):
 def create_operations_menu(menubar):
     operation_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Operations", menu=operation_menu)
-    operation_menu.add_command(label="Add")  # add command
+    operation_menu.add_command(label="Add", command=generate_add_operation_input)
     subtract_menu = Menu(operation_menu, tearoff=0)
     operation_menu.add_cascade(label="Subtract", menu=subtract_menu)
     subtract_menu.add_command(label="Color")  # add command
@@ -379,6 +389,33 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
     current_image.show()
 
 
+def generate_binary_operations_input():
+    reset_parameters()
+    image_1_button = Button(buttons_frame, text="Load Image 1", command=load_left_image).grid(row=0, column=0)
+    image_2_button = Button(buttons_frame, text="Load Image 2", command=load_right_image).grid(row=0, column=1)
+
+
+def binary_operation_validator(image_1, image_2):
+    if image_1 is None or image_2 is None:
+        return False
+    else:
+        return True
+
+
+def add_grey_image_wrapper(width_1, height_1, image_1, width_2, height_2, image_2):
+    if binary_operation_validator(image_1, image_2):
+        add_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to operate.")
+
+
+def generate_add_operation_input():
+    generate_binary_operations_input()
+    add_button = Button(buttons_frame, text="Add",
+                        command=lambda: add_grey_image_wrapper(512, 512, left_image, 512, 512, right_image))
+    add_button.grid(row=1, column=0)
+
+
 def generate_image_threshold_input():
     if current_image is not None:
         Label(buttons_frame, text="Threshold").grid(row=0, column=0)
@@ -501,9 +538,17 @@ def load_frames():
 
 
 def clean_images():
-    global current_image, image_to_copy
+    global current_image, image_to_copy, left_image, right_image
     image_to_copy = None
     current_image = None
+    left_image = None
+    right_image = None
+
+
+def reset_parameters():
+    clean_images()
+    delete_widgets(buttons_frame)
+    delete_widgets(image_frame)
 
 
 root = Tk()
@@ -512,6 +557,8 @@ root.state('zoomed')
 
 current_image = None
 image_to_copy = None
+left_image = None
+right_image = None
 
 buttons_frame = None
 image_frame = None

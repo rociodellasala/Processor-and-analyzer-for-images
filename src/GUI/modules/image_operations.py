@@ -20,7 +20,7 @@ def add_grey_images(image_1_width, image_1_height, image_1, image_2_width, image
             pixel_image_1 = get_pixel_value(pixels_image_1, x, y, image_1_width, image_1_height)
             pixel_image_2 = get_pixel_value(pixels_image_2, x, y, image_2_width, image_2_height)
             added_image[y, x] = int(pixel_image_1 + pixel_image_2)
-    img = Image.fromarray(added_image)
+    img = Image.fromarray(lineally_adjust_image_values(added_image, 512, 512))
     img.show()
     return added_image
 
