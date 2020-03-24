@@ -65,8 +65,6 @@ def load_image(row, column):
         # grey_image_negative(image_instance, 512, 512)
         # colored_image_negative(image_instance, 512, 512)
         # grey_level_histogram(image_instance, 512, 512)
-        # image_equalization(image_instance, 512, 512)
-        # gaussian_noise_generator(0.5, True, image_instance, 512, 512, 0, 30)
         # rayleigh_noise_generator(0.5, False, image_instance, 512, 512, 40)
         # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
@@ -132,7 +130,7 @@ def create_function_menu(menubar):
     menubar.add_cascade(label="Function", menu=function_menu)
     function_menu.add_command(label="Gamma", command=generate_gamma_input)
     function_menu.add_command(label="Threshold", command=generate_image_threshold_input)  # add command
-    function_menu.add_command(label="Ecualization")  # add command
+    function_menu.add_command(label="Equalization", command=generate_equalized_image)  # add command
     function_menu.add_command(label="Grey Histogram")  # add command
 
 
@@ -165,7 +163,7 @@ def create_filters_menu(menubar):
 def create_noise_menu(menubar):
     noise_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Noise", menu=noise_menu)
-    noise_menu.add_command(label="Gaussian")  # add command
+   # noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)  # add command
     noise_menu.add_command(label="Rayleight")  # add command
     noise_menu.add_command(label="Exponential")  # add command
 
@@ -392,6 +390,13 @@ def generate_image_threshold_input():
         apply_threshold = Button(buttons_frame, text="Apply",
                                  command=lambda: image_threshold(current_image, WIDTH, HEIGHT, int(threshold.get())))
         apply_threshold.grid(row=2, column=0)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
+def generate_equalized_image():
+    if current_image is not None:
+        image_equalization(current_image, WIDTH, HEIGHT)
     else:
         messagebox.showerror(title="Error", message="You must upload an image")
 
