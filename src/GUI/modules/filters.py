@@ -143,7 +143,7 @@ def border_enhancement_filter(image, image_height, image_width):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
-    image.show()
+    image.show("Border enhancement")
     return new_image
 
 
