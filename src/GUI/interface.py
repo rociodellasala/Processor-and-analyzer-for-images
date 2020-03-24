@@ -64,8 +64,6 @@ def load_image(row, column):
         # dynamic_range_compression(image_instance, 512, 512)
         # grey_image_negative(image_instance, 512, 512)
         # colored_image_negative(image_instance, 512, 512)
-        # grey_level_histogram(image_instance, 512, 512)
-        # exponential_noise_generator(0.5, False, image_instance, 512, 512, 2)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
