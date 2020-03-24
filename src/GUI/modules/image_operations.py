@@ -59,7 +59,6 @@ def subtract_colored_images(width, height, image_1, image_2):
     #TODO save subtracted_image
 
 
-
 def multiply_grey_images_with_scalar(width, height, image_1, scalar):
     pixels_image_1 = image_1.load()
     multiplied_image = np.zeros((width, height))

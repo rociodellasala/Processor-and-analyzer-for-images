@@ -148,7 +148,7 @@ def create_operations_menu(menubar):
     subtract_menu.add_command(label="B&W", command=generate_subtract_grey_operation_input)
     multiply_menu = Menu(operation_menu, tearoff=0)
     operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
-    multiply_menu.add_command(label="By scalar")  # add command
+    multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
     multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
     operation_menu.add_command(label="Copy", command=copy_sub_image_input)
     operation_menu.add_command(label="Negative")  # add command
@@ -450,19 +450,34 @@ def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, 
 
 def generate_multiply_images_operation_input():
     generate_binary_operations_input()
-    add_button = Button(buttons_frame, text="Multiply",
-                        command=lambda: multiply_grey_images(512, 512, left_image, 512, 512, right_image))
-    add_button.grid(row=1, column=0)
+    multiply_button = Button(buttons_frame, text="Multiply",
+                             command=lambda: multiply_grey_images_wrapper(512, 512, left_image, 512, 512, right_image))
+    multiply_button.grid(row=1, column=0)
 
 
-# def generate_multiply_by_scalar_input():
-#     global current_image
-#     if current_image is None:
-#         messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract.")
-#
-#     add_button = Button(buttons_frame, text="Multiply",
-#                         command=lambda: subtract_colored_image_wrapper(512, 512, left_image, right_image))
-#     add_button.grid(row=1, column=0)
+def multiply_grey_images_with_scalar_wrapper(width, height, image, scalar):
+    error = False
+    try:
+        scalar_value = float(scalar)
+    except ValueError:
+        error = True
+        messagebox.showerror(title="Error", message="You need to insert a valid scalar to multiply.")
+    if (not error) and image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to multiply.")
+    elif not error:
+        multiply_grey_images_with_scalar(width, height, image, scalar_value)
+
+
+def generate_multiply_by_scalar_input():
+    reset_parameters()
+    load_image_button = Button(buttons_frame, text="Load Image", command=load_left_image).grid(row=0, column=0)
+    Label(buttons_frame, text="Scalar").grid(row=1, column=0)
+    scalar = Entry(buttons_frame)
+    scalar.grid(row=1, column=1)
+    multiply_button = Button(buttons_frame, text="Multiply",
+                             command=lambda: multiply_grey_images_with_scalar_wrapper(512, 512, left_image,
+                                                                                      scalar.get()))
+    multiply_button.grid(row=2, column=0)
 
 
 def generate_image_threshold_input():
