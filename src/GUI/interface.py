@@ -73,7 +73,7 @@ def load_image(row, column):
         # weighted_median_filter(image_instance, 512, 512)
         # median_filter(image_instance, 512, 512, 5)
         # gaussian_filter(image_instance, 512, 512, 3)
-        border_enhancement_filter(image_instance, 512, 512)
+        # border_enhancement_filter(image_instance, 512, 512)
         return image_instance
 
 
@@ -94,34 +94,89 @@ def save_image():
         ('jpg', '*.jpg'), ('jpeg', '*.jpeg'), ('png', '*.png'), ('ppm', '*.ppm'), ("pgm", "*.pgm")))
     image.save(image_info)
 
-
-def load_menu():
-    menubar = Menu(root)
-    root.config(menu=menubar)
+def create_image_menu(menubar):
     image_menu = Menu(menubar, tearoff=0)
-    pixel_menu = Menu(menubar, tearoff=0)
-    draw_menu = Menu(menubar, tearoff=0)
-    gradient_menu = Menu(menubar, tearoff=0)
-    function_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Image", menu=image_menu)
     image_menu.add_command(label="Open", command=load_image_wrapper)
     image_menu.add_command(label="Save", command=save_image)
     image_menu.add_separator()
     image_menu.add_command(label="Exit", command=root.quit)
+
+
+def create_pixel_menu(menubar):
+    pixel_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Pixel", menu=pixel_menu)
     pixel_menu.add_command(label="Get", command=load_pixel_input)
     pixel_menu.add_command(label="Modify", command=modify_pixel_input)
-    pixel_menu.add_command(label="Copy", command=copy_subimage_input)
+
+
+def create_draw_menu(menubar):
+    draw_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Draw", menu=draw_menu)
     draw_menu.add_command(label="Rectangle", command=generate_rectangle_input)
     draw_menu.add_command(label="Circle", command=generate_circle_input)
+
+
+def create_gradient_menu(menubar):
+    gradient_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Gradient", menu=gradient_menu)
     gradient_menu.add_command(label="Gray", command=generate_gray_fading_input)
     gradient_menu.add_command(label="Color", command=generate_color_fading_input)
+
+
+def create_function_menu(menubar):
+    function_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Function", menu=function_menu)
     function_menu.add_command(label="Gamma", command=generate_gamma_input)
-    function_menu.add_command(label="Negative") # add command
-    function_menu.add_command(label="Grey Histogram") # add command
+    function_menu.add_command(label="Threshold")  # add command
+    function_menu.add_command(label="Ecualization")  # add command
+    function_menu.add_command(label="Grey Histogram")  # add command
+
+def create_operations_menu(menubar):
+    operation_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Operations", menu=operation_menu)
+    operation_menu.add_command(label="Add")  # add command
+    subtract_menu = Menu(operation_menu, tearoff=0)
+    operation_menu.add_cascade(label="Subtract", menu=subtract_menu)
+    subtract_menu.add_command(label="Color")  # add command
+    subtract_menu.add_command(label="B&W")  # add command
+    multiply_menu = Menu(operation_menu, tearoff=0)
+    operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
+    multiply_menu.add_command(label="By scalar")  # add command
+    multiply_menu.add_command(label="Two images")  # add command
+    operation_menu.add_command(label="Copy", command=copy_subimage_input)
+    operation_menu.add_command(label="Negative")  # add command
+
+
+def create_filters_menu(menubar):
+    filters_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Filters", menu=filters_menu)
+    filters_menu.add_command(label="Media")  # add command
+    filters_menu.add_command(label="Median")  # add command
+    filters_menu.add_command(label="Weighted median")  # add command
+    filters_menu.add_command(label="Gaussian")  # add command
+    filters_menu.add_command(label="Border enhacement")  # add command
+
+
+def create_noise_menu(menubar):
+    noise_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Noise", menu=noise_menu)
+    noise_menu.add_command(label="Gaussian")  # add command
+    noise_menu.add_command(label="Rayleight")  # add command
+    noise_menu.add_command(label="Exponential")  # add command
+
+
+def load_menu():
+    menubar = Menu(root)
+    root.config(menu=menubar)
+    create_image_menu(menubar)
+    create_pixel_menu(menubar)
+    create_operations_menu(menubar)
+    create_draw_menu(menubar)
+    create_gradient_menu(menubar)
+    create_function_menu(menubar)
+    create_noise_menu(menubar)
+    create_filters_menu(menubar)
 
 
 def open_file_name():
