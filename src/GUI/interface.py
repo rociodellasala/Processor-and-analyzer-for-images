@@ -54,8 +54,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # subtract_grey_images(512, 512, image_instance, image_instance)
-        # subtract_colored_images(512, 512, image_instance, image_instance)
         # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
         # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # dynamic_range_compression(image_instance, 512, 512)
@@ -151,7 +149,7 @@ def create_operations_menu(menubar):
     multiply_menu = Menu(operation_menu, tearoff=0)
     operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
     multiply_menu.add_command(label="By scalar")  # add command
-    multiply_menu.add_command(label="Two images")  # add command
+    multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
     operation_menu.add_command(label="Copy", command=copy_sub_image_input)
     operation_menu.add_command(label="Negative")  # add command
 
@@ -424,9 +422,9 @@ def subtract_grey_image_wrapper(width, height, image_1, image_2):
 
 def generate_subtract_grey_operation_input():
     generate_binary_operations_input()
-    add_button = Button(buttons_frame, text="Subtract",
-                        command=lambda: subtract_grey_image_wrapper(512, 512, left_image, right_image))
-    add_button.grid(row=1, column=0)
+    subtract_button = Button(buttons_frame, text="Subtract",
+                             command=lambda: subtract_grey_image_wrapper(512, 512, left_image, right_image))
+    subtract_button.grid(row=1, column=0)
 
 
 def subtract_colored_image_wrapper(width, height, image_1, image_2):
@@ -438,9 +436,33 @@ def subtract_colored_image_wrapper(width, height, image_1, image_2):
 
 def generate_subtract_colored_operation_input():
     generate_binary_operations_input()
-    add_button = Button(buttons_frame, text="Subtract",
-                        command=lambda: subtract_colored_image_wrapper(512, 512, left_image, right_image))
+    subtract_button = Button(buttons_frame, text="Subtract",
+                             command=lambda: subtract_colored_image_wrapper(512, 512, left_image, right_image))
+    subtract_button.grid(row=1, column=0)
+
+
+def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, image_2):
+    if binary_operation_validator(image_1, image_2):
+        multiply_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to multiply.")
+
+
+def generate_multiply_images_operation_input():
+    generate_binary_operations_input()
+    add_button = Button(buttons_frame, text="Multiply",
+                        command=lambda: multiply_grey_images(512, 512, left_image, 512, 512, right_image))
     add_button.grid(row=1, column=0)
+
+
+# def generate_multiply_by_scalar_input():
+#     global current_image
+#     if current_image is None:
+#         messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract.")
+#
+#     add_button = Button(buttons_frame, text="Multiply",
+#                         command=lambda: subtract_colored_image_wrapper(512, 512, left_image, right_image))
+#     add_button.grid(row=1, column=0)
 
 
 def generate_image_threshold_input():

@@ -20,7 +20,7 @@ def add_grey_images(image_1_width, image_1_height, image_1, image_2_width, image
             pixel_image_1 = get_pixel_value(pixels_image_1, x, y, image_1_width, image_1_height)
             pixel_image_2 = get_pixel_value(pixels_image_2, x, y, image_2_width, image_2_height)
             added_image[y, x] = int(pixel_image_1 + pixel_image_2)
-    img = Image.fromarray(lineally_adjust_image_values(added_image, 512, 512))
+    img = Image.fromarray(lineally_adjust_image_values(added_image, width, height))
     img.show()
     #TODO save added_image
     return added_image
@@ -33,7 +33,7 @@ def subtract_grey_images(width, height, image_1, image_2):
     for y in range(0, height):
         for x in range(0, width):
             subtracted_image[y, x] = int(pixels_image_1[x, y] - pixels_image_2[x, y])
-    img = Image.fromarray(lineally_adjust_image_values(subtracted_image, 512, 512))
+    img = Image.fromarray(lineally_adjust_image_values(subtracted_image, width, height))
     img.show()
     #TODO save subtracted_image
     return subtracted_image
@@ -54,7 +54,7 @@ def subtract_colored_images(width, height, image_1, image_2):
             subtracted_image[y, x, 0] = np.uint8(red_value_1 - red_value_2)
             subtracted_image[y, x, 1] = np.uint8(green_value_1 - green_value_2)
             subtracted_image[y, x, 2] = np.uint8(blue_value_1 - blue_value_2)
-    img = Image.fromarray(lineally_adjust_colored_image_values(subtracted_image, 512, 512), 'RGB')
+    img = Image.fromarray(lineally_adjust_colored_image_values(subtracted_image, width, height), 'RGB')
     img.show()
     #TODO save subtracted_image
 
@@ -66,8 +66,9 @@ def multiply_grey_images_with_scalar(width, height, image_1, scalar):
     for y in range(0, height):
         for x in range(0, width):
             multiplied_image[y, x] = int(pixels_image_1[x, y] * scalar)
-    img = Image.fromarray(multiplied_image)
+    img = Image.fromarray(lineally_adjust_image_values(multiplied_image, width, height))
     img.show()
+    # TODO save multiplied image
     return multiplied_image
 
 
@@ -82,9 +83,9 @@ def multiply_grey_images(image_1_width, image_1_height, image_1, image_2_width, 
             pixel_image_1 = get_pixel_value(pixels_image_1, x, y, image_1_width, image_1_height)
             pixel_image_2 = get_pixel_value(pixels_image_2, x, y, image_2_width, image_2_height)
             multiplied_image[y, x] = int(pixel_image_1 * pixel_image_2)
-    img = Image.fromarray(multiplied_image)
-    #img.show()
-    lineally_adjust_image_values(multiplied_image, width, height)
+    img = Image.fromarray(lineally_adjust_image_values(multiplied_image, width, height))
+    img.show()
+    # TODO save multiplied image
     return multiplied_image
 
 
