@@ -54,10 +54,7 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # gamma_pow_function(image_instance, 512, 512, 0.2)
         # dynamic_range_compression(image_instance, 512, 512)
-        # grey_image_negative(image_instance, 512, 512)
-        # colored_image_negative(image_instance, 512, 512)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
@@ -69,6 +66,7 @@ def load_image(row, column):
 
 
 def load_image_wrapper():
+    reset_parameters()
     global current_image, image_to_copy
     if current_image is None:
         current_image = load_image(0, 0)
@@ -148,7 +146,12 @@ def create_operations_menu(menubar):
     multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
     multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
     operation_menu.add_command(label="Copy", command=copy_sub_image_input)
-    operation_menu.add_command(label="Negative")  # add command
+    negative_menu = Menu(operation_menu, tearoff=0)
+    operation_menu.add_cascade(label="Negative", menu=negative_menu)
+    negative_menu.add_command(label="Colored Negative",
+                              command=lambda: colored_negative_wrapper(current_image, 512, 512))
+    negative_menu.add_command(label="Grey Negative",
+                              command=lambda: grey_negative_wrapper(current_image, 512, 512))
 
 
 def create_filters_menu(menubar):
@@ -158,7 +161,7 @@ def create_filters_menu(menubar):
     filters_menu.add_command(label="Median")  # add command
     filters_menu.add_command(label="Weighted median")  # add command
     filters_menu.add_command(label="Gaussian")  # add command
-    filters_menu.add_command(label="Border enhacement")  # add command
+    filters_menu.add_command(label="Border enhancement")  # add command
 
 
 def create_noise_menu(menubar):
@@ -349,54 +352,55 @@ def generate_gamma_input():
 
 
 def copy_sub_image_input():
-    if current_image is not None and image_to_copy is not None:
-        delete_widgets(buttons_frame)
-        Label(buttons_frame, text="Original image").grid(row=0, column=0)
-        Label(buttons_frame, text="X").grid(row=1, column=0)
-        Label(buttons_frame, text="Y").grid(row=2, column=0)
-        Label(buttons_frame, text="width").grid(row=1, column=2)
-        Label(buttons_frame, text="height").grid(row=2, column=2)
-        Label(buttons_frame, text="Image to copy").grid(row=0, column=4)
-        Label(buttons_frame, text="X").grid(row=1, column=4)
-        Label(buttons_frame, text="Y").grid(row=2, column=4)
-        x_original = Entry(buttons_frame)
-        y_original = Entry(buttons_frame)
-        width_original = Entry(buttons_frame)
-        height_original = Entry(buttons_frame)
-        x_copy = Entry(buttons_frame)
-        y_copy = Entry(buttons_frame)
-        x_original.grid(row=1, column=1)
-        y_original.grid(row=2, column=1)
-        width_original.grid(row=1, column=3)
-        height_original.grid(row=2, column=3)
-        x_copy.grid(row=1, column=5)
-        y_copy.grid(row=2, column=5)
-        modify_pixel_button = Button(buttons_frame, text="Copy",
-                                     command=lambda: copy_pixels(int(x_original.get()),
-                                                                 int(y_original.get()),
-                                                                 int(width_original.get()), int(height_original.get()),
-                                                                 int(x_copy.get()) - 1, int(y_copy.get())))
-        modify_pixel_button.grid(row=3, column=0)
+    generate_binary_operations_input()
+    Label(buttons_frame, text="Original image").grid(row=1, column=0)
+    Label(buttons_frame, text="X").grid(row=2, column=0)
+    Label(buttons_frame, text="Y").grid(row=3, column=0)
+    Label(buttons_frame, text="width").grid(row=2, column=2)
+    Label(buttons_frame, text="height").grid(row=3, column=2)
+    Label(buttons_frame, text="Image to copy").grid(row=1, column=4)
+    Label(buttons_frame, text="X").grid(row=2, column=4)
+    Label(buttons_frame, text="Y").grid(row=3, column=4)
+    x_original = Entry(buttons_frame)
+    y_original = Entry(buttons_frame)
+    width_original = Entry(buttons_frame)
+    height_original = Entry(buttons_frame)
+    x_copy = Entry(buttons_frame)
+    y_copy = Entry(buttons_frame)
+    x_original.grid(row=2, column=1)
+    y_original.grid(row=3, column=1)
+    width_original.grid(row=2, column=3)
+    height_original.grid(row=3, column=3)
+    x_copy.grid(row=2, column=5)
+    y_copy.grid(row=3, column=5)
+    modify_pixel_button = Button(buttons_frame, text="Copy",
+                                 command=lambda: copy_pixels(int(x_original.get()),
+                                                             int(y_original.get()),
+                                                             int(width_original.get()), int(height_original.get()),
+                                                             int(x_copy.get()) - 1, int(y_copy.get()),
+                                                             left_image, right_image))
+    #TODO validate cast
+    modify_pixel_button.grid(row=4, column=0)
+
+
+def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy, image_1, image_2):
+    if binary_operation_validator(image_1, image_2):
+        pixels = image_1.load()
+        copy = image_2.load()
+        y_copy_aux = y_copy
+        for x in range(x_original, x_original + width_original):
+            x_copy += 1
+            y_copy = y_copy_aux
+            for y in range(y_original, y_original + height_original):
+                if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
+                    pixels[x, y] = copy[x_copy, y_copy]
+                    y_copy += 1
+
+        global save_path
+        image_1.save(save_path + "copy_image.png")
+        image_1.show()
     else:
         messagebox.showerror(title="Error", message="You must upload two images")
-
-
-def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy):
-    pixels = current_image.load()
-    copy = image_to_copy.load()
-    y_copy_aux = y_copy
-
-    for x in range(x_original, x_original + width_original):
-        x_copy += 1
-        y_copy = y_copy_aux
-        for y in range(y_original, y_original + height_original):
-            if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
-                pixels[x, y] = copy[x_copy, y_copy]
-                y_copy += 1
-
-    global save_path
-    current_image.save(save_path + "copy_image.png")
-    current_image.show()
 
 
 def generate_binary_operations_input():
@@ -491,6 +495,20 @@ def generate_multiply_by_scalar_input():
                              command=lambda: multiply_grey_images_with_scalar_wrapper(512, 512, left_image,
                                                                                       scalar.get()))
     multiply_button.grid(row=2, column=0)
+
+
+def grey_negative_wrapper(image, width, height):
+    if image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative.")
+    else:
+        grey_image_negative(image, width, height)
+
+
+def colored_negative_wrapper(image, width, height):
+    if image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative.")
+    else:
+        colored_image_negative(image, width, height)
 
 
 def generate_image_threshold_input():
