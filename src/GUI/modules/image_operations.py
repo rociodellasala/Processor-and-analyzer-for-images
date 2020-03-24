@@ -22,6 +22,7 @@ def add_grey_images(image_1_width, image_1_height, image_1, image_2_width, image
             added_image[y, x] = int(pixel_image_1 + pixel_image_2)
     img = Image.fromarray(lineally_adjust_image_values(added_image, 512, 512))
     img.show()
+    #TODO save added_image
     return added_image
 
 
@@ -32,8 +33,9 @@ def subtract_grey_images(width, height, image_1, image_2):
     for y in range(0, height):
         for x in range(0, width):
             subtracted_image[y, x] = int(pixels_image_1[x, y] - pixels_image_2[x, y])
-    img = Image.fromarray(subtracted_image)
+    img = Image.fromarray(lineally_adjust_image_values(subtracted_image, 512, 512))
     img.show()
+    #TODO save subtracted_image
     return subtracted_image
 
 
@@ -52,7 +54,7 @@ def subtract_colored_images(width, height, image_1, image_2):
             subtracted_image[y, x, 0] = np.uint8(red_value_1 - red_value_2)
             subtracted_image[y, x, 1] = np.uint8(green_value_1 - green_value_2)
             subtracted_image[y, x, 2] = np.uint8(blue_value_1 - blue_value_2)
-    img = Image.fromarray(subtracted_image, 'RGB')
+    img = Image.fromarray(lineally_adjust_colored_image_values(subtracted_image, 512, 512), 'RGB')
     img.show()
 
 
@@ -98,21 +100,84 @@ def lineally_adjust_image_values(pixels, width, height):
     print(max_value)
     print(min_value)
     if max_value == min_value:
+        slope = 0
+    else:
+        slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (max_value - min_value)
+    if max_value == min_value:
         if max_value > MAX_PIXEL_VALUE:
-            return MAX_PIXEL_VALUE
+            constant = MAX_PIXEL_VALUE
         elif min_value < MIN_PIXEL_VALUE:
-            return MIN_PIXEL_VALUE
-        return max_value
-    slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (max_value - min_value)
-    constant = -slope * min_value
+            constant = MIN_PIXEL_VALUE
+        else:
+            constant = max_value
+    else:
+        constant = -slope * min_value
     adjusted_image = pixels
     for y in range(0, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
             adjusted_image[x, y] = int(slope * current_value + constant)
-    # img = Image.fromarray(adjusted_image)
-    # img.show()
     return adjusted_image
+
+
+def lineally_adjust_colored_image_values(pixels, width, height):
+    limits = get_colored_max_and_min_value(pixels, width, height)
+    red_max_value = limits[0]
+    red_min_value = limits[0]
+    green_max_value = limits[0]
+    green_min_value = limits[0]
+    blue_max_value = limits[0]
+    blue_min_value = limits[0]
+    if red_max_value == red_min_value:
+        red_slope = 0
+    else:
+        red_slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (red_max_value - red_min_value)
+    if green_max_value == green_min_value:
+        green_slope = 0
+    else:
+        green_slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (green_max_value - green_min_value)
+    if blue_max_value == blue_min_value:
+        blue_slope = 0
+    else:
+        blue_slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (blue_max_value - blue_min_value)
+    if red_max_value == red_min_value:
+        if red_max_value > MAX_PIXEL_VALUE:
+            red_constant = MAX_PIXEL_VALUE
+        elif red_min_value < MIN_PIXEL_VALUE:
+            red_constant = MIN_PIXEL_VALUE
+        else:
+            red_constant = red_max_value
+    else:
+        red_constant = -red_slope * red_min_value
+    if green_max_value == green_min_value:
+        if green_max_value > MAX_PIXEL_VALUE:
+            green_constant = MAX_PIXEL_VALUE
+        elif green_min_value < MIN_PIXEL_VALUE:
+            green_constant = MIN_PIXEL_VALUE
+        else:
+            green_constant = green_max_value
+    else:
+        green_constant = -green_slope * green_min_value
+    if blue_max_value == blue_min_value:
+        if blue_max_value > MAX_PIXEL_VALUE:
+            blue_constant = MAX_PIXEL_VALUE
+        elif blue_min_value < MIN_PIXEL_VALUE:
+            blue_constant = MIN_PIXEL_VALUE
+        else:
+            blue_constant = blue_max_value
+    else:
+        blue_constant = -blue_slope * blue_min_value
+    adjusted_image = pixels
+    for y in range(0, height):
+        for x in range(0, width):
+            current_red_value = int(pixels[x, y][0])
+            current_green_value = int(pixels[x, y][1])
+            current_blue_value = int(pixels[x, y][2])
+            adjusted_image[x, y][0] = int(red_slope * current_red_value + red_constant)
+            adjusted_image[x, y][1] = int(green_slope * current_green_value + green_constant)
+            adjusted_image[x, y][0] = int(blue_slope * current_blue_value + blue_constant)
+    return adjusted_image
+
 
 def get_max_and_min_value(pixels, width, height):
     max_value = None
@@ -125,6 +190,33 @@ def get_max_and_min_value(pixels, width, height):
             if min_value is None or min_value > current_value:
                 min_value = current_value
     return [max_value, min_value]
+
+
+def get_colored_max_and_min_value(pixels, width, height):
+    red_max_value = None
+    green_max_value = None
+    blue_max_value = None
+    red_min_value = None
+    green_min_value = None
+    blue_min_value = None
+    for y in range(0, height):
+        for x in range(0, width):
+            current_red_value = int(pixels[x, y][0])
+            current_green_value = int(pixels[x, y][1])
+            current_blue_value = int(pixels[x, y][2])
+            if red_max_value is None or red_max_value < current_red_value:
+                red_max_value = current_red_value
+            if red_min_value is None or red_min_value > current_red_value:
+                red_min_value = current_red_value
+            if green_max_value is None or green_max_value < current_green_value:
+                green_max_value = current_green_value
+            if green_min_value is None or green_min_value > current_green_value:
+                green_min_value = current_green_value
+            if blue_max_value is None or blue_max_value < current_blue_value:
+                blue_max_value = current_blue_value
+            if blue_min_value is None or blue_min_value > current_blue_value:
+                blue_min_value = current_blue_value
+    return [red_max_value, red_min_value, green_max_value, green_min_value, blue_max_value, blue_min_value]
 
 
 def dynamic_range_compression(image, width, height):

@@ -54,7 +54,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # add_grey_images(512, 512, image_instance, 512, 512, image_instance)
         # subtract_grey_images(512, 512, image_instance, image_instance)
         # subtract_colored_images(512, 512, image_instance, image_instance)
         # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
@@ -147,8 +146,8 @@ def create_operations_menu(menubar):
     operation_menu.add_command(label="Add", command=generate_add_operation_input)
     subtract_menu = Menu(operation_menu, tearoff=0)
     operation_menu.add_cascade(label="Subtract", menu=subtract_menu)
-    subtract_menu.add_command(label="Color")  # add command
-    subtract_menu.add_command(label="B&W")  # add command
+    subtract_menu.add_command(label="Color", command=generate_subtract_colored_operation_input)
+    subtract_menu.add_command(label="B&W", command=generate_subtract_grey_operation_input)
     multiply_menu = Menu(operation_menu, tearoff=0)
     operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
     multiply_menu.add_command(label="By scalar")  # add command
@@ -406,13 +405,41 @@ def add_grey_image_wrapper(width_1, height_1, image_1, width_2, height_2, image_
     if binary_operation_validator(image_1, image_2):
         add_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
     else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to operate.")
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to add.")
 
 
 def generate_add_operation_input():
     generate_binary_operations_input()
     add_button = Button(buttons_frame, text="Add",
                         command=lambda: add_grey_image_wrapper(512, 512, left_image, 512, 512, right_image))
+    add_button.grid(row=1, column=0)
+
+
+def subtract_grey_image_wrapper(width, height, image_1, image_2):
+    if binary_operation_validator(image_1, image_2):
+        subtract_grey_images(width, height, image_1, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract.")
+
+
+def generate_subtract_grey_operation_input():
+    generate_binary_operations_input()
+    add_button = Button(buttons_frame, text="Subtract",
+                        command=lambda: subtract_grey_image_wrapper(512, 512, left_image, right_image))
+    add_button.grid(row=1, column=0)
+
+
+def subtract_colored_image_wrapper(width, height, image_1, image_2):
+    if binary_operation_validator(image_1, image_2):
+        subtract_colored_images(width, height, image_1, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract.")
+
+
+def generate_subtract_colored_operation_input():
+    generate_binary_operations_input()
+    add_button = Button(buttons_frame, text="Subtract",
+                        command=lambda: subtract_colored_image_wrapper(512, 512, left_image, right_image))
     add_button.grid(row=1, column=0)
 
 
