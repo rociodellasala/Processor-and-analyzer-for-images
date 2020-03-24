@@ -230,6 +230,8 @@ def dynamic_range_compression(image, width, height):
             compressed_image[y, x] = int(c * log10(1 + current_value))
     img = Image.fromarray(compressed_image)
     img.show()
+    # TODO save compressed image
+
 
 
 def gamma_pow_function(image, width, height, gamma):
@@ -239,9 +241,11 @@ def gamma_pow_function(image, width, height, gamma):
     for y in range(0, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
-            compressed_image[y,x] = int(c * pow(current_value, gamma))
-    img = Image.fromarray(compressed_image)
+            compressed_image[y, x] = int(c * pow(current_value, gamma))
+    img = Image.fromarray(lineally_adjust_image_values(compressed_image, width, height))
     img.show()
+    # TODO save compressed image
+
 
 
 def grey_image_negative(image, width, height):

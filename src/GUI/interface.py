@@ -54,9 +54,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # multiply_grey_images_with_scalar(512, 512, image_instance, 2)
-        # multiply_grey_images(512, 512, image_instance, 512, 512, image_instance)
-        # dynamic_range_compression(image_instance, 512, 512)
         # gamma_pow_function(image_instance, 512, 512, 0.2)
         # dynamic_range_compression(image_instance, 512, 512)
         # grey_image_negative(image_instance, 512, 512)
@@ -319,20 +316,36 @@ def generate_color_fading_input():
     image_height = Entry(buttons_frame)
     image_width.grid(row=0, column=3)
     image_height.grid(row=1, column=3)
-    generate_gray_fading_button = Button(buttons_frame, text="Show", command=lambda:
-    color_faded_image(int(image_width.get()), int(image_height.get()), red.get(), green.get(), blue.get()))
+    generate_gray_fading_button = Button(buttons_frame, text="Show",
+                                         command=lambda: color_faded_image(int(image_width.get()),
+                                                                           int(image_height.get()),
+                                                                           red.get(), green.get(),
+                                                                           blue.get()))
     generate_gray_fading_button.grid(row=3, column=0)
 
 
+def gamma_pow_function_wrapper(image, width, height, gamma):
+    error = False
+    try:
+        gamma_value = float(gamma)
+    except ValueError:
+        error = True
+        messagebox.showerror(title="Error", message="You need to insert a valid gamma.")
+    if (not error) and image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to apply gamma.")
+    elif not error:
+        gamma_pow_function(image, width, height, gamma_value)
+
+
 def generate_gamma_input():
-    clean_images()
     delete_widgets(buttons_frame)
     delete_widgets(image_frame)
     Label(buttons_frame, text="Gamma").grid(row=0, column=0)
     gamma = Entry(buttons_frame)
     gamma.grid(row=0, column=1)
-    # call function
-    # apply_function.grid(row=0, column=2)
+    apply_button = Button(buttons_frame, text="Apply",
+                          command=lambda: gamma_pow_function_wrapper(current_image, 512, 512, gamma.get()))
+    apply_button.grid(row=1, column=0)
 
 
 def copy_sub_image_input():
