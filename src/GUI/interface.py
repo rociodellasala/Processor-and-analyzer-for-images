@@ -163,7 +163,7 @@ def create_filters_menu(menubar):
 def create_noise_menu(menubar):
     noise_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Noise", menu=noise_menu)
-   # noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)  # add command
+    noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)  # add command
     noise_menu.add_command(label="Rayleight")  # add command
     noise_menu.add_command(label="Exponential")  # add command
 
@@ -397,6 +397,30 @@ def generate_image_threshold_input():
 def generate_equalized_image():
     if current_image is not None:
         image_equalization(current_image, WIDTH, HEIGHT)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
+def generate_gaussian_noise_input():
+    if current_image is not None:
+        Label(buttons_frame, text="Percentage").grid(row=0, column=0)
+        Label(buttons_frame, text="Mu").grid(row=0, column=2)
+        Label(buttons_frame, text="Sigma").grid(row=1, column=2)
+        percentage = Entry(buttons_frame)
+        mu = Entry(buttons_frame)
+        sigma = Entry(buttons_frame)
+        percentage.grid(row=0, column=1)
+        mu.grid(row=0, column=3)
+        sigma.grid(row=1, column=3)
+        radio_var = BooleanVar()
+        radio_var.set(True)
+        Radiobutton(buttons_frame, text="Additive", value=True, variable=radio_var).grid(row=0, column=4)
+        Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
+        generate_noise = Button(buttons_frame, text="Generate",
+                                command=lambda: gaussian_noise_generator(float(percentage.get()), radio_var.get(),
+                                                                         current_image, WIDTH, HEIGHT, int(mu.get()),
+                                                                         int(sigma.get())))
+        generate_noise.grid(row=2, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image")
 
