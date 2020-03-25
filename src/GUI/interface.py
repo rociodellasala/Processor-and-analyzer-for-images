@@ -58,7 +58,7 @@ def load_image(row, column):
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
-        weighted_median_filter(image_instance, 512, 512, 3)
+        # weighted_median_filter(image_instance, 512, 512, 3)
         # median_filter(image_instance, 512, 512, 5)
         # gaussian_filter(image_instance, 512, 512, 3)
         # border_enhancement_filter(image_instance, 512, 512)
@@ -66,7 +66,7 @@ def load_image(row, column):
 
 
 def load_image_wrapper():
-    reset_parameters()
+    remove_images()
     global current_image, image_to_copy
     if current_image is None:
         current_image = load_image(0, 0)
@@ -128,6 +128,7 @@ def create_function_menu(menubar):
     function_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Function", menu=function_menu)
     function_menu.add_command(label="Gamma", command=generate_gamma_input)
+    function_menu.add_command(label="Dynamic Range Compression", command=generate_range_compression_input)
     function_menu.add_command(label="Threshold", command=generate_image_threshold_input)  # add command
     function_menu.add_command(label="Equalization", command=generate_equalized_image)  # add command
     function_menu.add_command(label="Grey Histogram")  # add command
@@ -351,6 +352,14 @@ def generate_gamma_input():
     apply_button.grid(row=1, column=0)
 
 
+def generate_range_compression_input():
+    delete_widgets(buttons_frame)
+    if current_image is not None:
+        dynamic_range_compression(current_image, 512, 512)
+    else:
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
 def copy_sub_image_input():
     generate_binary_operations_input()
     Label(buttons_frame, text="Original image").grid(row=1, column=0)
@@ -512,6 +521,7 @@ def colored_negative_wrapper(image, width, height):
 
 
 def generate_image_threshold_input():
+    delete_widgets(buttons_frame)
     if current_image is not None:
         Label(buttons_frame, text="Threshold").grid(row=0, column=0)
         threshold = Entry(buttons_frame)
@@ -640,10 +650,14 @@ def clean_images():
     right_image = None
 
 
-def reset_parameters():
+def remove_images():
     clean_images()
-    delete_widgets(buttons_frame)
     delete_widgets(image_frame)
+
+
+def reset_parameters():
+    remove_images()
+    delete_widgets(buttons_frame)
 
 
 root = Tk()

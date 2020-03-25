@@ -83,6 +83,7 @@ def weighted_median_filter(image, image_height, image_width, window_size):
             new_image[y, x] = get_weighted_median_value(pixels, x, y, window_size, sliding_window)
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
+    # ODO save new image
     return new_image
 
 
