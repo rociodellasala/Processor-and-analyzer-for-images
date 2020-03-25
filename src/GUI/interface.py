@@ -54,7 +54,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # dynamic_range_compression(image_instance, 512, 512)
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
@@ -168,9 +167,10 @@ def create_filters_menu(menubar):
 def create_noise_menu(menubar):
     noise_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Noise", menu=noise_menu)
-    noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)  # add command
-    noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)  # add command
-    noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)  # add command
+    noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)
+    noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)
+    noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)
+    noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
 
 
 def load_menu():
@@ -343,7 +343,8 @@ def gamma_pow_function_wrapper(image, width, height, gamma):
 
 def generate_gamma_input():
     delete_widgets(buttons_frame)
-    delete_widgets(image_frame)
+    if current_image is None:
+        delete_widgets(image_frame)
     Label(buttons_frame, text="Gamma").grid(row=0, column=0)
     gamma = Entry(buttons_frame)
     gamma.grid(row=0, column=1)
@@ -535,13 +536,16 @@ def generate_image_threshold_input():
 
 def generate_equalized_image():
     if current_image is not None:
+        delete_widgets(buttons_frame)
         image_equalization(current_image, WIDTH, HEIGHT)
     else:
+        reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image")
 
 
 def generate_gaussian_noise_input():
     if current_image is not None:
+        delete_widgets(buttons_frame)
         Label(buttons_frame, text="Percentage").grid(row=0, column=0)
         Label(buttons_frame, text="Mu").grid(row=0, column=2)
         Label(buttons_frame, text="Sigma").grid(row=1, column=2)
@@ -561,11 +565,13 @@ def generate_gaussian_noise_input():
                                                                          int(sigma.get())))
         generate_noise.grid(row=2, column=0)
     else:
+        reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image")
 
 
 def generate_rayleigh_noise_input():
     if current_image is not None:
+        delete_widgets(buttons_frame)
         Label(buttons_frame, text="Percentage").grid(row=0, column=0)
         Label(buttons_frame, text="Xi").grid(row=0, column=2)
         percentage = Entry(buttons_frame)
@@ -581,11 +587,13 @@ def generate_rayleigh_noise_input():
                                                                          current_image, WIDTH, HEIGHT, int(xi.get())))
         generate_noise.grid(row=2, column=0)
     else:
+        reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image")
 
 
 def generate_exponential_noise_input():
     if current_image is not None:
+        delete_widgets(buttons_frame)
         Label(buttons_frame, text="Percentage").grid(row=0, column=0)
         Label(buttons_frame, text="Lambda").grid(row=0, column=2)
         percentage = Entry(buttons_frame)
@@ -602,6 +610,22 @@ def generate_exponential_noise_input():
                                                                             int(lambda_value.get())))
         generate_noise.grid(row=2, column=0)
     else:
+        reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
+def generate_salt_and_pepper_noise_input():
+    if current_image is not None:
+        delete_widgets(buttons_frame)
+        Label(buttons_frame, text="density").grid(row=0, column=0)
+        density = Entry(buttons_frame)
+        density.grid(row=1, column=0)
+        generate_salt_and_pepper = Button(buttons_frame, text="Generate",
+                                          command=lambda: salt_and_pepper_noise_generator(current_image, WIDTH, HEIGHT,
+                                                                                          float(density.get())))
+        generate_salt_and_pepper.grid(row=2, column=0)
+    else:
+        reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image")
 
 

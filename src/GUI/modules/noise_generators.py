@@ -55,7 +55,7 @@ def get_image_with_noise(pixels, image_height, image_width, noise_generated_valu
     return new_image
 
 
-def salt_and_pepper_noise_generator(image, image_height, image_width, p0):
+def salt_and_pepper_noise_generator(image, image_width, image_height, p0):
     p1 = 1 - p0
     pixels = image.load()
     new_image = np.zeros((image_height, image_width))
