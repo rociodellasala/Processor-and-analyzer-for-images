@@ -54,7 +54,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
         # weighted_median_filter(image_instance, 512, 512, 3)
