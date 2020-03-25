@@ -72,7 +72,7 @@ def get_median_window(pixels, x, y, windows_size):
     return median_window
 
 
-def weighted_median_filter(image, image_height, image_width):
+def weighted_median_filter(image, image_height, image_width, window_size):
     new_image = np.zeros((image_height, image_width))
     pixels = image.load()
     window_y_center = 1
@@ -80,10 +80,32 @@ def weighted_median_filter(image, image_height, image_width):
     sliding_window = get_weighted_median_window()
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
-            new_image[y, x] = get_convolution(pixels, x, y, sliding_window, 3)
+            new_image[y, x] = get_weighted_median_value(pixels, x, y, window_size, sliding_window)
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
     return new_image
+
+
+def get_weighted_median_value(pixels, x, y, window_size, sliding_window):
+    array_size = int(np.sum(sliding_window))
+    new_array = np.zeros(array_size)
+    starting_col = int(x - window_size / 2)
+    starting_row = int(y - window_size / 2)
+    ending_col = int(x + window_size / 2)
+    ending_row = int(y + window_size / 2)
+    first_middle = int(array_size / 2) - 1
+    second_middle = first_middle + 1
+    index = 0
+    for i in range(starting_row, ending_row):
+        for j in range(starting_col, ending_col):
+            row = i - starting_row
+            col = j - starting_col
+            value = int(sliding_window[row, col])
+            for k in range(0, value):
+                new_array[index] = pixels[j, i]
+                index += 1
+    new_array = np.sort(new_array)
+    return int((new_array[first_middle] + new_array[second_middle]) / 2)
 
 
 def get_weighted_median_window():
@@ -97,7 +119,6 @@ def get_weighted_median_window():
     weighted_median_window[2, 0] = 1
     weighted_median_window[2, 1] = 2
     weighted_median_window[2, 2] = 1
-    print(weighted_median_window)
     return weighted_median_window
 
 

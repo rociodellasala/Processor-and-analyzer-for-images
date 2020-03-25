@@ -58,7 +58,7 @@ def load_image(row, column):
         # salt_and_pepper_noise_generator(image_instance, 512, 512, 0.01)
         # media_filter(image_instance, 512, 512, 5)
         # median_filter(image_instance, 512, 512, 5)
-        # weighted_median_filter(image_instance, 512, 512)
+        weighted_median_filter(image_instance, 512, 512, 3)
         # median_filter(image_instance, 512, 512, 5)
         # gaussian_filter(image_instance, 512, 512, 3)
         # border_enhancement_filter(image_instance, 512, 512)
