@@ -17,7 +17,6 @@ from image_operations import dynamic_range_compression
 from image_operations import grey_image_negative
 from image_operations import colored_image_negative
 from image_operations import gamma_pow_function
-from image_operations import grey_level_histogram
 from image_operations import image_threshold
 from image_operations import image_equalization
 from noise_generators import gaussian_noise_generator
@@ -54,10 +53,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # weighted_median_filter(image_instance, 512, 512, 3)
-        # median_filter(image_instance, 512, 512, 5)
-        # gaussian_filter(image_instance, 512, 512, 3)
-        # border_enhancement_filter(image_instance, 512, 512)
         return image_instance
 
 
@@ -102,8 +97,8 @@ def create_image_menu(menubar):
 def create_pixel_menu(menubar):
     pixel_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Pixel", menu=pixel_menu)
-    pixel_menu.add_command(label="Get", command=load_pixel_input)
-    pixel_menu.add_command(label="Modify", command=modify_pixel_input)
+    pixel_menu.add_command(label="Get", command=generate_get_pixel_input)
+    pixel_menu.add_command(label="Modify", command=generate_modify_pixel_input)
 
 
 def create_draw_menu(menubar):
@@ -125,9 +120,10 @@ def create_function_menu(menubar):
     menubar.add_cascade(label="Function", menu=function_menu)
     function_menu.add_command(label="Gamma", command=generate_gamma_input)
     function_menu.add_command(label="Dynamic Range Compression", command=generate_range_compression_input)
-    function_menu.add_command(label="Threshold", command=generate_image_threshold_input)  # add command
-    function_menu.add_command(label="Equalization", command=generate_equalized_image)  # add command
-    function_menu.add_command(label="Grey Histogram")  # add command
+    function_menu.add_command(label="Threshold", command=generate_image_threshold_input)
+    function_menu.add_command(label="Equalization", command=lambda:
+                            equalized_image_wrapper(current_image, WIDTH, HEIGHT))
+    function_menu.add_command(label="Grey Histogram")
 
 
 def create_operations_menu(menubar):
@@ -142,23 +138,25 @@ def create_operations_menu(menubar):
     operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
     multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
     multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
-    operation_menu.add_command(label="Copy", command=copy_sub_image_input)
+    operation_menu.add_command(label="Copy", command=generate_copy_sub_image_input)
     negative_menu = Menu(operation_menu, tearoff=0)
     operation_menu.add_cascade(label="Negative", menu=negative_menu)
-    negative_menu.add_command(label="Colored Negative",
-                              command=lambda: colored_negative_wrapper(current_image, 512, 512))
-    negative_menu.add_command(label="Grey Negative",
-                              command=lambda: grey_negative_wrapper(current_image, 512, 512))
+    negative_menu.add_command(label="Colored Negative", command=lambda:
+                              colored_negative_wrapper(current_image, WIDTH, HEIGHT))
+    negative_menu.add_command(label="Grey Negative", command=lambda:
+                              grey_negative_wrapper(current_image, WIDTH, HEIGHT))
 
 
 def create_filters_menu(menubar):
     filters_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Filters", menu=filters_menu)
-    filters_menu.add_command(label="Media", command=generate_media_filter_input)  # add command
-    filters_menu.add_command(label="Median", command=generate_median_filter_input)  # add command
-    filters_menu.add_command(label="Weighted median")  # add command
-    filters_menu.add_command(label="Gaussian")  # add command
-    filters_menu.add_command(label="Border enhancement")  # add command
+    filters_menu.add_command(label="Media", command=generate_media_filter_input)
+    filters_menu.add_command(label="Median", command=generate_median_filter_input)
+    filters_menu.add_command(label="Weighted median", command=lambda:
+                             weighted_median_wrapper(current_image, WIDTH, HEIGHT))
+    filters_menu.add_command(label="Gaussian", command=generate_gaussian_filter_input)
+    filters_menu.add_command(label="Border enhancement", command=lambda:
+                             border_enhancement_filter_wrapper(current_image, WIDTH, HEIGHT))
 
 
 def create_noise_menu(menubar):
@@ -193,7 +191,7 @@ def open_file_name():
         return ""
 
 
-def load_pixel_input():
+def generate_get_pixel_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
         Label(buttons_frame, text="x", ).grid(row=0, column=0)
@@ -205,7 +203,7 @@ def load_pixel_input():
         get_pixel_button = Button(buttons_frame, text="Get Value", command=lambda: get_pixel_value(x.get(), y.get()))
         get_pixel_button.grid(row=2, column=0)
     else:
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to get the value of a pixel")
 
 
 def get_pixel_value(x, y):
@@ -213,7 +211,7 @@ def get_pixel_value(x, y):
     Label(buttons_frame, text=px[int(y), int(x)]).grid(row=2, column=1)
 
 
-def modify_pixel_input():
+def generate_modify_pixel_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
         Label(buttons_frame, text="x").grid(row=0, column=0)
@@ -226,7 +224,7 @@ def modify_pixel_input():
                                      command=lambda: modify_pixel_value(x.get(), y.get()))
         modify_pixel_button.grid(row=2, column=0)
     else:
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to modify the value of a pixel")
 
 
 def modify_pixel_value(x, y):
@@ -331,9 +329,9 @@ def gamma_pow_function_wrapper(image, width, height, gamma):
         gamma_value = float(gamma)
     except ValueError:
         error = True
-        messagebox.showerror(title="Error", message="You need to insert a valid gamma.")
+        messagebox.showerror(title="Error", message="You need to insert a valid gamma")
     if (not error) and image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to apply gamma.")
+        messagebox.showerror(title="Error", message="You need to upload an image to apply gamma")
     elif not error:
         gamma_pow_function(image, width, height, gamma_value)
 
@@ -355,10 +353,10 @@ def generate_range_compression_input():
     if current_image is not None:
         dynamic_range_compression(current_image, 512, 512)
     else:
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to generate range compression")
 
 
-def copy_sub_image_input():
+def generate_copy_sub_image_input():
     generate_binary_operations_input()
     Label(buttons_frame, text="Original image").grid(row=1, column=0)
     Label(buttons_frame, text="X").grid(row=2, column=0)
@@ -407,13 +405,15 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
         image_1.save(save_path + "copy_image.png")
         image_1.show()
     else:
-        messagebox.showerror(title="Error", message="You must upload two images")
+        messagebox.showerror(title="Error", message="You must upload two images to copy one into another")
 
 
 def generate_binary_operations_input():
     reset_parameters()
-    image_1_button = Button(buttons_frame, text="Load Image 1", command=load_left_image).grid(row=0, column=0)
-    image_2_button = Button(buttons_frame, text="Load Image 2", command=load_right_image).grid(row=0, column=1)
+    image_1_button = Button(buttons_frame, text="Load Image 1", command=load_left_image)
+    image_2_button = Button(buttons_frame, text="Load Image 2", command=load_right_image)
+    image_1_button.grid(row=0, column=0)
+    image_2_button.grid(row=0, column=1)
 
 
 def binary_operation_validator(image_1, image_2):
@@ -427,7 +427,7 @@ def add_grey_image_wrapper(width_1, height_1, image_1, width_2, height_2, image_
     if binary_operation_validator(image_1, image_2):
         add_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
     else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to add.")
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to add")
 
 
 def generate_add_operation_input():
@@ -441,7 +441,7 @@ def subtract_grey_image_wrapper(width, height, image_1, image_2):
     if binary_operation_validator(image_1, image_2):
         subtract_grey_images(width, height, image_1, image_2)
     else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract.")
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
 
 
 def generate_subtract_grey_operation_input():
@@ -455,7 +455,7 @@ def subtract_colored_image_wrapper(width, height, image_1, image_2):
     if binary_operation_validator(image_1, image_2):
         subtract_colored_images(width, height, image_1, image_2)
     else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract.")
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
 
 
 def generate_subtract_colored_operation_input():
@@ -469,7 +469,7 @@ def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, 
     if binary_operation_validator(image_1, image_2):
         multiply_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
     else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to multiply.")
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to multiply")
 
 
 def generate_multiply_images_operation_input():
@@ -485,9 +485,9 @@ def multiply_grey_images_with_scalar_wrapper(width, height, image, scalar):
         scalar_value = float(scalar)
     except ValueError:
         error = True
-        messagebox.showerror(title="Error", message="You need to insert a valid scalar to multiply.")
+        messagebox.showerror(title="Error", message="You need to insert a valid scalar to multiply")
     if (not error) and image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to multiply.")
+        messagebox.showerror(title="Error", message="You need to upload an image to multiply")
     elif not error:
         multiply_grey_images_with_scalar(width, height, image, scalar_value)
 
@@ -506,14 +506,14 @@ def generate_multiply_by_scalar_input():
 
 def grey_negative_wrapper(image, width, height):
     if image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to get its negative.")
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
     else:
         grey_image_negative(image, width, height)
 
 
 def colored_negative_wrapper(image, width, height):
     if image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to get its negative.")
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
     else:
         colored_image_negative(image, width, height)
 
@@ -528,16 +528,16 @@ def generate_image_threshold_input():
                                  command=lambda: image_threshold(current_image, WIDTH, HEIGHT, int(threshold.get())))
         apply_threshold.grid(row=2, column=0)
     else:
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to apply a threshold")
 
 
-def generate_equalized_image():
-    if current_image is not None:
+def equalized_image_wrapper(image, width, height):
+    if image is not None:
         delete_widgets(buttons_frame)
-        image_equalization(current_image, WIDTH, HEIGHT)
+        image_equalization(image, width, height)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to get the equalized histogram")
 
 
 def generate_gaussian_noise_input():
@@ -563,7 +563,7 @@ def generate_gaussian_noise_input():
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to generate gaussian noise")
 
 
 def generate_rayleigh_noise_input():
@@ -585,7 +585,7 @@ def generate_rayleigh_noise_input():
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to generate rayleigh noise")
 
 
 def generate_exponential_noise_input():
@@ -608,7 +608,7 @@ def generate_exponential_noise_input():
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to generate exponential noise")
 
 
 def generate_salt_and_pepper_noise_input():
@@ -623,7 +623,8 @@ def generate_salt_and_pepper_noise_input():
         generate_salt_and_pepper.grid(row=2, column=0)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to generate salt and pepper noise")
+
 
 def generate_media_filter_input():
     if current_image is not None:
@@ -631,12 +632,12 @@ def generate_media_filter_input():
         Label(buttons_frame, text="Windows size").grid(row=0, column=0)
         windows_size = Entry(buttons_frame)
         windows_size.grid(row=1, column=0)
-        generate_noise = Button(buttons_frame, text="Generate",
+        generate_noise = Button(buttons_frame, text="Apply",
                                 command=lambda: media_filter(current_image, WIDTH, HEIGHT, int(windows_size.get())))
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to apply media filter")
 
 
 def generate_median_filter_input():
@@ -645,12 +646,41 @@ def generate_median_filter_input():
         Label(buttons_frame, text="Windows size").grid(row=0, column=0)
         windows_size = Entry(buttons_frame)
         windows_size.grid(row=1, column=0)
-        generate_noise = Button(buttons_frame, text="Generate",
+        generate_noise = Button(buttons_frame, text="Apply",
                                 command=lambda: median_filter(current_image, WIDTH, HEIGHT, int(windows_size.get())))
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image")
+        messagebox.showerror(title="Error", message="You must upload an image to apply median filter ")
+
+
+def weighted_median_wrapper(image, width, height):
+    if image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to apply weighted median filter ")
+    else:
+        weighted_median_filter(image, width, height, 3)
+
+
+def generate_gaussian_filter_input():
+    if current_image is not None:
+        delete_widgets(buttons_frame)
+        Label(buttons_frame, text="Sigma").grid(row=0, column=0)
+        sigma = Entry(buttons_frame)
+        sigma.grid(row=1, column=0)
+        generate_noise = Button(buttons_frame, text="Apply",
+                                command=lambda: gaussian_filter(current_image, WIDTH, HEIGHT, int(sigma.get())))
+        generate_noise.grid(row=2, column=0)
+    else:
+        reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to apply gaussian filter ")
+
+
+def border_enhancement_filter_wrapper(image, width, height):
+    if image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
+    else:
+        border_enhancement_filter(image, width, height)
+
 
 def delete_widgets(frame):
     print(frame)
