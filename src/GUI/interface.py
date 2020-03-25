@@ -647,6 +647,8 @@ def reset_parameters():
 
 
 root = Tk()
+# can only resize height
+root.resizable(False, True)
 root.title('ATI interface')
 root.state('zoomed')
 
@@ -666,3 +668,5 @@ save_path = "../../draws/"
 
 # main loop
 root.mainloop()
+
+
