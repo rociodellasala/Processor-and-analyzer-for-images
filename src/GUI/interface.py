@@ -54,8 +54,6 @@ def load_image(row, column):
         # set the image as img
         panel.image = image
         panel.grid(row=row, column=column)
-        # media_filter(image_instance, 512, 512, 5)
-        # median_filter(image_instance, 512, 512, 5)
         # weighted_median_filter(image_instance, 512, 512, 3)
         # median_filter(image_instance, 512, 512, 5)
         # gaussian_filter(image_instance, 512, 512, 3)
@@ -156,8 +154,8 @@ def create_operations_menu(menubar):
 def create_filters_menu(menubar):
     filters_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Filters", menu=filters_menu)
-    filters_menu.add_command(label="Media")  # add command
-    filters_menu.add_command(label="Median")  # add command
+    filters_menu.add_command(label="Media", command=generate_media_filter_input)  # add command
+    filters_menu.add_command(label="Median", command=generate_median_filter_input)  # add command
     filters_menu.add_command(label="Weighted median")  # add command
     filters_menu.add_command(label="Gaussian")  # add command
     filters_menu.add_command(label="Border enhancement")  # add command
@@ -627,6 +625,32 @@ def generate_salt_and_pepper_noise_input():
         reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image")
 
+def generate_media_filter_input():
+    if current_image is not None:
+        delete_widgets(buttons_frame)
+        Label(buttons_frame, text="Windows size").grid(row=0, column=0)
+        windows_size = Entry(buttons_frame)
+        windows_size.grid(row=1, column=0)
+        generate_noise = Button(buttons_frame, text="Generate",
+                                command=lambda: media_filter(current_image, WIDTH, HEIGHT, int(windows_size.get())))
+        generate_noise.grid(row=2, column=0)
+    else:
+        reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image")
+
+
+def generate_median_filter_input():
+    if current_image is not None:
+        delete_widgets(buttons_frame)
+        Label(buttons_frame, text="Windows size").grid(row=0, column=0)
+        windows_size = Entry(buttons_frame)
+        windows_size.grid(row=1, column=0)
+        generate_noise = Button(buttons_frame, text="Generate",
+                                command=lambda: median_filter(current_image, WIDTH, HEIGHT, int(windows_size.get())))
+        generate_noise.grid(row=2, column=0)
+    else:
+        reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image")
 
 def delete_widgets(frame):
     print(frame)
