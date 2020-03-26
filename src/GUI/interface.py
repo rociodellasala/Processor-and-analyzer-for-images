@@ -539,7 +539,7 @@ def generate_image_threshold_input():
         threshold = Entry(buttons_frame)
         threshold.grid(row=1, column=0)
         apply_threshold = Button(buttons_frame, text="Apply",
-                                 command=lambda: image_threshold(current_image, WIDTH, HEIGHT, int(threshold.get())))
+                                 command=lambda: image_threshold(current_image, WIDTH, HEIGHT, float(threshold.get())))
         apply_threshold.grid(row=2, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image to apply a threshold")

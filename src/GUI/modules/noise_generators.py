@@ -49,7 +49,7 @@ def get_image_with_noise(pixels, image_height, image_width, noise_generated_valu
     count = 0
     for y in range(0, image_height):
         for x in range(0, image_width):
-            if np.random.uniform(0.0, 1.0, 1)[0] > percentage:
+            if np.random.uniform(0.0, 1.0, 1)[0] <= percentage:
                 noise_values[y, x] = noise_generated_values[count]
                 count += 1
             if is_additive:
