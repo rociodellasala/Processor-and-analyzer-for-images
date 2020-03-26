@@ -71,12 +71,16 @@ def load_image_wrapper():
 
 def load_left_image():
     global left_image
-    left_image = load_image(0, 0)
+    loaded_image = load_image(0, 0)
+    if loaded_image is not None:
+        left_image = loaded_image
 
 
 def load_right_image():
     global right_image
-    right_image = load_image(0, 1)
+    loaded_image = load_image(0, 1)
+    if loaded_image is not None:
+        right_image = loaded_image
 
 
 def save_image():
@@ -413,6 +417,8 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
 def generate_binary_operations_input():
     if current_image is not None or image_to_copy is not None:
         reset_parameters()
+    else:
+        delete_widgets(buttons_frame)
     image_1_button = Button(buttons_frame, text="Load Image 1", command=load_left_image)
     image_2_button = Button(buttons_frame, text="Load Image 2", command=load_right_image)
     image_1_button.grid(row=0, column=0)

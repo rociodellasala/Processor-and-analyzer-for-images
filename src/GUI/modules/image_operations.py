@@ -339,7 +339,7 @@ def image_equalization(image, width, height):
     grey_level_histogram(img, width, height)
 
 
-def save_image(image,  file_path):
+def save_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("L")
     img.save(file_path)
