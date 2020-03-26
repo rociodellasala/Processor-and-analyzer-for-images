@@ -411,7 +411,8 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
 
 
 def generate_binary_operations_input():
-    reset_parameters()
+    if current_image is not None or image_to_copy is not None:
+        reset_parameters()
     image_1_button = Button(buttons_frame, text="Load Image 1", command=load_left_image)
     image_2_button = Button(buttons_frame, text="Load Image 2", command=load_right_image)
     image_1_button.grid(row=0, column=0)
