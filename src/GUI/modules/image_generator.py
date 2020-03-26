@@ -1,24 +1,29 @@
 from PIL import Image
-from math import cos
-from math import sin
+from math import sqrt
+from math import pow
+from tkinter import messagebox
 from src.GUI import gui_constants
 
 
 # Rectangle draw functions
 def generate_rectangle(image_name, image_width, image_height, rectangle_width, rectangle_height, filled):
-    new_image = Image.new("L", (int(image_width), int(image_height)))
-    pixels = new_image.load()
-    starting_x = int(image_width / 2 - rectangle_width / 2)
-    ending_x = int(image_width / 2 + rectangle_width / 2)
-    starting_y = int(image_height / 2 - rectangle_height / 2)
-    ending_y = int(image_height / 2 + rectangle_height / 2)
-    if filled:
-        draw_filled_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+    if image_width >= 2 * rectangle_width and image_height >= 2 * rectangle_height:
+        new_image = Image.new("L", (int(image_width), int(image_height)))
+        pixels = new_image.load()
+        starting_x = int(image_width / 2 - rectangle_width / 2)
+        ending_x = int(image_width / 2 + rectangle_width / 2)
+        starting_y = int(image_height / 2 - rectangle_height / 2)
+        ending_y = int(image_height / 2 + rectangle_height / 2)
+        if filled:
+            draw_filled_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+        else:
+            draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+        global save_path
+        new_image.save(save_path + image_name)
+        new_image.show()
     else:
-        draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
-    global save_path
-    new_image.save(save_path + image_name)
-    new_image.show()
+        messagebox.showerror(title="Error", message="Width must be at least 2 times greater than the image width"
+                                                    "and height must be at least 2 times grater than image height")
 
 
 def draw_filled_rectangle(pixels, left, right, upper, lower):
@@ -49,32 +54,37 @@ def draw_vertical_line(pixels, width, starting_y, ending_y):
 
 # Circle draw functions
 def generate_circle(image_name, image_width, image_height, circle_radius, filled):
-    new_image = Image.new("L", (int(image_width), int(image_height)))
-    pixels = new_image.load()
-    medium_x = image_width/2
-    medium_y = image_height/2
-    if filled:
-        draw_filled_circle(pixels, medium_x, medium_y, circle_radius)
+    if image_width >= 2 * circle_radius and image_height >= 2 * circle_radius:
+        new_image = Image.new("L", (int(image_width), int(image_height)))
+        pixels = new_image.load()
+        medium_x = image_width/2
+        medium_y = image_height/2
+        if filled:
+            draw_filled_circle(pixels, medium_x, medium_y, circle_radius)
+        else:
+            draw_empty_circle(pixels, medium_x, medium_y, circle_radius)
+        new_image.save(save_path + image_name)
+        new_image.show()
     else:
-        draw_empty_circle(pixels, medium_x, medium_y, circle_radius)
-    new_image.save(save_path + image_name)
-    new_image.show()
+        messagebox.showerror(title="Error", message="Both width and height of the image "
+                                                    "must be at least 2 times greater than the radius")
 
 
 def draw_empty_circle(pixels, medium_x, medium_y, circle_radius):
-    for theta in range(0, 360):
-        x = medium_x + circle_radius * cos(theta)
-        y = medium_y + circle_radius * sin(theta)
-        pixels[x, y] = 255
+    border = circle_radius * 0.05
+    for x in range(-circle_radius, circle_radius):
+        for y in range(-circle_radius, circle_radius):
+            aux = sqrt(pow(x, 2) + pow(y, 2))
+            if circle_radius - border < aux < circle_radius:
+                pixels[medium_x + x, medium_y + y] = 255
     return pixels
 
 
 def draw_filled_circle(pixels, medium_x, medium_y, circle_radius):
-    for theta in range(0, 360):
-        for radius in range(0, circle_radius):
-            x = medium_x + radius * cos(theta)
-            y = medium_y + radius * sin(theta)
-            pixels[x, y] = 255
+    for x in range(-circle_radius, circle_radius):
+        for y in range(-circle_radius, circle_radius):
+            if sqrt(pow(x, 2) + pow(y, 2)) <= circle_radius:
+                pixels[medium_x + x, medium_y + y] = 255
     return pixels
 
 
