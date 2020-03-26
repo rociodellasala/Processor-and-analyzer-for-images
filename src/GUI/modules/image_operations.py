@@ -65,9 +65,9 @@ def multiply_grey_images_with_scalar(width, height, image_1, scalar):
     for y in range(0, height):
         for x in range(0, width):
             multiplied_image[y, x] = int(pixels_image_1[x, y] * scalar)
+    save_image(multiplied_image, save_path + "multiplied_image_with_scalar.ppm")
     img = Image.fromarray(lineally_adjust_image_values(multiplied_image, width, height))
     img.show()
-    # TODO save multiplied image
     return multiplied_image
 
 
@@ -82,9 +82,9 @@ def multiply_grey_images(image_1_width, image_1_height, image_1, image_2_width, 
             pixel_image_1 = get_pixel_value(pixels_image_1, x, y, image_1_width, image_1_height)
             pixel_image_2 = get_pixel_value(pixels_image_2, x, y, image_2_width, image_2_height)
             multiplied_image[y, x] = int(pixel_image_1 * pixel_image_2)
+    save_image(multiplied_image, save_path + "multiplied_image.ppm")
     img = Image.fromarray(lineally_adjust_image_values(multiplied_image, width, height))
     img.show()
-    # TODO save multiplied image
     return multiplied_image
 
 
@@ -228,9 +228,9 @@ def dynamic_range_compression(image, width, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
             compressed_image[y, x] = int(c * log10(1 + current_value))
+    save_image(compressed_image, save_path + "compressed_image.ppm")
     img = Image.fromarray(compressed_image)
     img.show()
-    # TODO save compressed image
 
 
 def gamma_pow_function(image, width, height, gamma):
@@ -241,9 +241,9 @@ def gamma_pow_function(image, width, height, gamma):
         for x in range(0, width):
             current_value = int(pixels[x, y])
             compressed_image[y, x] = int(c * pow(current_value, gamma))
+    save_image(compressed_image, save_path + "gamma_generated_image.ppm")
     img = Image.fromarray(lineally_adjust_image_values(compressed_image, width, height))
     img.show()
-    # TODO save compressed image
 
 
 def grey_image_negative(image, width, height):
@@ -253,6 +253,7 @@ def grey_image_negative(image, width, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
             negative_image[y, x] = -current_value + L - 1
+    save_image(negative_image, save_path + "grey_negative_image.ppm")
     img = Image.fromarray(negative_image)
     img.show()
 
@@ -270,6 +271,7 @@ def colored_image_negative(image, width, height):
             negative_image[y, x, 2] = np.uint8(-blue_value + L - 1)
     img = Image.fromarray(negative_image, 'RGB')
     img.show()
+    # TODO save image
 
 
 def grey_level_histogram(image, width, height):
@@ -302,6 +304,7 @@ def image_threshold(image, width, height, threshold):
         for x in range(0, width):
             current_value = 0 if int(pixels[x, y]) <= threshold else MAX_PIXEL_VALUE
             new_image[y, x] = current_value
+    save_image(new_image, save_path + "threshold_image.ppm")
     img = Image.fromarray(new_image)
     img.show()
 
@@ -330,10 +333,10 @@ def image_equalization(image, width, height):
         for x in range(0, width):
             current_value = int(pixels[x, y])
             new_image[y, x] = new_grey_levels[current_value]
+    save_image(new_image, save_path + "equalized_image.ppm")
     img = Image.fromarray(new_image)
     img.show()
     grey_level_histogram(img, width, height)
-    # TODO modularize function
 
 
 def save_image(image,  file_path):
