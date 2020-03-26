@@ -29,7 +29,7 @@ from filters import weighted_median_filter
 from filters import median_filter
 from filters import gaussian_filter
 from filters import border_enhancement_filter
-from src.GUI import gui_constants
+from src.GUI import gui_constants as color
 from tkinter import ttk
 WIDTH = 512
 HEIGHT = 512
@@ -205,13 +205,14 @@ def open_file_name():
 def generate_get_pixel_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="x", ).grid(row=0, column=0)
-        ttk.Label(buttons_frame, text="y").grid(row=1, column=0)
+        ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=1, column=0)
         x = Entry(buttons_frame)
         y = Entry(buttons_frame)
         x.grid(row=0, column=1)
         y.grid(row=1, column=1)
-        get_pixel_button = ttk.Button(buttons_frame, text="Get Value", command=lambda: get_pixel_value(x.get(), y.get()))
+        get_pixel_button = ttk.Button(buttons_frame,
+                                      text="Get Value", command=lambda: get_pixel_value(x.get(), y.get()))
         get_pixel_button.grid(row=2, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image to get the value of a pixel")
@@ -225,8 +226,8 @@ def get_pixel_value(x, y):
 def generate_modify_pixel_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="x").grid(row=0, column=0)
-        ttk.Label(buttons_frame, text="y").grid(row=1, column=0)
+        ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=1, column=0)
         x = Entry(buttons_frame)
         y = Entry(buttons_frame)
         x.grid(row=0, column=1)
@@ -250,18 +251,20 @@ def generate_rectangle_input():
     clean_images()
     delete_widgets(buttons_frame)
     delete_widgets(image_frame)
-    ttk.Label(buttons_frame, text="rectangle width").grid(row=0, column=0)
-    ttk.Label(buttons_frame, text="rectangle height").grid(row=1, column=0)
-    ttk.Label(buttons_frame, text="image width").grid(row=0, column=2)
-    ttk.Label(buttons_frame, text="image height").grid(row=1, column=2)
+    ttk.Label(buttons_frame, text="Rectangle width", background=color.TOP_COLOR).grid(row=0, column=0)
+    ttk.Label(buttons_frame, text="Rectangle height", background=color.TOP_COLOR).grid(row=1, column=0)
+    ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=2)
+    ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=2)
     width = Entry(buttons_frame)
     height = Entry(buttons_frame)
     image_width = Entry(buttons_frame)
     image_height = Entry(buttons_frame)
     radio_var = BooleanVar()
     radio_var.set(True)
-    Radiobutton(buttons_frame, text="Empty", value=False, variable=radio_var).grid(row=1, column=4)
-    Radiobutton(buttons_frame, text="Filled", value=True, variable=radio_var).grid(row=0, column=4)
+    Radiobutton(buttons_frame, text="Empty", value=False, variable=radio_var,
+                background=color.TOP_COLOR).grid(row=1, column=4)
+    Radiobutton(buttons_frame, text="Filled", value=True, variable=radio_var,
+                background=color.TOP_COLOR).grid(row=0, column=4)
     width.grid(row=0, column=1)
     height.grid(row=1, column=1)
     image_width.grid(row=0, column=3)
@@ -276,19 +279,21 @@ def generate_circle_input():
     clean_images()
     delete_widgets(buttons_frame)
     delete_widgets(image_frame)
-    ttk.Label(buttons_frame, text="radius").grid(row=0, column=0)
-    ttk.Label(buttons_frame, text="image width").grid(row=0, column=2)
-    ttk.Label(buttons_frame, text="image height").grid(row=1, column=2)
+    ttk.Label(buttons_frame, text="Radius", background=color.TOP_COLOR).grid(row=0, column=2)
+    ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=0)
+    ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=0)
     radius = Entry(buttons_frame)
     image_width = Entry(buttons_frame)
     image_height = Entry(buttons_frame)
     radio_var = BooleanVar()
     radio_var.set(True)
-    Radiobutton(buttons_frame, text="Filled", value=True, variable=radio_var).grid(row=0, column=4)
-    Radiobutton(buttons_frame, text="Empty", value=False, variable=radio_var).grid(row=1, column=4)
-    radius.grid(row=0, column=1)
-    image_width.grid(row=0, column=3)
-    image_height.grid(row=1, column=3)
+    Radiobutton(buttons_frame, text="Filled", value=True,
+                variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=4)
+    Radiobutton(buttons_frame, text="Empty", value=False,
+                variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=4)
+    radius.grid(row=0, column=3)
+    image_width.grid(row=0, column=1)
+    image_height.grid(row=1, column=1)
     modify_pixel_button = ttk.Button(buttons_frame, text="Draw", command=lambda:
     generate_circle("circle.png", int(image_width.get()), int(image_height.get()),
                     int(radius.get()), radio_var.get()))
@@ -299,8 +304,8 @@ def generate_gray_fading_input():
     clean_images()
     delete_widgets(buttons_frame)
     delete_widgets(image_frame)
-    ttk.Label(buttons_frame, text="image width").grid(row=0, column=0)
-    ttk.Label(buttons_frame, text="image height").grid(row=1, column=0)
+    ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=0)
+    ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=0)
     image_width = Entry(buttons_frame)
     image_height = Entry(buttons_frame)
     image_width.grid(row=0, column=1)
@@ -314,18 +319,18 @@ def generate_color_fading_input():
     clean_images()
     delete_widgets(buttons_frame)
     delete_widgets(image_frame)
-    ttk.Label(buttons_frame, text="image width").grid(row=0, column=0)
-    ttk.Label(buttons_frame, text="image height").grid(row=1, column=0)
+    ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=0)
+    ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=0)
     red = BooleanVar()
     green = BooleanVar()
     blue = BooleanVar()
-    Checkbutton(buttons_frame, text="Red", variable=red).grid(row=2, column=0)
-    Checkbutton(buttons_frame, text="Green", variable=green).grid(row=2, column=1)
-    Checkbutton(buttons_frame, text="Blue", variable=blue).grid(row=2, column=2)
+    Checkbutton(buttons_frame, text="Red", variable=red, background=color.TOP_COLOR).grid(row=2, column=0)
+    Checkbutton(buttons_frame, text="Green", variable=green, background=color.TOP_COLOR).grid(row=2, column=1)
+    Checkbutton(buttons_frame, text="Blue", variable=blue, background=color.TOP_COLOR).grid(row=2, column=2)
     image_width = Entry(buttons_frame)
     image_height = Entry(buttons_frame)
-    image_width.grid(row=0, column=2)
-    image_height.grid(row=1, column=2)
+    image_width.grid(row=0, column=1)
+    image_height.grid(row=1, column=1)
     generate_gray_fading_button = ttk.Button(buttons_frame, text="Show",
                                          command=lambda: color_faded_image(int(image_width.get()),
                                                                            int(image_height.get()),
@@ -350,8 +355,7 @@ def gamma_pow_function_wrapper(image, width, height, gamma):
 def generate_gamma_input():
     delete_widgets(buttons_frame)
     if current_image is not None:
-        delete_widgets(image_frame)
-        ttk.Label(buttons_frame, text="Gamma").grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Gamma", background=color.TOP_COLOR).grid(row=0, column=0)
         gamma = Entry(buttons_frame)
         gamma.grid(row=0, column=1)
         apply_button = ttk.Button(buttons_frame, text="Apply",
@@ -371,14 +375,14 @@ def generate_range_compression_input():
 
 def generate_copy_sub_image_input():
     generate_binary_operations_input()
-    ttk.Label(buttons_frame, text="Original image").grid(row=1, column=0)
-    ttk.Label(buttons_frame, text="X").grid(row=2, column=0)
-    ttk.Label(buttons_frame, text="Y").grid(row=3, column=0)
-    ttk.Label(buttons_frame, text="width").grid(row=2, column=2)
-    ttk.Label(buttons_frame, text="height").grid(row=3, column=2)
-    ttk.Label(buttons_frame, text="Image to copy").grid(row=1, column=4)
-    ttk.Label(buttons_frame, text="X").grid(row=2, column=4)
-    ttk.Label(buttons_frame, text="Y").grid(row=3, column=4)
+    ttk.Label(buttons_frame, text="Original image", background=color.TOP_COLOR).grid(row=1, column=0)
+    ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=2, column=0)
+    ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=3, column=0)
+    ttk.Label(buttons_frame, text="Width", background=color.TOP_COLOR).grid(row=2, column=2)
+    ttk.Label(buttons_frame, text="Height", background=color.TOP_COLOR).grid(row=3, column=2)
+    ttk.Label(buttons_frame, text="Image to copy", background=color.TOP_COLOR).grid(row=1, column=4)
+    ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=2, column=4)
+    ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=3, column=4)
     x_original = Entry(buttons_frame)
     y_original = Entry(buttons_frame)
     width_original = Entry(buttons_frame)
@@ -510,8 +514,9 @@ def multiply_grey_images_with_scalar_wrapper(width, height, image, scalar):
 
 def generate_multiply_by_scalar_input():
     reset_parameters()
-    load_image_button = ttk.Button(buttons_frame, text="Load Image", command=load_left_image).grid(row=0, column=0)
-    ttk.Label(buttons_frame, text="Scalar").grid(row=1, column=0)
+    load_image_button = ttk.Button(buttons_frame, text="Load Image",
+                                   command=load_left_image).grid(row=0, column=0)
+    ttk.Label(buttons_frame, text="Scalar", background=color.TOP_COLOR).grid(row=1, column=0)
     scalar = Entry(buttons_frame)
     scalar.grid(row=1, column=1)
     multiply_button = ttk.Button(buttons_frame, text="Multiply",
@@ -537,12 +542,12 @@ def colored_negative_wrapper(image, width, height):
 def generate_image_threshold_input():
     delete_widgets(buttons_frame)
     if current_image is not None:
-        ttk.Label(buttons_frame, text="Threshold").grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Threshold", background=color.TOP_COLOR).grid(row=0, column=0)
         threshold = Entry(buttons_frame)
-        threshold.grid(row=1, column=0)
+        threshold.grid(row=0, column=1)
         apply_threshold = ttk.Button(buttons_frame, text="Apply",
                                  command=lambda: image_threshold(current_image, WIDTH, HEIGHT, float(threshold.get())))
-        apply_threshold.grid(row=2, column=0)
+        apply_threshold.grid(row=1, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image to apply a threshold")
 
@@ -568,19 +573,21 @@ def grey_level_histogram_wrapper(image, width, height):
 def generate_gaussian_noise_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="Percentage").grid(row=0, column=0)
-        ttk.Label(buttons_frame, text="Mu").grid(row=0, column=2)
-        ttk.Label(buttons_frame, text="Sigma").grid(row=1, column=2)
+        ttk.Label(buttons_frame, text="Percentage", background=color.TOP_COLOR).grid(row=0, column=3)
+        ttk.Label(buttons_frame, text="Mu", background=color.TOP_COLOR).grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Sigma", background=color.TOP_COLOR).grid(row=1, column=0)
         percentage = Entry(buttons_frame)
         mu = Entry(buttons_frame)
         sigma = Entry(buttons_frame)
-        percentage.grid(row=0, column=1)
-        mu.grid(row=0, column=3)
-        sigma.grid(row=1, column=3)
+        percentage.grid(row=0, column=4)
+        mu.grid(row=0, column=2)
+        sigma.grid(row=1, column=2)
         radio_var = BooleanVar()
         radio_var.set(True)
-        Radiobutton(buttons_frame, text="Additive", value=True, variable=radio_var).grid(row=0, column=4)
-        Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
+        Radiobutton(buttons_frame, text="Additive", value=True,
+                    variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=5)
+        Radiobutton(buttons_frame, text="Multiplicative", value=False,
+                    variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=5)
         generate_noise = ttk.Button(buttons_frame, text="Generate",
                                 command=lambda: gaussian_noise_generator(float(percentage.get()), radio_var.get(),
                                                                          current_image, WIDTH, HEIGHT, int(mu.get()),
@@ -594,16 +601,18 @@ def generate_gaussian_noise_input():
 def generate_rayleigh_noise_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="Percentage").grid(row=0, column=0)
-        ttk.Label(buttons_frame, text="Xi").grid(row=0, column=2)
+        ttk.Label(buttons_frame, text="Percentage", background=color.TOP_COLOR).grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Xi", background=color.TOP_COLOR).grid(row=1, column=0)
         percentage = Entry(buttons_frame)
         xi = Entry(buttons_frame)
         percentage.grid(row=0, column=1)
-        xi.grid(row=0, column=3)
+        xi.grid(row=1, column=1)
         radio_var = BooleanVar()
         radio_var.set(True)
-        Radiobutton(buttons_frame, text="Additive", value=True, variable=radio_var).grid(row=0, column=4)
-        Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
+        Radiobutton(buttons_frame, text="Additive", value=True,
+                    variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=2)
+        Radiobutton(buttons_frame, text="Multiplicative", value=False,
+                    variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=2)
         generate_noise = ttk.Button(buttons_frame, text="Generate",
                                 command=lambda: rayleigh_noise_generator(float(percentage.get()), radio_var.get(),
                                                                          current_image, WIDTH, HEIGHT, float(xi.get())))
@@ -616,16 +625,18 @@ def generate_rayleigh_noise_input():
 def generate_exponential_noise_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="Percentage").grid(row=0, column=0)
-        ttk.Label(buttons_frame, text="Lambda").grid(row=0, column=2)
+        ttk.Label(buttons_frame, text="Percentage", background=color.TOP_COLOR).grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Lambda", background=color.TOP_COLOR).grid(row=1, column=0)
         percentage = Entry(buttons_frame)
         lambda_value = Entry(buttons_frame)
         percentage.grid(row=0, column=1)
-        lambda_value.grid(row=0, column=3)
+        lambda_value.grid(row=1, column=1)
         radio_var = BooleanVar()
         radio_var.set(True)
-        Radiobutton(buttons_frame, text="Additive", value=True, variable=radio_var).grid(row=0, column=4)
-        Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
+        Radiobutton(buttons_frame, text="Additive",
+                    value=True, variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=2)
+        Radiobutton(buttons_frame, text="Multiplicative",
+                    value=False, variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=2)
         generate_noise = ttk.Button(buttons_frame, text="Generate",
                                 command=lambda: exponential_noise_generator(float(percentage.get()), radio_var.get(),
                                                                             current_image, WIDTH, HEIGHT,
@@ -639,13 +650,13 @@ def generate_exponential_noise_input():
 def generate_salt_and_pepper_noise_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="density").grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Density", background=color.TOP_COLOR).grid(row=0, column=0)
         density = Entry(buttons_frame)
-        density.grid(row=1, column=0)
+        density.grid(row=0, column=1)
         generate_salt_and_pepper = ttk.Button(buttons_frame, text="Generate",
                                           command=lambda: salt_and_pepper_noise_generator(current_image, WIDTH, HEIGHT,
                                                                                           float(density.get())))
-        generate_salt_and_pepper.grid(row=2, column=0)
+        generate_salt_and_pepper.grid(row=1, column=0)
     else:
         reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image to generate salt and pepper noise")
@@ -654,12 +665,12 @@ def generate_salt_and_pepper_noise_input():
 def generate_media_filter_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="Windows size").grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Windows size", background=color.TOP_COLOR).grid(row=0, column=0)
         windows_size = Entry(buttons_frame)
-        windows_size.grid(row=1, column=0)
+        windows_size.grid(row=0, column=1)
         generate_noise = ttk.Button(buttons_frame, text="Apply",
                                 command=lambda: media_filter(current_image, WIDTH, HEIGHT, int(windows_size.get())))
-        generate_noise.grid(row=2, column=0)
+        generate_noise.grid(row=1, column=0)
     else:
         reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image to apply media filter")
@@ -668,12 +679,12 @@ def generate_media_filter_input():
 def generate_median_filter_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="Windows size").grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Windows size", background=color.TOP_COLOR).grid(row=0, column=0)
         windows_size = Entry(buttons_frame)
-        windows_size.grid(row=1, column=0)
+        windows_size.grid(row=0, column=1)
         generate_noise = ttk.Button(buttons_frame, text="Apply",
                                 command=lambda: median_filter(current_image, WIDTH, HEIGHT, int(windows_size.get())))
-        generate_noise.grid(row=2, column=0)
+        generate_noise.grid(row=1, column=0)
     else:
         reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image to apply median filter ")
@@ -689,12 +700,12 @@ def weighted_median_wrapper(image, width, height):
 def generate_gaussian_filter_input():
     if current_image is not None:
         delete_widgets(buttons_frame)
-        ttk.Label(buttons_frame, text="Sigma").grid(row=0, column=0)
+        ttk.Label(buttons_frame, text="Sigma", background=color.TOP_COLOR).grid(row=0, column=0)
         sigma = Entry(buttons_frame)
-        sigma.grid(row=1, column=0)
+        sigma.grid(row=0, column=1)
         generate_noise = ttk.Button(buttons_frame, text="Apply",
                                 command=lambda: gaussian_filter(current_image, WIDTH, HEIGHT, int(sigma.get())))
-        generate_noise.grid(row=2, column=0)
+        generate_noise.grid(row=1, column=0)
     else:
         reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image to apply gaussian filter ")
@@ -732,13 +743,13 @@ def load_footer_buttons():
 
 def load_frames():
     global buttons_frame, image_frame, footer_frame
-    buttons_frame = Frame(root, bg=gui_constants.TOP_COLOR, bd=2,
+    buttons_frame = Frame(root, bg=color.TOP_COLOR, bd=2,
                           height=root.winfo_screenheight() / 8, width=root.winfo_screenwidth())
     buttons_frame.pack(side=TOP, expand=True, fill=BOTH)
-    image_frame = Frame(root, bg=gui_constants.MIDDLE_COLOR, bd=2,
+    image_frame = Frame(root, bg=color.MIDDLE_COLOR, bd=2,
                         height=root.winfo_screenheight() / 1.5, width=root.winfo_screenwidth())
     image_frame.pack(side=TOP, fill=BOTH, expand=True)
-    footer_frame = Frame(root, bg=gui_constants.BOTTOM_COLOR,
+    footer_frame = Frame(root, bg=color.BOTTOM_COLOR,
                          bd=2, height=root.winfo_screenheight() / 10, width=root.winfo_screenwidth())
     footer_frame.pack(side=BOTTOM, expand=True, fill=BOTH)
     load_footer_buttons()
@@ -767,7 +778,7 @@ root = Tk()
 root.style = ttk.Style()
 #('clam', 'alt', 'default', 'classic')
 root.style.theme_use("clam")
-ttk.Style().configure("Label", background=gui_constants.TOP_COLOR)
+ttk.Style().configure("Label", background=color.TOP_COLOR)
 
 root.resizable(False, True)
 root.title('ATI interface')
