@@ -325,7 +325,6 @@ def image_equalization(image, width, height):
             min_value = new_grey_levels[i]
     for i in range(0, L):
         new_grey_levels[i] = int((L - 1) * (new_grey_levels[i] - min_value) / (1 - min_value) + 0.5)
-    print(new_grey_levels)
     new_image = np.zeros((height, width))
     for y in range(0, height):
         for x in range(0, width):
