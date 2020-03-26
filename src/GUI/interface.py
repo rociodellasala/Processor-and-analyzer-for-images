@@ -62,7 +62,6 @@ def load_image_wrapper():
     global current_image, image_to_copy
     if current_image is None:
         current_image = load_image(0, 0)
-        grey_level_histogram(current_image, 512, 512)
     elif image_to_copy is None:
         image_to_copy = load_image(0, 1)
     else:
@@ -125,7 +124,8 @@ def create_function_menu(menubar):
     function_menu.add_command(label="Threshold", command=generate_image_threshold_input)
     function_menu.add_command(label="Equalization", command=lambda:
                             equalized_image_wrapper(current_image, WIDTH, HEIGHT))
-    function_menu.add_command(label="Grey Histogram")
+    function_menu.add_command(label="Grey Histogram", command=lambda:
+                              grey_level_histogram_wrapper(current_image, WIDTH, HEIGHT))
 
 
 def create_operations_menu(menubar):
@@ -346,14 +346,14 @@ def generate_gamma_input():
     gamma = Entry(buttons_frame)
     gamma.grid(row=0, column=1)
     apply_button = Button(buttons_frame, text="Apply",
-                          command=lambda: gamma_pow_function_wrapper(current_image, 512, 512, gamma.get()))
+                          command=lambda: gamma_pow_function_wrapper(current_image, WIDTH, HEIGHT, gamma.get()))
     apply_button.grid(row=1, column=0)
 
 
 def generate_range_compression_input():
     delete_widgets(buttons_frame)
     if current_image is not None:
-        dynamic_range_compression(current_image, 512, 512)
+        dynamic_range_compression(current_image, WIDTH, HEIGHT)
     else:
         messagebox.showerror(title="Error", message="You must upload an image to generate range compression")
 
@@ -435,7 +435,7 @@ def add_grey_image_wrapper(width_1, height_1, image_1, width_2, height_2, image_
 def generate_add_operation_input():
     generate_binary_operations_input()
     add_button = Button(buttons_frame, text="Add",
-                        command=lambda: add_grey_image_wrapper(512, 512, left_image, 512, 512, right_image))
+                        command=lambda: add_grey_image_wrapper(WIDTH, HEIGHT, left_image, WIDTH, HEIGHT, right_image))
     add_button.grid(row=1, column=0)
 
 
@@ -449,7 +449,7 @@ def subtract_grey_image_wrapper(width, height, image_1, image_2):
 def generate_subtract_grey_operation_input():
     generate_binary_operations_input()
     subtract_button = Button(buttons_frame, text="Subtract",
-                             command=lambda: subtract_grey_image_wrapper(512, 512, left_image, right_image))
+                             command=lambda: subtract_grey_image_wrapper(WIDTH, HEIGHT, left_image, right_image))
     subtract_button.grid(row=1, column=0)
 
 
@@ -463,7 +463,7 @@ def subtract_colored_image_wrapper(width, height, image_1, image_2):
 def generate_subtract_colored_operation_input():
     generate_binary_operations_input()
     subtract_button = Button(buttons_frame, text="Subtract",
-                             command=lambda: subtract_colored_image_wrapper(512, 512, left_image, right_image))
+                             command=lambda: subtract_colored_image_wrapper(WIDTH, HEIGHT, left_image, right_image))
     subtract_button.grid(row=1, column=0)
 
 
@@ -477,7 +477,7 @@ def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, 
 def generate_multiply_images_operation_input():
     generate_binary_operations_input()
     multiply_button = Button(buttons_frame, text="Multiply",
-                             command=lambda: multiply_grey_images_wrapper(512, 512, left_image, 512, 512, right_image))
+                             command=lambda: multiply_grey_images_wrapper(WIDTH, HEIGHT, left_image, WIDTH, HEIGHT, right_image))
     multiply_button.grid(row=1, column=0)
 
 
@@ -501,7 +501,7 @@ def generate_multiply_by_scalar_input():
     scalar = Entry(buttons_frame)
     scalar.grid(row=1, column=1)
     multiply_button = Button(buttons_frame, text="Multiply",
-                             command=lambda: multiply_grey_images_with_scalar_wrapper(512, 512, left_image,
+                             command=lambda: multiply_grey_images_with_scalar_wrapper(WIDTH, HEIGHT, left_image,
                                                                                       scalar.get()))
     multiply_button.grid(row=2, column=0)
 
@@ -537,6 +537,15 @@ def equalized_image_wrapper(image, width, height):
     if image is not None:
         delete_widgets(buttons_frame)
         image_equalization(image, width, height)
+    else:
+        reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to get the equalized histogram")
+
+
+def grey_level_histogram_wrapper(image, width, height):
+    if image is not None:
+        delete_widgets(buttons_frame)
+        grey_level_histogram(image, width, height)
     else:
         reset_parameters()
         messagebox.showerror(title="Error", message="You must upload an image to get the equalized histogram")
