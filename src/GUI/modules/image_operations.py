@@ -233,7 +233,6 @@ def dynamic_range_compression(image, width, height):
     # TODO save compressed image
 
 
-
 def gamma_pow_function(image, width, height, gamma):
     pixels = image.load()
     c = pow((L - 1), 1 - gamma)
@@ -245,7 +244,6 @@ def gamma_pow_function(image, width, height, gamma):
     img = Image.fromarray(lineally_adjust_image_values(compressed_image, width, height))
     img.show()
     # TODO save compressed image
-
 
 
 def grey_image_negative(image, width, height):
@@ -276,15 +274,13 @@ def colored_image_negative(image, width, height):
 
 def grey_level_histogram(image, width, height):
     grey_levels = calculate_histogram(image, width, height)
-    # histogram = np.histogram(grey_levels, L)
-    # print(histogram)
-    print(grey_levels)
-    print(np.sum(grey_levels))
     plt.hist(grey_levels, bins=L, edgecolor='black')
     plt.title("Grey level histogram")
     plt.xlabel("Grey value")
     plt.ylabel("Quantity")
-    plt.show()
+    plt.savefig(save_path + "grey_level_histogram.png")
+    histogram_image = Image.open(save_path + "grey_level_histogram.png")
+    histogram_image.show()
 
 
 def calculate_histogram(image, width, height):
@@ -340,3 +336,5 @@ def image_equalization(image, width, height):
     grey_level_histogram(img, width, height)
     # TODO modularize function
 
+
+save_path = "../../generated/"

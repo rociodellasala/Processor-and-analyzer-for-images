@@ -15,6 +15,7 @@ from image_operations import multiply_grey_images_with_scalar
 from image_operations import multiply_grey_images
 from image_operations import dynamic_range_compression
 from image_operations import grey_image_negative
+from image_operations import grey_level_histogram
 from image_operations import colored_image_negative
 from image_operations import gamma_pow_function
 from image_operations import image_threshold
@@ -61,6 +62,7 @@ def load_image_wrapper():
     global current_image, image_to_copy
     if current_image is None:
         current_image = load_image(0, 0)
+        grey_level_histogram(current_image, 512, 512)
     elif image_to_copy is None:
         image_to_copy = load_image(0, 1)
     else:
