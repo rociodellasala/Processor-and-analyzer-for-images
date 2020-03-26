@@ -20,9 +20,9 @@ def add_grey_images(image_1_width, image_1_height, image_1, image_2_width, image
             pixel_image_1 = get_pixel_value(pixels_image_1, x, y, image_1_width, image_1_height)
             pixel_image_2 = get_pixel_value(pixels_image_2, x, y, image_2_width, image_2_height)
             added_image[y, x] = int(pixel_image_1 + pixel_image_2)
+    save_image(added_image, save_path + "added_image.ppm")
     img = Image.fromarray(lineally_adjust_image_values(added_image, width, height))
     img.show()
-    #TODO save added_image
     return added_image
 
 
@@ -33,9 +33,9 @@ def subtract_grey_images(width, height, image_1, image_2):
     for y in range(0, height):
         for x in range(0, width):
             subtracted_image[y, x] = int(pixels_image_1[x, y] - pixels_image_2[x, y])
+    save_image(subtracted_image, save_path + "subtracted_grey_image.ppm")
     img = Image.fromarray(lineally_adjust_image_values(subtracted_image, width, height))
     img.show()
-    #TODO save subtracted_image
     return subtracted_image
 
 
@@ -334,6 +334,12 @@ def image_equalization(image, width, height):
     img.show()
     grey_level_histogram(img, width, height)
     # TODO modularize function
+
+
+def save_image(image,  file_path):
+    img = Image.fromarray(image)
+    img = img.convert("L")
+    img.save(file_path)
 
 
 save_path = "../../generated/"
