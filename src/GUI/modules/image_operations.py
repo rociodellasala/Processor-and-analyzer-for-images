@@ -54,9 +54,9 @@ def subtract_colored_images(width, height, image_1, image_2):
             subtracted_image[y, x, 0] = np.uint8(red_value_1 - red_value_2)
             subtracted_image[y, x, 1] = np.uint8(green_value_1 - green_value_2)
             subtracted_image[y, x, 2] = np.uint8(blue_value_1 - blue_value_2)
+    save_colored_image(subtracted_image, save_path + "subtracted_colored_image.ppm")
     img = Image.fromarray(lineally_adjust_colored_image_values(subtracted_image, width, height), 'RGB')
     img.show()
-    #TODO save subtracted_image
 
 
 def multiply_grey_images_with_scalar(width, height, image_1, scalar):
@@ -271,9 +271,9 @@ def colored_image_negative(image, width, height):
             negative_image[y, x, 0] = np.uint8(-red_value + L - 1)
             negative_image[y, x, 1] = np.uint8(-green_value + L - 1)
             negative_image[y, x, 2] = np.uint8(-blue_value + L - 1)
+    save_colored_image(negative_image, save_path + "negative_colored_image.ppm")
     img = Image.fromarray(negative_image, 'RGB')
     img.show()
-    # TODO save image
 
 
 def grey_level_histogram(image, width, height):
@@ -344,6 +344,12 @@ def image_equalization(image, width, height):
 def save_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
+    img.save(file_path)
+
+
+def save_colored_image(image, file_path):
+    img = Image.fromarray(image)
+    img = img.convert("RGB")
     img.save(file_path)
 
 

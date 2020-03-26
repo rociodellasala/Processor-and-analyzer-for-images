@@ -577,7 +577,7 @@ def generate_gaussian_noise_input():
         generate_noise = Button(buttons_frame, text="Generate",
                                 command=lambda: gaussian_noise_generator(float(percentage.get()), radio_var.get(),
                                                                          current_image, WIDTH, HEIGHT, int(mu.get()),
-                                                                         int(sigma.get())))
+                                                                         float(sigma.get())))
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
@@ -599,7 +599,7 @@ def generate_rayleigh_noise_input():
         Radiobutton(buttons_frame, text="Multiplicative", value=False, variable=radio_var).grid(row=1, column=4)
         generate_noise = Button(buttons_frame, text="Generate",
                                 command=lambda: rayleigh_noise_generator(float(percentage.get()), radio_var.get(),
-                                                                         current_image, WIDTH, HEIGHT, int(xi.get())))
+                                                                         current_image, WIDTH, HEIGHT, float(xi.get())))
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
@@ -622,7 +622,7 @@ def generate_exponential_noise_input():
         generate_noise = Button(buttons_frame, text="Generate",
                                 command=lambda: exponential_noise_generator(float(percentage.get()), radio_var.get(),
                                                                             current_image, WIDTH, HEIGHT,
-                                                                            int(lambda_value.get())))
+                                                                            float(lambda_value.get())))
         generate_noise.grid(row=2, column=0)
     else:
         reset_parameters()
