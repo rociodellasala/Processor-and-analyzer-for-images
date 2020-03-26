@@ -3,6 +3,7 @@ from PIL import Image
 from number_generators import gaussian_generator
 from number_generators import rayleigh_generator
 from number_generators import exponential_generator
+from image_operations import lineally_adjust_image_values
 
 
 def gaussian_noise_generator(percentage, is_additive, image, image_width, image_height, mu, sigma):
@@ -10,7 +11,8 @@ def gaussian_noise_generator(percentage, is_additive, image, image_width, image_
     noise_values = gaussian_generator(mu, sigma, image_height * image_width)
     new_image = get_image_with_noise(pixels, image_height, image_width, noise_values,
                                      is_additive, percentage)
-    img = Image.fromarray(new_image)
+    save_image(new_image, save_path + "gaussian_noise_image.ppm")
+    img = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     img.show()
     return new_image
 
@@ -20,7 +22,8 @@ def rayleigh_noise_generator(percentage, is_additive, image, image_width, image_
     noise_values = rayleigh_generator(xi, image_height * image_width)
     new_image = get_image_with_noise(pixels, image_height, image_width, noise_values,
                                      is_additive, percentage)
-    img = Image.fromarray(new_image)
+    save_image(new_image, save_path + "rayleigh_noise_image.ppm")
+    img = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     img.show()
     return new_image
 
@@ -30,7 +33,8 @@ def exponential_noise_generator(percentage, is_additive, image, image_width, ima
     noise_values = exponential_generator(lambda_value, image_height * image_width)
     new_image = get_image_with_noise(pixels, image_height, image_width, noise_values,
                                      is_additive, percentage)
-    img = Image.fromarray(new_image)
+    save_image(new_image, save_path + "exponential_noise_image.ppm")
+    img = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     img.show()
     return new_image
 
@@ -68,6 +72,16 @@ def salt_and_pepper_noise_generator(image, image_width, image_height, p0):
                 new_image[y, x] = 255
             else:
                 new_image[y, x] = pixels[x, y]
+    save_image(new_image, save_path + "salt_and_pepper_noise_image.ppm")
     img = Image.fromarray(new_image)
     img.show()
     return new_image
+
+
+def save_image(image, file_path):
+    img = Image.fromarray(image)
+    img = img.convert("I")
+    img.save(file_path)
+
+
+save_path = "../../generated/"

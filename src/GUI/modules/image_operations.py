@@ -99,6 +99,8 @@ def lineally_adjust_image_values(pixels, width, height):
     limits = get_max_and_min_value(pixels, width, height)
     max_value = limits[0]
     min_value = limits[1]
+    if MAX_PIXEL_VALUE >= max_value and MIN_PIXEL_VALUE <= min_value:
+        return pixels
     if max_value == min_value:
         slope = 0
     else:

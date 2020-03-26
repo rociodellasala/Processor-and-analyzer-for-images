@@ -15,7 +15,8 @@ def media_filter(image, image_height, image_width, window_size):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
-    image = Image.fromarray(new_image)
+    save_image(new_image, save_path + "media_filter_image.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
     return new_image
 
@@ -50,7 +51,8 @@ def median_filter(image, image_height, image_width, window_size):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_median_window(pixels, x, y, window_size)[middle]
-    image = Image.fromarray(new_image)
+    save_image(new_image, save_path + "median_filter_image.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
     return new_image
 
@@ -81,6 +83,7 @@ def weighted_median_filter(image, image_height, image_width, window_size):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_weighted_median_value(pixels, x, y, window_size, sliding_window)
+    save_image(new_image, save_path + "weighted_median_filter_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
     # ODO save new image
@@ -133,6 +136,7 @@ def gaussian_filter(image, image_height, image_width, sigma):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
+    save_image(new_image, save_path + "gussian_filter_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
     return new_image
@@ -164,6 +168,7 @@ def border_enhancement_filter(image, image_height, image_width):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
+    save_image(new_image, save_path + "border_enhancement_filter_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show("Border enhancement", lineally_adjust_image_values(new_image, image_width, image_height))
     return new_image
@@ -180,5 +185,14 @@ def get_border_enhancement_window():
     sliding_window[2, 0] = -1
     sliding_window[2, 1] = -1
     sliding_window[2, 2] = -1
-    print(sliding_window)
     return sliding_window
+
+
+def save_image(image, file_path):
+    img = Image.fromarray(image)
+    img = img.convert("I")
+    img.save(file_path)
+
+
+save_path = "../../generated/"
+
