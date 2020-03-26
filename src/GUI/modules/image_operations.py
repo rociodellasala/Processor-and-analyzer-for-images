@@ -341,7 +341,7 @@ def image_equalization(image, width, height):
 
 def save_image(image, file_path):
     img = Image.fromarray(image)
-    img = img.convert("L")
+    img = img.convert("I")
     img.save(file_path)
 
 
