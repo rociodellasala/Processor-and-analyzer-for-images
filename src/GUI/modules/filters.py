@@ -31,8 +31,8 @@ def generate_media_window(window_size):
 
 
 def get_convolution(pixels, x, y, sliding_window, window_size):
-    starting_row = y - window_size / 2
-    starting_col = x - window_size / 2
+    starting_row = y - int(window_size / 2)
+    starting_col = x - int(window_size / 2)
     total = 0
     for row in range(0, window_size):
         for col in range(0, window_size):
@@ -47,7 +47,7 @@ def median_filter(image, image_height, image_width, window_size):
     pixels = image.load()
     window_y_center = int(window_size / 2)
     window_x_center = int(window_size / 2)
-    middle = int(window_size / 2)
+    middle = int(window_size * window_size / 2)
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_median_window(pixels, x, y, window_size)[middle]
@@ -61,10 +61,10 @@ def get_median_window(pixels, x, y, windows_size):
     median_window = np.zeros(windows_size * windows_size)
     if windows_size % 2 == 0:
         windows_size += 1
-    starting_col = int(x - windows_size / 2)
-    starting_row = int(y - windows_size / 2)
-    ending_col = int(x + windows_size / 2)
-    ending_row = int(y + windows_size / 2)
+    starting_col = int(x - int(windows_size / 2))
+    starting_row = int(y - int(windows_size / 2))
+    ending_col = int(x + int(windows_size / 2)) + 1
+    ending_row = int(y + int(windows_size / 2)) + 1
     index = 0
     for i in range(starting_row, ending_row):
         for j in range(starting_col, ending_col):
@@ -149,7 +149,7 @@ def get_gaussian_window(window_size, sigma):
     for y in range(0, window_size):
         for x in range(0, window_size):
             sliding_window[y, x] = get_gaussian_value(x - origin_x, y - origin_y, sigma)
-    return sliding_window
+    return sliding_window / np.sum(sliding_window)
 
 
 def get_gaussian_value(x, y, sigma):
