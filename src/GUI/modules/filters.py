@@ -84,7 +84,6 @@ def weighted_median_filter(image, image_height, image_width, window_size):
     save_image(new_image, save_path + "weighted_median_filter_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
-    # ODO save new image
     return new_image
 
 
