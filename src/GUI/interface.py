@@ -3,6 +3,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
+import numpy as np
 from read_raw_image import read_raw_image
 from image_generator import generate_rectangle
 from image_generator import generate_circle
@@ -220,7 +221,7 @@ def generate_get_pixel_input():
 
 def get_pixel_value(x, y):
     px = current_image.load()
-    ttk.Label(buttons_frame, text=px[int(y), int(x)]).grid(row=2, column=1)
+    ttk.Label(buttons_frame, text=px[int(y), int(x)], background=color.TOP_COLOR).grid(row=2, column=1)
 
 
 def generate_modify_pixel_input():
@@ -228,20 +229,23 @@ def generate_modify_pixel_input():
         delete_widgets(buttons_frame)
         ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=0, column=0)
         ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=1, column=0)
+        ttk.Label(buttons_frame, text="Value", background=color.TOP_COLOR).grid(row=0, column=2)
         x = Entry(buttons_frame)
         y = Entry(buttons_frame)
+        value = Entry(buttons_frame)
         x.grid(row=0, column=1)
         y.grid(row=1, column=1)
+        value.grid(row=0, column=3)
         modify_pixel_button = ttk.Button(buttons_frame, text="Set Value",
-                                     command=lambda: modify_pixel_value(x.get(), y.get()))
+                                     command=lambda: modify_pixel_value(int(x.get()), int(y.get()), int(value.get())))
         modify_pixel_button.grid(row=2, column=0)
     else:
         messagebox.showerror(title="Error", message="You must upload an image to modify the value of a pixel")
 
 
-def modify_pixel_value(x, y):
+def modify_pixel_value(x, y, value):
     px = current_image.load()
-    px[int(x), int(y)] = 255
+    px[int(x), int(y)] = value
     global save_path
     current_image.save(save_path + "pixel_modification.png")
     current_image.show()
@@ -409,20 +413,29 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
     if binary_operation_validator(image_1, image_2):
         pixels = image_1.load()
         copy = image_2.load()
+        new_image = np.zeros((WIDTH, HEIGHT))
+        for y in range(0, HEIGHT):
+            for x in range(0, WIDTH):
+                new_image[y, x] = pixels[x, y]
         y_copy_aux = y_copy
         for x in range(x_original, x_original + width_original):
             x_copy += 1
             y_copy = y_copy_aux
             for y in range(y_original, y_original + height_original):
                 if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
-                    pixels[x, y] = copy[x_copy, y_copy]
+                    new_image[y, x] = copy[x_copy, y_copy]
                     y_copy += 1
-
-        global save_path
-        image_1.save(save_path + "copy_image.png")
-        image_1.show()
+        save_image(new_image, save_generated_path + "copy_image.ppm")
+        img = Image.fromarray(new_image)
+        img.show()
     else:
         messagebox.showerror(title="Error", message="You must upload two images to copy one into another")
+
+
+def save_image(image, file_path):
+    img = Image.fromarray(image)
+    img = img.convert("I")
+    img.save(file_path)
 
 
 def generate_binary_operations_input():
@@ -797,6 +810,7 @@ load_frames()
 load_menu()
 
 save_path = "../../draws/"
+save_generated_path = "../../generated/"
 
 # main loop
 root.mainloop()
