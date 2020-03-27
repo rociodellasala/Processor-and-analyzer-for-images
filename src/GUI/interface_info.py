@@ -104,4 +104,3 @@ class InterfaceInfo:
         self.clean_images()
         self.delete_widgets(self.image_frame)
 
-

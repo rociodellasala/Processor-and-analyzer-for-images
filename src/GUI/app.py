@@ -88,16 +88,6 @@ HEIGHT = 512
 #         right_image = loaded_image
 
 
-# def save_image():
-#     global current_image
-#     if current_image is None:
-#         messagebox.showerror(title="Error", message="You must upload an image to save it")
-#     else:
-#         image = current_image
-#         image_info = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
-#             ('ppm', '*.ppm'), ('jpg', '*.jpg'), ('jpeg', '*.jpeg'), ('png', '*.png'),  ("pgm", "*.pgm")))
-#         image.convert("I")
-#         image.save(image_info)
 
 
 def create_image_menu(menubar):

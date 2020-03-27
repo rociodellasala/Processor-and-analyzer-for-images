@@ -1,4 +1,5 @@
 from tkinter import Menu, messagebox, ttk
+from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
 from image_access import open_file_name
 from image_access import read_raw_image
@@ -41,11 +42,25 @@ def load_image_wrapper():
                                                     " one click on the \"Clean image\" button first")
 
 
+def save_image():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is None:
+        messagebox.showerror(title="Error", message="You must upload an image to save it")
+    else:
+        image = interface.current_image
+        image_info = image.filename = asksaveasfilename(initialdir="/", title="Select file", filetypes=(
+            ('ppm', '*.ppm'), ('jpg', '*.jpg'), ('jpeg', '*.jpeg'), ('png', '*.png'),  ("pgm", "*.pgm")))
+        image.convert("I")
+        image.save(image_info)
+
+
 class ImageMenu:
     def __init__(self, menubar):
+        interface = InterfaceInfo.get_instance()
         image_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Image", menu=image_menu)
         image_menu.add_command(label="Open", command=load_image_wrapper)
-        # image_menu.add_command(label="Save", command=self.save_image)
-        # image_menu.add_separator()
-        # image_menu.add_command(label="Exit", command=self.root.quit)
+        image_menu.add_command(label="Save", command=save_image)
+        image_menu.add_separator()
+        image_menu.add_command(label="Exit", command=interface.root.quit)
+
