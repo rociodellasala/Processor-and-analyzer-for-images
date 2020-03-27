@@ -425,14 +425,14 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
                 if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
                     new_image[y, x] = copy[x_copy, y_copy]
                     y_copy += 1
-        save_image(new_image, save_generated_path + "copy_image.ppm")
+        save_grey_image(new_image, save_generated_path + "copy_image.ppm")
         img = Image.fromarray(new_image)
         img.show()
     else:
         messagebox.showerror(title="Error", message="You must upload two images to copy one into another")
 
 
-def save_image(image, file_path):
+def save_grey_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
     img.save(file_path)
