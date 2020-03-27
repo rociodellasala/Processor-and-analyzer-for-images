@@ -8,7 +8,7 @@ def media_filter(image, image_height, image_width, window_size):
     if window_size % 2 == 0:
         window_size = window_size + 1
     new_image = np.zeros((image_height, image_width))
-    pixels = image.load()
+    pixels = np.array(image)
     sliding_window = generate_media_window(window_size)
     window_y_center = int(window_size / 2)
     window_x_center = int(window_size / 2)
@@ -33,12 +33,10 @@ def generate_media_window(window_size):
 def get_convolution(pixels, x, y, sliding_window, window_size):
     starting_row = y - int(window_size / 2)
     starting_col = x - int(window_size / 2)
-    total = 0
-    for row in range(0, window_size):
-        for col in range(0, window_size):
-            pixels_row = starting_row + row
-            pixels_col = starting_col + col
-            total += (pixels[pixels_col, pixels_row] * sliding_window[row, col])
+    ending_row = starting_row + window_size
+    ending_col = starting_col + window_size
+    sub_matrix = pixels[starting_row:ending_row, starting_col:ending_col]
+    total = np.sum(sub_matrix * sliding_window)
     return total
 
 
@@ -129,7 +127,7 @@ def get_weighted_median_window():
 def gaussian_filter(image, image_height, image_width, sigma):
     new_image = np.zeros((image_height, image_width))
     window_size = 2 * sigma + 1
-    pixels = image.load()
+    pixels = np.array(image)
     window_y_center = int(window_size / 2)
     window_x_center = int(window_size / 2)
     sliding_window = get_gaussian_window(window_size, sigma)
@@ -161,7 +159,7 @@ def get_gaussian_value(x, y, sigma):
 def border_enhancement_filter(image, image_height, image_width):
     new_image = np.zeros((image_height, image_width))
     window_size = 3
-    pixels = image.load()
+    pixels = np.array(image)
     window_y_center = 1
     window_x_center = 1
     sliding_window = get_border_enhancement_window()
