@@ -1,3 +1,4 @@
+# TODO remove extras
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -32,48 +33,12 @@ from filters import gaussian_filter
 from filters import border_enhancement_filter
 from src.GUI import gui_constants as color
 from tkinter import ttk
+
+from src.GUI.image_menu import ImageMenu
+from src.GUI.interface_info import InterfaceInfo
+
 WIDTH = 512
 HEIGHT = 512
-
-
-class Interface:
-    __instance = None
-
-    def __init__(self):
-        if Interface.__instance is not None:
-            raise Exception("This class is a singleton!")
-        else:
-            self.root = Tk()
-            self.current_image = None
-            self.image_to_copy = None
-            self.left_image = None
-            self.right_image = None
-            self.buttons_frame = None
-            self.image_frame = None
-            self.footer_frame = None
-            Interface.__instance = self
-
-    @staticmethod
-    def get_instance():
-        if Interface.__instance is None:
-            Interface()
-        return Interface.__instance
-
-    def configure(self):
-        # can only resize height
-        self.root.style = ttk.Style()
-        # ('clam', 'alt', 'default', 'classic')
-        self.root.style.theme_use("clam")
-        ttk.Style().configure("Label", background=color.TOP_COLOR)
-        self.root.resizable(False, True)
-        self.root.title('ATI interface')
-        self.root.state('zoomed')
-        load_frames(self)
-        load_menu(self)
-
-    def get_root(self):
-        return self.root
-
 
 # def load_image(row, column):
 #     file_name = open_file_name()
@@ -250,27 +215,8 @@ def create_noise_menu(menubar):
     # noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
 
 
-def load_menu(interface):
-    menubar = Menu(interface.root)
-    interface.root.config(menu=menubar)
-    create_image_menu(menubar)
-    create_pixel_menu(menubar)
-    # create_operations_menu(menubar)
-    create_draw_menu(menubar)
-    create_gradient_menu(menubar)
-    create_function_menu(menubar)
-    create_noise_menu(menubar)
-    create_filters_menu(menubar)
 
 
-def open_file_name():
-    file_name = filedialog.askopenfilename(title='Choose Image', filetypes=[("ppm", "*.ppm"), ("pgm", "*.pgm"),
-                                                                            ("jpg", "*.jpg"), ("png", "*.png"),
-                                                                            ("jpeg", "*.jpeg"), ("raw", "*.RAW")])
-    if file_name:
-        return file_name
-    else:
-        return ""
 
 
 # def generate_get_pixel_input():
@@ -802,55 +748,6 @@ def border_enhancement_filter_wrapper(image, width, height):
         border_enhancement_filter(image, width, height)
 
 
-def delete_widgets(interface, frame):
-    for widget in frame.winfo_children():
-        widget.destroy()
-    if frame is interface.image_frame:
-        clean_images(interface)
-
-
-def ask_quit():
-    if messagebox.askokcancel("Quit", "Are you sure you want to quit?"):
-        root.destroy()
-
-
-def load_footer_buttons(interface):
-    exit_program_btn = ttk.Button(interface.footer_frame, text="Exit Program", command=ask_quit)
-    exit_program_btn.grid(column=0, row=0)
-    clean_window_btn = ttk.Button(interface.footer_frame, text="Clean buttons",
-                                  command=lambda: delete_widgets(interface, interface.buttons_frame))
-    clean_window_btn.grid(column=1, row=0)
-    clean_window_btn = ttk.Button(interface.footer_frame, text="Clean image",
-                                  command=lambda: delete_widgets(interface, interface.image_frame))
-    clean_window_btn.grid(column=2, row=0)
-
-
-def load_frames(interface):
-    interface.buttons_frame = Frame(interface.root, bg=color.TOP_COLOR, bd=2,
-                                    height=interface.root.winfo_screenheight() / 8,
-                                    width=interface.root.winfo_screenwidth())
-    interface.buttons_frame.pack(side=TOP, expand=True, fill=BOTH)
-    interface.image_frame = Frame(interface.root, bg=color.MIDDLE_COLOR, bd=2,
-                                  height=interface.root.winfo_screenheight() / 1.5,
-                                  width=interface.root.winfo_screenwidth())
-    interface.image_frame.pack(side=TOP, fill=BOTH, expand=True)
-    interface.footer_frame = Frame(interface.root, bg=color.BOTTOM_COLOR,
-                                   bd=2, height=interface.root.winfo_screenheight() / 10,
-                                   width=interface.root.winfo_screenwidth())
-    interface.footer_frame.pack(side=BOTTOM, expand=True, fill=BOTH)
-    load_footer_buttons(interface)
-
-
-def clean_images(interface):
-    interface.current_image = None
-    interface.left_image = None
-    interface.right_image = None
-
-
-# def remove_images():
-#     clean_images()
-#     delete_widgets(image_frame)
-#
 #
 # def reset_parameters():
 #     remove_images()
@@ -879,10 +776,44 @@ def clean_images(interface):
 #
 # load_frames()
 # load_menu()
-app = Interface.get_instance()
-app.configure()
-root = app.get_root()
+#########################################################################################################################
+class App:
+    def __init__(self):
+        interface = InterfaceInfo.get_instance()
+        root = interface.get_root()
+        interface.configure()
+        interface.load_frames()
+        self.load_menu(root)
 
+    def load_footer_buttons(self):
+        exit_program_btn = ttk.Button(self.footer_frame, text="Exit Program", command=self.ask_quit)
+        exit_program_btn.grid(column=0, row=0)
+        clean_window_btn = ttk.Button(self.footer_frame, text="Clean buttons",
+                                      command=lambda: self.delete_widgets(self, self.buttons_frame))
+        clean_window_btn.grid(column=1, row=0)
+        clean_window_btn = ttk.Button(self.footer_frame, text="Clean image",
+                                      command=lambda: self.delete_widgets(self, self.image_frame))
+        clean_window_btn.grid(column=2, row=0)
+
+    def ask_quit(self):
+        if messagebox.askokcancel("Quit", "Are you sure you want to quit?"):
+            self.root.destroy()
+
+    def load_menu(self, root):
+        menubar = Menu(root)
+        root.config(menu=menubar)
+        ImageMenu(menubar)
+        # create_pixel_menu(menubar)
+        # # create_operations_menu(menubar)
+        # create_draw_menu(menubar)
+        # create_gradient_menu(menubar)
+        # create_function_menu(menubar)
+        # create_noise_menu(menubar)
+        # create_filters_menu(menubar)
+
+
+app = App()
+root = InterfaceInfo.get_instance().get_root()
 save_path = "../../draws/"
 save_generated_path = "../../generated/"
 
