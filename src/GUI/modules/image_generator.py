@@ -22,7 +22,7 @@ def generate_rectangle(image_name, image_width, image_height, rectangle_width, r
         new_image.save(save_path + image_name)
         new_image.show()
     else:
-        messagebox.showerror(title="Error", message="Width must be at least 2 times greater than the image width"
+        messagebox.showerror(title="Error", message="Width must be at least 2 times greater than the image width "
                                                     "and height must be at least 2 times grater than image height")
 
 
