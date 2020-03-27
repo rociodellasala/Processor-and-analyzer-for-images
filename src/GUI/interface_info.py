@@ -87,7 +87,6 @@ class InterfaceInfo:
                                   bd=2, height=self.root.winfo_screenheight() / 10,
                                   width=self.root.winfo_screenwidth())
         self.footer_frame.pack(side=BOTTOM, expand=True, fill=BOTH)
-        # self.load_footer_buttons()
 
     def clean_images(self):
         self.current_image = None
