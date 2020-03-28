@@ -7,6 +7,8 @@ from src.GUI import gui_constants as constants
 from src.GUI.image_menu import load_image
 from src.GUI.interface_info import InterfaceInfo
 from image_operations import add_grey_images
+from image_operations import subtract_colored_images
+from image_operations import subtract_grey_images
 
 
 def load_left_image(interface):
@@ -58,6 +60,40 @@ def add_grey_image_wrapper(width_1, height_1, image_1, width_2, height_2, image_
         messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to add")
 
 
+def generate_subtract_colored_operation_input():
+    interface = InterfaceInfo.get_instance()
+    generate_binary_operations_input(interface)
+    subtract_button = ttk.Button(interface.buttons_frame, text="Subtract",
+                                 command=lambda: subtract_colored_image_wrapper(constants.WIDTH, constants.HEIGHT,
+                                                                                interface.left_image,
+                                                                                interface.right_image))
+    subtract_button.grid(row=1, column=0)
+
+
+def subtract_colored_image_wrapper(width, height, image_1, image_2):
+    if binary_operation_validator(image_1, image_2):
+        subtract_colored_images(width, height, image_1, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
+
+
+def generate_subtract_grey_operation_input():
+    interface = InterfaceInfo.get_instance()
+    generate_binary_operations_input(interface)
+    subtract_button = ttk.Button(interface.buttons_frame, text="Subtract",
+                                 command=lambda: subtract_grey_image_wrapper(constants.WIDTH, constants.HEIGHT,
+                                                                             interface.left_image,
+                                                                             interface.right_image))
+    subtract_button.grid(row=1, column=0)
+
+
+def subtract_grey_image_wrapper(width, height, image_1, image_2):
+    if binary_operation_validator(image_1, image_2):
+        subtract_grey_images(width, height, image_1, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
+
+
 class OperationsMenu:
     def __init__(self, menubar):
         operation_menu = Menu(menubar, tearoff=0)
@@ -65,8 +101,8 @@ class OperationsMenu:
         operation_menu.add_command(label="Add", command=generate_add_operation_input)
         subtract_menu = Menu(operation_menu, tearoff=0)
         operation_menu.add_cascade(label="Subtract", menu=subtract_menu)
-        # subtract_menu.add_command(label="Color", command=generate_subtract_colored_operation_input)
-        # subtract_menu.add_command(label="B&W", command=generate_subtract_grey_operation_input)
+        subtract_menu.add_command(label="Color", command=generate_subtract_colored_operation_input)
+        subtract_menu.add_command(label="B&W", command=generate_subtract_grey_operation_input)
         # multiply_menu = Menu(operation_menu, tearoff=0)
         # operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
         # multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)

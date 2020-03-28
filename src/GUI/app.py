@@ -9,8 +9,6 @@ from read_raw_image import read_raw_image
 from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
-from image_operations import subtract_grey_images
-from image_operations import subtract_colored_images
 from image_operations import multiply_grey_images_with_scalar
 from image_operations import multiply_grey_images
 from image_operations import dynamic_range_compression
@@ -75,25 +73,6 @@ HEIGHT = 512
 #                                                     " one click on the \"Clean image\" button first")
 
 
-
-
-
-
-
-def create_image_menu(menubar):
-    image_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Image", menu=image_menu)
-
-    image_menu.add_command(label="Open")
-    image_menu.add_command(label="Save")
-    image_menu.add_separator()
-    image_menu.add_command(label="Exit")
-    # image_menu.add_command(label="Open", command=load_image_wrapper)
-    # image_menu.add_command(label="Save", command=save_image)
-    # image_menu.add_separator()
-    # image_menu.add_command(label="Exit", command=root.quit)
-
-
 def create_gradient_menu(menubar):
     gradient_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Gradient", menu=gradient_menu)
@@ -120,8 +99,6 @@ def create_function_menu(menubar):
     #                         equalized_image_wrapper(current_image, WIDTH, HEIGHT))
     # function_menu.add_command(label="Grey Histogram", command=lambda:
     #                           grey_level_histogram_wrapper(current_image, WIDTH, HEIGHT))
-
-
 
 
 def create_filters_menu(menubar):
@@ -288,34 +265,6 @@ def save_grey_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
     img.save(file_path)
-
-
-def subtract_grey_image_wrapper(width, height, image_1, image_2):
-    if binary_operation_validator(image_1, image_2):
-        subtract_grey_images(width, height, image_1, image_2)
-    else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
-
-
-# def generate_subtract_grey_operation_input():
-#     generate_binary_operations_input()
-#     subtract_button = ttk.Button(buttons_frame, text="Subtract",
-#                                  command=lambda: subtract_grey_image_wrapper(WIDTH, HEIGHT, left_image, right_image))
-#     subtract_button.grid(row=1, column=0)
-
-
-def subtract_colored_image_wrapper(width, height, image_1, image_2):
-    if binary_operation_validator(image_1, image_2):
-        subtract_colored_images(width, height, image_1, image_2)
-    else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
-
-
-def generate_subtract_colored_operation_input():
-    generate_binary_operations_input()
-    subtract_button = ttk.Button(buttons_frame, text="Subtract",
-                             command=lambda: subtract_colored_image_wrapper(WIDTH, HEIGHT, left_image, right_image))
-    subtract_button.grid(row=1, column=0)
 
 
 def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, image_2):
