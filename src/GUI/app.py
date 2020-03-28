@@ -1,9 +1,5 @@
 # TODO remove extras
 from tkinter import messagebox, ttk, Menu
-from noise_generators import gaussian_noise_generator
-from noise_generators import rayleigh_noise_generator
-from noise_generators import exponential_noise_generator
-from noise_generators import salt_and_pepper_noise_generator
 from filters import media_filter
 from filters import weighted_median_filter
 from filters import median_filter
@@ -15,6 +11,7 @@ from src.GUI.function_menu import FunctionMenu
 from src.GUI.gradient_menu import GradientMenu
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
+from src.GUI.noise_menu import NoiseMenu
 from src.GUI.operations_menu import OperationsMenu
 from src.GUI.pixel_menu import PixelMenu
 
@@ -68,112 +65,6 @@ def create_filters_menu(menubar):
     # filters_menu.add_command(label="Gaussian", command=generate_gaussian_filter_input)
     # filters_menu.add_command(label="Border enhancement", command=lambda:
     #                          border_enhancement_filter_wrapper(current_image, WIDTH, HEIGHT))
-
-
-def create_noise_menu(menubar):
-    noise_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Noise", menu=noise_menu)
-
-    noise_menu.add_command(label="Gaussian")
-    noise_menu.add_command(label="Rayleigh")
-    noise_menu.add_command(label="Exponential")
-    noise_menu.add_command(label="Salt and Pepper")
-    # noise_menu.add_command(label="Gaussian", command=generate_gaussian_noise_input)
-    # noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)
-    # noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)
-    # noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
-
-
-# def generate_gaussian_noise_input():
-#     if current_image is not None:
-#         delete_widgets(buttons_frame)
-#         ttk.Label(buttons_frame, text="Percentage", background=color.TOP_COLOR).grid(row=0, column=3)
-#         ttk.Label(buttons_frame, text="Mu", background=color.TOP_COLOR).grid(row=0, column=0)
-#         ttk.Label(buttons_frame, text="Sigma", background=color.TOP_COLOR).grid(row=1, column=0)
-#         percentage = Entry(buttons_frame)
-#         mu = Entry(buttons_frame)
-#         sigma = Entry(buttons_frame)
-#         percentage.grid(row=0, column=4)
-#         mu.grid(row=0, column=2)
-#         sigma.grid(row=1, column=2)
-#         radio_var = BooleanVar()
-#         radio_var.set(True)
-#         Radiobutton(buttons_frame, text="Additive", value=True,
-#                     variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=5)
-#         Radiobutton(buttons_frame, text="Multiplicative", value=False,
-#                     variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=5)
-#         generate_noise = ttk.Button(buttons_frame, text="Generate",
-#                                 command=lambda: gaussian_noise_generator(float(percentage.get()), radio_var.get(),
-#                                                                          current_image, WIDTH, HEIGHT, int(mu.get()),
-#                                                                          float(sigma.get())))
-#         generate_noise.grid(row=2, column=0)
-#     else:
-#         reset_parameters()
-#         messagebox.showerror(title="Error", message="You must upload an image to generate gaussian noise")
-
-
-# def generate_rayleigh_noise_input():
-#     if current_image is not None:
-#         delete_widgets(buttons_frame)
-#         ttk.Label(buttons_frame, text="Percentage", background=color.TOP_COLOR).grid(row=0, column=0)
-#         ttk.Label(buttons_frame, text="Xi", background=color.TOP_COLOR).grid(row=1, column=0)
-#         percentage = Entry(buttons_frame)
-#         xi = Entry(buttons_frame)
-#         percentage.grid(row=0, column=1)
-#         xi.grid(row=1, column=1)
-#         radio_var = BooleanVar()
-#         radio_var.set(True)
-#         Radiobutton(buttons_frame, text="Additive", value=True,
-#                     variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=2)
-#         Radiobutton(buttons_frame, text="Multiplicative", value=False,
-#                     variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=2)
-#         generate_noise = ttk.Button(buttons_frame, text="Generate",
-#                                 command=lambda: rayleigh_noise_generator(float(percentage.get()), radio_var.get(),
-#                                                                          current_image, WIDTH, HEIGHT, float(xi.get())))
-#         generate_noise.grid(row=2, column=0)
-#     else:
-#         reset_parameters()
-#         messagebox.showerror(title="Error", message="You must upload an image to generate rayleigh noise")
-
-
-# def generate_exponential_noise_input():
-#     if current_image is not None:
-#         delete_widgets(buttons_frame)
-#         ttk.Label(buttons_frame, text="Percentage", background=color.TOP_COLOR).grid(row=0, column=0)
-#         ttk.Label(buttons_frame, text="Lambda", background=color.TOP_COLOR).grid(row=1, column=0)
-#         percentage = Entry(buttons_frame)
-#         lambda_value = Entry(buttons_frame)
-#         percentage.grid(row=0, column=1)
-#         lambda_value.grid(row=1, column=1)
-#         radio_var = BooleanVar()
-#         radio_var.set(True)
-#         Radiobutton(buttons_frame, text="Additive",
-#                     value=True, variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=2)
-#         Radiobutton(buttons_frame, text="Multiplicative",
-#                     value=False, variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=2)
-#         generate_noise = ttk.Button(buttons_frame, text="Generate",
-#                                 command=lambda: exponential_noise_generator(float(percentage.get()), radio_var.get(),
-#                                                                             current_image, WIDTH, HEIGHT,
-#                                                                             float(lambda_value.get())))
-#         generate_noise.grid(row=2, column=0)
-#     else:
-#         reset_parameters()
-#         messagebox.showerror(title="Error", message="You must upload an image to generate exponential noise")
-
-
-# def generate_salt_and_pepper_noise_input():
-#     if current_image is not None:
-#         delete_widgets(buttons_frame)
-#         ttk.Label(buttons_frame, text="Density", background=color.TOP_COLOR).grid(row=0, column=0)
-#         density = Entry(buttons_frame)
-#         density.grid(row=0, column=1)
-#         generate_salt_and_pepper = ttk.Button(buttons_frame, text="Generate",
-#                                           command=lambda: salt_and_pepper_noise_generator(current_image, WIDTH, HEIGHT,
-#                                                                                           float(density.get())))
-#         generate_salt_and_pepper.grid(row=1, column=0)
-#     else:
-#         reset_parameters()
-#         messagebox.showerror(title="Error", message="You must upload an image to generate salt and pepper noise")
 
 
 # def generate_media_filter_input():
@@ -288,7 +179,7 @@ class App:
         OperationsMenu(menubar)
         GradientMenu(menubar)
         FunctionMenu(menubar)
-        # create_noise_menu(menubar)
+        NoiseMenu(menubar)
         # create_filters_menu(menubar)
 
 
