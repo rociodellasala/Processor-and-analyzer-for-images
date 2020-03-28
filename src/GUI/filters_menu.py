@@ -1,4 +1,4 @@
-from tkinter import Menu, messagebox, ttk, Entry, BooleanVar, Radiobutton
+from tkinter import Menu, messagebox, ttk, Entry
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from filters import media_filter

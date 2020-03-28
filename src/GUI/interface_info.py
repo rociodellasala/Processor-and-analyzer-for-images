@@ -1,6 +1,5 @@
-from tkinter import *
 from src.GUI import gui_constants as color
-from tkinter import ttk
+from tkinter import Frame, ttk, TOP, BOTH, BOTTOM, Tk
 
 
 class InterfaceInfo:
