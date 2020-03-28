@@ -9,7 +9,6 @@ from read_raw_image import read_raw_image
 from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
-from image_operations import add_grey_images
 from image_operations import subtract_grey_images
 from image_operations import subtract_colored_images
 from image_operations import multiply_grey_images_with_scalar
@@ -36,6 +35,7 @@ from tkinter import ttk
 from src.GUI.draw_menu import DrawMenu
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
+from src.GUI.operations_menu import OperationsMenu
 from src.GUI.pixel_menu import PixelMenu
 
 WIDTH = 512
@@ -75,18 +75,7 @@ HEIGHT = 512
 #                                                     " one click on the \"Clean image\" button first")
 
 
-# def load_left_image():
-#     global left_image
-#     loaded_image = load_image(0, 0)
-#     if loaded_image is not None:
-#         left_image = loaded_image
 
-
-# def load_right_image():
-#     global right_image
-#     loaded_image = load_image(0, 1)
-#     if loaded_image is not None:
-#         right_image = loaded_image
 
 
 
@@ -133,25 +122,6 @@ def create_function_menu(menubar):
     #                           grey_level_histogram_wrapper(current_image, WIDTH, HEIGHT))
 
 
-# def create_operations_menu(menubar):
-#     operation_menu = Menu(menubar, tearoff=0)
-#     menubar.add_cascade(label="Operations", menu=operation_menu)
-#     operation_menu.add_command(label="Add", command=generate_add_operation_input)
-#     subtract_menu = Menu(operation_menu, tearoff=0)
-#     operation_menu.add_cascade(label="Subtract", menu=subtract_menu)
-#     subtract_menu.add_command(label="Color", command=generate_subtract_colored_operation_input)
-#     subtract_menu.add_command(label="B&W", command=generate_subtract_grey_operation_input)
-#     multiply_menu = Menu(operation_menu, tearoff=0)
-#     operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
-#     multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
-#     multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
-#     operation_menu.add_command(label="Copy", command=generate_copy_sub_image_input)
-#     negative_menu = Menu(operation_menu, tearoff=0)
-#     operation_menu.add_cascade(label="Negative", menu=negative_menu)
-#     negative_menu.add_command(label="Colored Negative", command=lambda:
-#                               colored_negative_wrapper(current_image, WIDTH, HEIGHT))
-#     negative_menu.add_command(label="Grey Negative", command=lambda:
-#                               grey_negative_wrapper(current_image, WIDTH, HEIGHT))
 
 
 def create_filters_menu(menubar):
@@ -318,38 +288,6 @@ def save_grey_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
     img.save(file_path)
-
-
-# def generate_binary_operations_input():
-#     if current_image is not None or image_to_copy is not None:
-#         reset_parameters()
-#     else:
-#         delete_widgets(buttons_frame)
-#     image_1_button = ttk.Button(buttons_frame, text="Load Image 1", command=load_left_image)
-#     image_2_button = ttk.Button(buttons_frame, text="Load Image 2", command=load_right_image)
-#     image_1_button.grid(row=0, column=0)
-#     image_2_button.grid(row=0, column=1)
-
-
-def binary_operation_validator(image_1, image_2):
-    if image_1 is None or image_2 is None:
-        return False
-    else:
-        return True
-
-
-def add_grey_image_wrapper(width_1, height_1, image_1, width_2, height_2, image_2):
-    if binary_operation_validator(image_1, image_2):
-        add_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
-    else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to add")
-
-
-# def generate_add_operation_input():
-#     generate_binary_operations_input()
-#     add_button = ttk.Button(buttons_frame, text="Add",
-#                         command=lambda: add_grey_image_wrapper(WIDTH, HEIGHT, left_image, WIDTH, HEIGHT, right_image))
-#     add_button.grid(row=1, column=0)
 
 
 def subtract_grey_image_wrapper(width, height, image_1, image_2):
@@ -669,6 +607,7 @@ class App:
         ImageMenu(menubar)
         PixelMenu(menubar)
         DrawMenu(menubar)
+        OperationsMenu(menubar)
         # create_operations_menu(menubar)
         # create_gradient_menu(menubar)
         # create_function_menu(menubar)
