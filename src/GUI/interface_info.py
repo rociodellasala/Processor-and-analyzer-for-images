@@ -103,3 +103,7 @@ class InterfaceInfo:
         self.clean_images()
         self.delete_widgets(self.image_frame)
 
+    def reset_parameters(self):
+        self.remove_images()
+        self.delete_widgets(self.buttons_frame)
+

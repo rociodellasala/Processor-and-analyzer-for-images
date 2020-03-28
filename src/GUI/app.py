@@ -613,10 +613,7 @@ def border_enhancement_filter_wrapper(image, width, height):
         border_enhancement_filter(image, width, height)
 
 
-#
-# def reset_parameters():
-#     remove_images()
-#     delete_widgets(buttons_frame)
+
 
 
 # root = Tk()
