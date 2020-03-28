@@ -1,5 +1,4 @@
 from tkinter import Menu, messagebox, ttk, Entry
-from PIL import ImageTk, Image
 from src.GUI import gui_constants as constants
 from src.GUI.image_menu import load_image
 from src.GUI.interface_info import InterfaceInfo
@@ -9,6 +8,8 @@ from image_operations import subtract_grey_images
 from image_operations import multiply_grey_images_with_scalar
 from image_operations import multiply_grey_images
 from image_operations import copy_pixels
+from image_operations import grey_image_negative
+from image_operations import colored_image_negative
 
 
 def load_left_image(interface):
@@ -182,8 +183,23 @@ def copy_pixels_wrapper(x_original, y_original, width_original, height_original,
         messagebox.showerror(title="Error", message="You must upload two images to copy one into another")
 
 
+def grey_negative_wrapper(image, width, height):
+    if image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
+    else:
+        grey_image_negative(image, width, height)
+
+
+def colored_negative_wrapper(image, width, height):
+    if image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
+    else:
+        colored_image_negative(image, width, height)
+
+
 class OperationsMenu:
     def __init__(self, menubar):
+        interface = InterfaceInfo.get_instance()
         operation_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Operations", menu=operation_menu)
         operation_menu.add_command(label="Add", command=generate_add_operation_input)
@@ -196,9 +212,9 @@ class OperationsMenu:
         multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
         multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
         operation_menu.add_command(label="Copy", command=generate_copy_sub_image_input)
-        # negative_menu = Menu(operation_menu, tearoff=0)
-        # operation_menu.add_cascade(label="Negative", menu=negative_menu)
-        # negative_menu.add_command(label="Colored Negative", command=lambda:
-        #                           colored_negative_wrapper(current_image, WIDTH, HEIGHT))
-        # negative_menu.add_command(label="Grey Negative", command=lambda:
-        #                           grey_negative_wrapper(current_image, WIDTH, HEIGHT))
+        negative_menu = Menu(operation_menu, tearoff=0)
+        operation_menu.add_cascade(label="Negative", menu=negative_menu)
+        negative_menu.add_command(label="Colored Negative", command=lambda:
+                                  colored_negative_wrapper(interface.current_image, constants.WIDTH, constants.HEIGHT))
+        negative_menu.add_command(label="Grey Negative", command=lambda:
+                                  grey_negative_wrapper(interface.current_image, constants.WIDTH, constants.HEIGHT))

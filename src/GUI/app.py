@@ -1,16 +1,10 @@
 # TODO remove extras
-from tkinter import *
-from tkinter import filedialog
-from tkinter import messagebox
-from tkinter.filedialog import asksaveasfilename
-from PIL import ImageTk, Image
-import numpy as np
+from tkinter import messagebox, ttk, Menu
+from PIL import Image
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
 from image_operations import dynamic_range_compression
-from image_operations import grey_image_negative
 from image_operations import grey_level_histogram
-from image_operations import colored_image_negative
 from image_operations import gamma_pow_function
 from image_operations import image_threshold
 from image_operations import image_equalization
@@ -23,17 +17,12 @@ from filters import weighted_median_filter
 from filters import median_filter
 from filters import gaussian_filter
 from filters import border_enhancement_filter
-from src.GUI import gui_constants as color
-from tkinter import ttk
 
 from src.GUI.draw_menu import DrawMenu
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
 from src.GUI.operations_menu import OperationsMenu
 from src.GUI.pixel_menu import PixelMenu
-
-WIDTH = 512
-HEIGHT = 512
 
 # def load_image(row, column):
 #     file_name = open_file_name()
@@ -200,26 +189,6 @@ def gamma_pow_function_wrapper(image, width, height, gamma):
 #         dynamic_range_compression(current_image, WIDTH, HEIGHT)
 #     else:
 #         messagebox.showerror(title="Error", message="You must upload an image to generate range compression")
-
-
-def save_grey_image(image, file_path):
-    img = Image.fromarray(image)
-    img = img.convert("I")
-    img.save(file_path)
-
-
-def grey_negative_wrapper(image, width, height):
-    if image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
-    else:
-        grey_image_negative(image, width, height)
-
-
-def colored_negative_wrapper(image, width, height):
-    if image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
-    else:
-        colored_image_negative(image, width, height)
 
 
 # def generate_image_threshold_input():
@@ -399,9 +368,6 @@ def border_enhancement_filter_wrapper(image, width, height):
         messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
     else:
         border_enhancement_filter(image, width, height)
-
-
-
 
 
 # root = Tk()
