@@ -63,4 +63,3 @@ class ImageMenu:
         image_menu.add_command(label="Save", command=save_image)
         image_menu.add_separator()
         image_menu.add_command(label="Exit", command=interface.root.quit)
-

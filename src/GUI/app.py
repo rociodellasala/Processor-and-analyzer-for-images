@@ -36,6 +36,7 @@ from tkinter import ttk
 
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
+from src.GUI.pixel_menu import PixelMenu
 
 WIDTH = 512
 HEIGHT = 512
@@ -102,17 +103,6 @@ def create_image_menu(menubar):
     # image_menu.add_command(label="Save", command=save_image)
     # image_menu.add_separator()
     # image_menu.add_command(label="Exit", command=root.quit)
-
-
-def create_pixel_menu(menubar):
-    pixel_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Pixel", menu=pixel_menu)
-
-    pixel_menu.add_command(label="Get")
-    pixel_menu.add_command(label="Modify")
-    # pixel_menu.add_command(label="Get", command=generate_get_pixel_input)
-    # pixel_menu.add_command(label="Modify", command=generate_modify_pixel_input)
-
 
 def create_draw_menu(menubar):
     draw_menu = Menu(menubar, tearoff=0)
@@ -203,59 +193,6 @@ def create_noise_menu(menubar):
     # noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)
     # noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)
     # noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
-
-
-
-
-
-
-# def generate_get_pixel_input():
-#     interface = Interface.get_instance()
-#     if current_image is not None:
-#         delete_widgets(buttons_frame)
-#         ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=0, column=0)
-#         ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=1, column=0)
-#         x = Entry(buttons_frame)
-#         y = Entry(buttons_frame)
-#         x.grid(row=0, column=1)
-#         y.grid(row=1, column=1)
-#         get_pixel_button = ttk.Button(buttons_frame,
-#                                       text="Get Value", command=lambda: get_pixel_value(x.get(), y.get()))
-#         get_pixel_button.grid(row=2, column=0)
-#     else:
-#         messagebox.showerror(title="Error", message="You must upload an image to get the value of a pixel")
-
-
-# def get_pixel_value(x, y):
-#     px = current_image.load()
-#     ttk.Label(buttons_frame, text=px[int(y), int(x)], background=color.TOP_COLOR).grid(row=2, column=1)
-
-
-# def generate_modify_pixel_input():
-#     if current_image is not None:
-#         delete_widgets(buttons_frame)
-#         ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=0, column=0)
-#         ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=1, column=0)
-#         ttk.Label(buttons_frame, text="Value", background=color.TOP_COLOR).grid(row=0, column=2)
-#         x = Entry(buttons_frame)
-#         y = Entry(buttons_frame)
-#         value = Entry(buttons_frame)
-#         x.grid(row=0, column=1)
-#         y.grid(row=1, column=1)
-#         value.grid(row=0, column=3)
-#         modify_pixel_button = ttk.Button(buttons_frame, text="Set Value",
-#                                      command=lambda: modify_pixel_value(int(x.get()), int(y.get()), int(value.get())))
-#         modify_pixel_button.grid(row=2, column=0)
-#     else:
-#         messagebox.showerror(title="Error", message="You must upload an image to modify the value of a pixel")
-
-
-# def modify_pixel_value(x, y, value):
-#     px = current_image.load()
-#     px[int(x), int(y)] = value
-#     global save_path
-#     current_image.save(save_path + "pixel_modification.png")
-#     current_image.show()
 
 
 # def generate_rectangle_input():
@@ -795,6 +732,7 @@ class App:
         menubar = Menu(root)
         root.config(menu=menubar)
         ImageMenu(menubar)
+        PixelMenu(menubar)
         # create_pixel_menu(menubar)
         # # create_operations_menu(menubar)
         # create_draw_menu(menubar)
