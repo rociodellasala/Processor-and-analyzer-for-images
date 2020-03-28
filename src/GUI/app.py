@@ -288,7 +288,6 @@ class App:
         OperationsMenu(menubar)
         GradientMenu(menubar)
         FunctionMenu(menubar)
-        # create_function_menu(menubar)
         # create_noise_menu(menubar)
         # create_filters_menu(menubar)
 
