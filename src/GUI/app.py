@@ -1,8 +1,5 @@
 # TODO remove extras
 from tkinter import messagebox, ttk, Menu
-from PIL import Image
-from image_generator import gray_faded_image
-from image_generator import color_faded_image
 from image_operations import dynamic_range_compression
 from image_operations import grey_level_histogram
 from image_operations import gamma_pow_function
@@ -19,6 +16,7 @@ from filters import gaussian_filter
 from filters import border_enhancement_filter
 
 from src.GUI.draw_menu import DrawMenu
+from src.GUI.gradient_menu import GradientMenu
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
 from src.GUI.operations_menu import OperationsMenu
@@ -56,16 +54,6 @@ from src.GUI.pixel_menu import PixelMenu
 #     else:
 #         messagebox.showerror(title="Error", message="You can't upload more than two images. If you want to change"
 #                                                     " one click on the \"Clean image\" button first")
-
-
-def create_gradient_menu(menubar):
-    gradient_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Gradient", menu=gradient_menu)
-
-    gradient_menu.add_command(label="Gray")
-    gradient_menu.add_command(label="Color")
-    # gradient_menu.add_command(label="Gray", command=generate_gray_fading_input)
-    # gradient_menu.add_command(label="Color", command=generate_color_fading_input)
 
 
 def create_function_menu(menubar):
@@ -116,45 +104,6 @@ def create_noise_menu(menubar):
     # noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)
     # noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)
     # noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
-
-
-# def generate_gray_fading_input():
-#     clean_images()
-#     delete_widgets(buttons_frame)
-#     delete_widgets(image_frame)
-#     ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=0)
-#     ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=0)
-#     image_width = Entry(buttons_frame)
-#     image_height = Entry(buttons_frame)
-#     image_width.grid(row=0, column=1)
-#     image_height.grid(row=1, column=1)
-#     generate_gray_fading_button = ttk.Button(buttons_frame, text="Show", command=lambda:
-#     gray_faded_image(int(image_width.get()), int(image_height.get())))
-#     generate_gray_fading_button.grid(row=3, column=0)
-
-
-# def generate_color_fading_input():
-#     clean_images()
-#     delete_widgets(buttons_frame)
-#     delete_widgets(image_frame)
-#     ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=0)
-#     ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=0)
-#     red = BooleanVar()
-#     green = BooleanVar()
-#     blue = BooleanVar()
-#     Checkbutton(buttons_frame, text="Red", variable=red, background=color.TOP_COLOR).grid(row=2, column=0)
-#     Checkbutton(buttons_frame, text="Green", variable=green, background=color.TOP_COLOR).grid(row=2, column=1)
-#     Checkbutton(buttons_frame, text="Blue", variable=blue, background=color.TOP_COLOR).grid(row=2, column=2)
-#     image_width = Entry(buttons_frame)
-#     image_height = Entry(buttons_frame)
-#     image_width.grid(row=0, column=1)
-#     image_height.grid(row=1, column=1)
-#     generate_gray_fading_button = ttk.Button(buttons_frame, text="Show",
-#                                          command=lambda: color_faded_image(int(image_width.get()),
-#                                                                            int(image_height.get()),
-#                                                                            red.get(), green.get(),
-#                                                                            blue.get()))
-#     generate_gray_fading_button.grid(row=3, column=0)
 
 
 def gamma_pow_function_wrapper(image, width, height, gamma):
@@ -424,7 +373,7 @@ class App:
         PixelMenu(menubar)
         DrawMenu(menubar)
         OperationsMenu(menubar)
-        # create_operations_menu(menubar)
+        GradientMenu(menubar)
         # create_gradient_menu(menubar)
         # create_function_menu(menubar)
         # create_noise_menu(menubar)
