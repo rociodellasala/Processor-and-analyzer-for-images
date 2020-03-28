@@ -6,7 +6,6 @@ from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
 import numpy as np
 from read_raw_image import read_raw_image
-from image_generator import generate_rectangle
 from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
@@ -34,6 +33,7 @@ from filters import border_enhancement_filter
 from src.GUI import gui_constants as color
 from tkinter import ttk
 
+from src.GUI.draw_menu import DrawMenu
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
 from src.GUI.pixel_menu import PixelMenu
@@ -103,15 +103,6 @@ def create_image_menu(menubar):
     # image_menu.add_command(label="Save", command=save_image)
     # image_menu.add_separator()
     # image_menu.add_command(label="Exit", command=root.quit)
-
-def create_draw_menu(menubar):
-    draw_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Draw", menu=draw_menu)
-
-    draw_menu.add_command(label="Rectangle")
-    draw_menu.add_command(label="Circle")
-    # draw_menu.add_command(label="Rectangle", command=generate_rectangle_input)
-    # draw_menu.add_command(label="Circle", command=generate_circle_input)
 
 
 def create_gradient_menu(menubar):
@@ -193,59 +184,6 @@ def create_noise_menu(menubar):
     # noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)
     # noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)
     # noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
-
-
-# def generate_rectangle_input():
-#     clean_images()
-#     delete_widgets(buttons_frame)
-#     delete_widgets(image_frame)
-#     ttk.Label(buttons_frame, text="Rectangle width", background=color.TOP_COLOR).grid(row=0, column=0)
-#     ttk.Label(buttons_frame, text="Rectangle height", background=color.TOP_COLOR).grid(row=1, column=0)
-#     ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=2)
-#     ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=2)
-#     width = Entry(buttons_frame)
-#     height = Entry(buttons_frame)
-#     image_width = Entry(buttons_frame)
-#     image_height = Entry(buttons_frame)
-#     radio_var = BooleanVar()
-#     radio_var.set(True)
-#     Radiobutton(buttons_frame, text="Empty", value=False, variable=radio_var,
-#                 background=color.TOP_COLOR).grid(row=1, column=4)
-#     Radiobutton(buttons_frame, text="Filled", value=True, variable=radio_var,
-#                 background=color.TOP_COLOR).grid(row=0, column=4)
-#     width.grid(row=0, column=1)
-#     height.grid(row=1, column=1)
-#     image_width.grid(row=0, column=3)
-#     image_height.grid(row=1, column=3)
-#     modify_pixel_button = ttk.Button(buttons_frame, text="Draw", command=lambda:
-#     generate_rectangle("rectangle.png", int(image_width.get()), int(image_height.get()), int(width.get()),
-#                        int(height.get()), radio_var.get()))
-#     modify_pixel_button.grid(row=3, column=0)
-
-
-# def generate_circle_input():
-#     clean_images()
-#     delete_widgets(buttons_frame)
-#     delete_widgets(image_frame)
-#     ttk.Label(buttons_frame, text="Radius", background=color.TOP_COLOR).grid(row=0, column=2)
-#     ttk.Label(buttons_frame, text="Image width", background=color.TOP_COLOR).grid(row=0, column=0)
-#     ttk.Label(buttons_frame, text="Image height", background=color.TOP_COLOR).grid(row=1, column=0)
-#     radius = Entry(buttons_frame)
-#     image_width = Entry(buttons_frame)
-#     image_height = Entry(buttons_frame)
-#     radio_var = BooleanVar()
-#     radio_var.set(True)
-#     Radiobutton(buttons_frame, text="Filled", value=True,
-#                 variable=radio_var, background=color.TOP_COLOR).grid(row=0, column=4)
-#     Radiobutton(buttons_frame, text="Empty", value=False,
-#                 variable=radio_var, background=color.TOP_COLOR).grid(row=1, column=4)
-#     radius.grid(row=0, column=3)
-#     image_width.grid(row=0, column=1)
-#     image_height.grid(row=1, column=1)
-#     modify_pixel_button = ttk.Button(buttons_frame, text="Draw", command=lambda:
-#     generate_circle("circle.png", int(image_width.get()), int(image_height.get()),
-#                     int(radius.get()), radio_var.get()))
-#     modify_pixel_button.grid(row=3, column=0)
 
 
 # def generate_gray_fading_input():
@@ -733,9 +671,9 @@ class App:
         root.config(menu=menubar)
         ImageMenu(menubar)
         PixelMenu(menubar)
-        # create_pixel_menu(menubar)
-        # # create_operations_menu(menubar)
+        DrawMenu(menubar)
         # create_draw_menu(menubar)
+        # create_operations_menu(menubar)
         # create_gradient_menu(menubar)
         # create_function_menu(menubar)
         # create_noise_menu(menubar)
