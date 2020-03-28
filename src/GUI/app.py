@@ -1,10 +1,5 @@
 # TODO remove extras
 from tkinter import messagebox, ttk, Menu
-from image_operations import dynamic_range_compression
-from image_operations import grey_level_histogram
-from image_operations import gamma_pow_function
-from image_operations import image_threshold
-from image_operations import image_equalization
 from noise_generators import gaussian_noise_generator
 from noise_generators import rayleigh_noise_generator
 from noise_generators import exponential_noise_generator
@@ -16,6 +11,7 @@ from filters import gaussian_filter
 from filters import border_enhancement_filter
 
 from src.GUI.draw_menu import DrawMenu
+from src.GUI.function_menu import FunctionMenu
 from src.GUI.gradient_menu import GradientMenu
 from src.GUI.image_menu import ImageMenu
 from src.GUI.interface_info import InterfaceInfo
@@ -56,24 +52,6 @@ from src.GUI.pixel_menu import PixelMenu
 #                                                     " one click on the \"Clean image\" button first")
 
 
-def create_function_menu(menubar):
-    function_menu = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Function", menu=function_menu)
-
-    function_menu.add_command(label="Gamma")
-    function_menu.add_command(label="Dynamic Range Compression")
-    function_menu.add_command(label="Threshold")
-    function_menu.add_command(label="Equalization")
-    function_menu.add_command(label="Grey Histogram")
-    # function_menu.add_command(label="Gamma", command=generate_gamma_input)
-    # function_menu.add_command(label="Dynamic Range Compression", command=generate_range_compression_input)
-    # function_menu.add_command(label="Threshold", command=generate_image_threshold_input)
-    # function_menu.add_command(label="Equalization", command=lambda:
-    #                         equalized_image_wrapper(current_image, WIDTH, HEIGHT))
-    # function_menu.add_command(label="Grey Histogram", command=lambda:
-    #                           grey_level_histogram_wrapper(current_image, WIDTH, HEIGHT))
-
-
 def create_filters_menu(menubar):
     filters_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Filters", menu=filters_menu)
@@ -104,71 +82,6 @@ def create_noise_menu(menubar):
     # noise_menu.add_command(label="Rayleigh", command=generate_rayleigh_noise_input)
     # noise_menu.add_command(label="Exponential", command=generate_exponential_noise_input)
     # noise_menu.add_command(label="Salt and Pepper", command=generate_salt_and_pepper_noise_input)
-
-
-def gamma_pow_function_wrapper(image, width, height, gamma):
-    error = False
-    try:
-        gamma_value = float(gamma)
-    except ValueError:
-        error = True
-        messagebox.showerror(title="Error", message="You need to insert a valid gamma")
-    if (not error) and image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to apply gamma")
-    elif not error:
-        gamma_pow_function(image, width, height, gamma_value)
-
-
-# def generate_gamma_input():
-#     delete_widgets(buttons_frame)
-#     if current_image is not None:
-#         ttk.Label(buttons_frame, text="Gamma", background=color.TOP_COLOR).grid(row=0, column=0)
-#         gamma = Entry(buttons_frame)
-#         gamma.grid(row=0, column=1)
-#         apply_button = ttk.Button(buttons_frame, text="Apply",
-#                               command=lambda: gamma_pow_function_wrapper(current_image, WIDTH, HEIGHT, gamma.get()))
-#         apply_button.grid(row=1, column=0)
-#     else:
-#         messagebox.showerror(title="Error", message="You must upload an image to apply gamma")
-
-
-# def generate_range_compression_input():
-#     delete_widgets(buttons_frame)
-#     if current_image is not None:
-#         dynamic_range_compression(current_image, WIDTH, HEIGHT)
-#     else:
-#         messagebox.showerror(title="Error", message="You must upload an image to generate range compression")
-
-
-# def generate_image_threshold_input():
-#     delete_widgets(buttons_frame)
-#     if current_image is not None:
-#         ttk.Label(buttons_frame, text="Threshold", background=color.TOP_COLOR).grid(row=0, column=0)
-#         threshold = Entry(buttons_frame)
-#         threshold.grid(row=0, column=1)
-#         apply_threshold = ttk.Button(buttons_frame, text="Apply",
-#                                  command=lambda: image_threshold(current_image, WIDTH, HEIGHT, float(threshold.get())))
-#         apply_threshold.grid(row=1, column=0)
-#     else:
-#         messagebox.showerror(title="Error", message="You must upload an image to apply a threshold")
-
-
-# def equalized_image_wrapper(image, width, height):
-#     if image is not None:
-#         delete_widgets(buttons_frame)
-#         image_equalization(image, width, height)
-#     else:
-#         reset_parameters()
-#         messagebox.showerror(title="Error", message="You must upload an image to get the equalized histogram")
-
-
-def grey_level_histogram_wrapper(image, width, height):
-    if image is not None:
-        delete_widgets(buttons_frame)
-        grey_level_histogram(image, width, height)
-    else:
-        reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image to get the equalized histogram")
 
 
 # def generate_gaussian_noise_input():
@@ -374,6 +287,7 @@ class App:
         DrawMenu(menubar)
         OperationsMenu(menubar)
         GradientMenu(menubar)
+        FunctionMenu(menubar)
         # create_function_menu(menubar)
         # create_noise_menu(menubar)
         # create_filters_menu(menubar)
