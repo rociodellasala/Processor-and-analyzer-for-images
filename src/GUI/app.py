@@ -669,7 +669,6 @@ class App:
         ImageMenu(menubar)
         PixelMenu(menubar)
         DrawMenu(menubar)
-        # create_draw_menu(menubar)
         # create_operations_menu(menubar)
         # create_gradient_menu(menubar)
         # create_function_menu(menubar)

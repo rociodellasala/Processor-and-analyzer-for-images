@@ -1,41 +1,6 @@
-# TODO remove extras
 from tkinter import *
-from tkinter import filedialog
-from tkinter import messagebox
-from tkinter.filedialog import asksaveasfilename
-from PIL import ImageTk, Image
-import numpy as np
-from read_raw_image import read_raw_image
-from image_generator import generate_rectangle
-from image_generator import generate_circle
-from image_generator import gray_faded_image
-from image_generator import color_faded_image
-from image_operations import add_grey_images
-from image_operations import subtract_grey_images
-from image_operations import subtract_colored_images
-from image_operations import multiply_grey_images_with_scalar
-from image_operations import multiply_grey_images
-from image_operations import dynamic_range_compression
-from image_operations import grey_image_negative
-from image_operations import grey_level_histogram
-from image_operations import colored_image_negative
-from image_operations import gamma_pow_function
-from image_operations import image_threshold
-from image_operations import image_equalization
-from noise_generators import gaussian_noise_generator
-from noise_generators import rayleigh_noise_generator
-from noise_generators import exponential_noise_generator
-from noise_generators import salt_and_pepper_noise_generator
-from filters import media_filter
-from filters import weighted_median_filter
-from filters import median_filter
-from filters import gaussian_filter
-from filters import border_enhancement_filter
 from src.GUI import gui_constants as color
 from tkinter import ttk
-
-WIDTH = 512
-HEIGHT = 512
 
 
 class InterfaceInfo:
