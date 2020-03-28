@@ -5,12 +5,8 @@ from tkinter import messagebox
 from tkinter.filedialog import asksaveasfilename
 from PIL import ImageTk, Image
 import numpy as np
-from read_raw_image import read_raw_image
-from image_generator import generate_circle
 from image_generator import gray_faded_image
 from image_generator import color_faded_image
-from image_operations import multiply_grey_images_with_scalar
-from image_operations import multiply_grey_images
 from image_operations import dynamic_range_compression
 from image_operations import grey_image_negative
 from image_operations import grey_level_histogram
@@ -265,46 +261,6 @@ def save_grey_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
     img.save(file_path)
-
-
-def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, image_2):
-    if binary_operation_validator(image_1, image_2):
-        multiply_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
-    else:
-        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to multiply")
-
-
-# def generate_multiply_images_operation_input():
-#     generate_binary_operations_input()
-#     multiply_button = ttk.Button(buttons_frame, text="Multiply",
-#                              command=lambda: multiply_grey_images_wrapper(WIDTH, HEIGHT, left_image, WIDTH, HEIGHT, right_image))
-#     multiply_button.grid(row=1, column=0)
-
-
-def multiply_grey_images_with_scalar_wrapper(width, height, image, scalar):
-    error = False
-    try:
-        scalar_value = float(scalar)
-    except ValueError:
-        error = True
-        messagebox.showerror(title="Error", message="You need to insert a valid scalar to multiply")
-    if (not error) and image is None:
-        messagebox.showerror(title="Error", message="You need to upload an image to multiply")
-    elif not error:
-        multiply_grey_images_with_scalar(width, height, image, scalar_value)
-
-
-# def generate_multiply_by_scalar_input():
-#     reset_parameters()
-#     load_image_button = ttk.Button(buttons_frame, text="Load Image",
-#                                    command=load_left_image).grid(row=0, column=0)
-#     ttk.Label(buttons_frame, text="Scalar", background=color.TOP_COLOR).grid(row=1, column=0)
-#     scalar = Entry(buttons_frame)
-#     scalar.grid(row=1, column=1)
-#     multiply_button = ttk.Button(buttons_frame, text="Multiply",
-#                              command=lambda: multiply_grey_images_with_scalar_wrapper(WIDTH, HEIGHT, left_image,
-#                                                                                       scalar.get()))
-#     multiply_button.grid(row=2, column=0)
 
 
 def grey_negative_wrapper(image, width, height):

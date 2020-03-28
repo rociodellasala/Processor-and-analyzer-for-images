@@ -1,14 +1,13 @@
-from tkinter import Menu, messagebox, ttk
-from tkinter.filedialog import asksaveasfilename
+from tkinter import Menu, messagebox, ttk, Entry
 from PIL import ImageTk, Image
-from image_access import open_file_name
-from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.image_menu import load_image
 from src.GUI.interface_info import InterfaceInfo
 from image_operations import add_grey_images
 from image_operations import subtract_colored_images
 from image_operations import subtract_grey_images
+from image_operations import multiply_grey_images_with_scalar
+from image_operations import multiply_grey_images
 
 
 def load_left_image(interface):
@@ -94,6 +93,53 @@ def subtract_grey_image_wrapper(width, height, image_1, image_2):
         messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to subtract")
 
 
+def generate_multiply_by_scalar_input():
+    interface = InterfaceInfo.get_instance()
+    interface.reset_parameters()
+    load_image_button = ttk.Button(interface.buttons_frame, text="Load Image",
+                                   command=lambda: load_left_image(interface))
+    load_image_button.grid(row=0, column=0)
+    ttk.Label(interface.buttons_frame, text="Scalar", background=constants.TOP_COLOR).grid(row=1, column=0)
+    scalar = Entry(interface.buttons_frame)
+    scalar.grid(row=1, column=1)
+    multiply_button = ttk.Button(interface.buttons_frame, text="Multiply",
+                                 command=lambda: multiply_grey_images_with_scalar_wrapper(constants.WIDTH,
+                                                                                          constants.HEIGHT,
+                                                                                          interface.left_image,
+                                                                                          scalar.get()))
+    multiply_button.grid(row=2, column=0)
+
+
+def multiply_grey_images_with_scalar_wrapper(width, height, image, scalar):
+    error = False
+    try:
+        scalar_value = float(scalar)
+    except ValueError:
+        error = True
+        messagebox.showerror(title="Error", message="You need to insert a valid scalar to multiply")
+    if (not error) and image is None:
+        messagebox.showerror(title="Error", message="You need to upload an image to multiply")
+    elif not error:
+        multiply_grey_images_with_scalar(width, height, image, scalar_value)
+
+
+def generate_multiply_images_operation_input():
+    interface = InterfaceInfo.get_instance()
+    generate_binary_operations_input(interface)
+    multiply_button = ttk.Button(interface.buttons_frame, text="Multiply",
+                                 command=lambda: multiply_grey_images_wrapper(constants.WIDTH, constants.HEIGHT,
+                                                                              interface.left_image, constants.WIDTH,
+                                                                              constants.HEIGHT, interface.right_image))
+    multiply_button.grid(row=1, column=0)
+
+
+def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, image_2):
+    if binary_operation_validator(image_1, image_2):
+        multiply_grey_images(width_1, height_1, image_1, width_2, height_2, image_2)
+    else:
+        messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to multiply")
+
+
 class OperationsMenu:
     def __init__(self, menubar):
         operation_menu = Menu(menubar, tearoff=0)
@@ -103,10 +149,10 @@ class OperationsMenu:
         operation_menu.add_cascade(label="Subtract", menu=subtract_menu)
         subtract_menu.add_command(label="Color", command=generate_subtract_colored_operation_input)
         subtract_menu.add_command(label="B&W", command=generate_subtract_grey_operation_input)
-        # multiply_menu = Menu(operation_menu, tearoff=0)
-        # operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
-        # multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
-        # multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
+        multiply_menu = Menu(operation_menu, tearoff=0)
+        operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
+        multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
+        multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
         # operation_menu.add_command(label="Copy", command=generate_copy_sub_image_input)
         # negative_menu = Menu(operation_menu, tearoff=0)
         # operation_menu.add_cascade(label="Negative", menu=negative_menu)
