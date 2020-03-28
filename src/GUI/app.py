@@ -202,61 +202,6 @@ def gamma_pow_function_wrapper(image, width, height, gamma):
 #         messagebox.showerror(title="Error", message="You must upload an image to generate range compression")
 
 
-# def generate_copy_sub_image_input():
-#     generate_binary_operations_input()
-#     ttk.Label(buttons_frame, text="Original image", background=color.TOP_COLOR).grid(row=1, column=0)
-#     ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=2, column=0)
-#     ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=3, column=0)
-#     ttk.Label(buttons_frame, text="Width", background=color.TOP_COLOR).grid(row=2, column=2)
-#     ttk.Label(buttons_frame, text="Height", background=color.TOP_COLOR).grid(row=3, column=2)
-#     ttk.Label(buttons_frame, text="Image to copy", background=color.TOP_COLOR).grid(row=1, column=4)
-#     ttk.Label(buttons_frame, text="X", background=color.TOP_COLOR).grid(row=2, column=4)
-#     ttk.Label(buttons_frame, text="Y", background=color.TOP_COLOR).grid(row=3, column=4)
-#     x_original = Entry(buttons_frame)
-#     y_original = Entry(buttons_frame)
-#     width_original = Entry(buttons_frame)
-#     height_original = Entry(buttons_frame)
-#     x_copy = Entry(buttons_frame)
-#     y_copy = Entry(buttons_frame)
-#     x_original.grid(row=2, column=1)
-#     y_original.grid(row=3, column=1)
-#     width_original.grid(row=2, column=3)
-#     height_original.grid(row=3, column=3)
-#     x_copy.grid(row=2, column=5)
-#     y_copy.grid(row=3, column=5)
-#     modify_pixel_button = ttk.Button(buttons_frame, text="Copy",
-#                                  command=lambda: copy_pixels(int(x_original.get()),
-#                                                              int(y_original.get()),
-#                                                              int(width_original.get()), int(height_original.get()),
-#                                                              int(x_copy.get()) - 1, int(y_copy.get()),
-#                                                              left_image, right_image))
-#     #TODO validate cast
-#     modify_pixel_button.grid(row=4, column=0)
-
-
-def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy, image_1, image_2):
-    if binary_operation_validator(image_1, image_2):
-        pixels = image_1.load()
-        copy = image_2.load()
-        new_image = np.zeros((WIDTH, HEIGHT))
-        for y in range(0, HEIGHT):
-            for x in range(0, WIDTH):
-                new_image[y, x] = pixels[x, y]
-        y_copy_aux = y_copy
-        for x in range(x_original, x_original + width_original):
-            x_copy += 1
-            y_copy = y_copy_aux
-            for y in range(y_original, y_original + height_original):
-                if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
-                    new_image[y, x] = copy[x_copy, y_copy]
-                    y_copy += 1
-        save_grey_image(new_image, save_generated_path + "copy_image.ppm")
-        img = Image.fromarray(new_image)
-        img.show()
-    else:
-        messagebox.showerror(title="Error", message="You must upload two images to copy one into another")
-
-
 def save_grey_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")

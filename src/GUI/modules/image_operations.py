@@ -341,6 +341,27 @@ def image_equalization(image, width, height):
     grey_level_histogram(img, width, height)
 
 
+def copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy, image_1, image_2,
+                final_image_width, final_image_height):
+    pixels = image_1.load()
+    copy = image_2.load()
+    new_image = np.zeros((final_image_width, final_image_height))
+    for y in range(0, final_image_height):
+        for x in range(0, final_image_width):
+            new_image[y, x] = pixels[x, y]
+    y_copy_aux = y_copy
+    for x in range(x_original, x_original + width_original):
+        x_copy += 1
+        y_copy = y_copy_aux
+        for y in range(y_original, y_original + height_original):
+            if x < 512 and y < 512 and x_copy < 512 and y_copy < 512:
+                new_image[y, x] = copy[x_copy, y_copy]
+                y_copy += 1
+    save_image(new_image, save_path + "copy_image.ppm")
+    img = Image.fromarray(new_image)
+    img.show()
+
+
 def save_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")

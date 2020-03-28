@@ -8,6 +8,7 @@ from image_operations import subtract_colored_images
 from image_operations import subtract_grey_images
 from image_operations import multiply_grey_images_with_scalar
 from image_operations import multiply_grey_images
+from image_operations import copy_pixels
 
 
 def load_left_image(interface):
@@ -140,6 +141,47 @@ def multiply_grey_images_wrapper(width_1, height_1, image_1, width_2, height_2, 
         messagebox.showerror(title="Error", message="You need to upload image 1 and 2 to multiply")
 
 
+def generate_copy_sub_image_input():
+    interface = InterfaceInfo.get_instance()
+    generate_binary_operations_input(interface)
+    ttk.Label(interface.buttons_frame, text="Original image", background=constants.TOP_COLOR).grid(row=1, column=0)
+    ttk.Label(interface.buttons_frame, text="X", background=constants.TOP_COLOR).grid(row=2, column=0)
+    ttk.Label(interface.buttons_frame, text="Y", background=constants.TOP_COLOR).grid(row=3, column=0)
+    ttk.Label(interface.buttons_frame, text="Width", background=constants.TOP_COLOR).grid(row=2, column=2)
+    ttk.Label(interface.buttons_frame, text="Height", background=constants.TOP_COLOR).grid(row=3, column=2)
+    ttk.Label(interface.buttons_frame, text="Image to copy", background=constants.TOP_COLOR).grid(row=1, column=4)
+    ttk.Label(interface.buttons_frame, text="X", background=constants.TOP_COLOR).grid(row=2, column=4)
+    ttk.Label(interface.buttons_frame, text="Y", background=constants.TOP_COLOR).grid(row=3, column=4)
+    x_original = Entry(interface.buttons_frame)
+    y_original = Entry(interface.buttons_frame)
+    width_original = Entry(interface.buttons_frame)
+    height_original = Entry(interface.buttons_frame)
+    x_copy = Entry(interface.buttons_frame)
+    y_copy = Entry(interface.buttons_frame)
+    x_original.grid(row=2, column=1)
+    y_original.grid(row=3, column=1)
+    width_original.grid(row=2, column=3)
+    height_original.grid(row=3, column=3)
+    x_copy.grid(row=2, column=5)
+    y_copy.grid(row=3, column=5)
+    modify_pixel_button = ttk.Button(interface.buttons_frame, text="Copy",
+                                     command=lambda: copy_pixels_wrapper(int(x_original.get()),
+                                                                 int(y_original.get()),int(width_original.get()),
+                                                                 int(height_original.get()), int(x_copy.get()) - 1,
+                                                                 int(y_copy.get()),interface.left_image,
+                                                                 interface.right_image))
+    #TODO validate cast
+    modify_pixel_button.grid(row=4, column=0)
+
+
+def copy_pixels_wrapper(x_original, y_original, width_original, height_original, x_copy, y_copy, image_1, image_2):
+    if binary_operation_validator(image_1, image_2):
+        copy_pixels(x_original, y_original, width_original, height_original, x_copy, y_copy, image_1, image_2,
+                    constants.WIDTH, constants.HEIGHT)
+    else:
+        messagebox.showerror(title="Error", message="You must upload two images to copy one into another")
+
+
 class OperationsMenu:
     def __init__(self, menubar):
         operation_menu = Menu(menubar, tearoff=0)
@@ -153,7 +195,7 @@ class OperationsMenu:
         operation_menu.add_cascade(label="Multiply", menu=multiply_menu)
         multiply_menu.add_command(label="By scalar", command=generate_multiply_by_scalar_input)
         multiply_menu.add_command(label="Two images", command=generate_multiply_images_operation_input)
-        # operation_menu.add_command(label="Copy", command=generate_copy_sub_image_input)
+        operation_menu.add_command(label="Copy", command=generate_copy_sub_image_input)
         # negative_menu = Menu(operation_menu, tearoff=0)
         # operation_menu.add_cascade(label="Negative", menu=negative_menu)
         # negative_menu.add_command(label="Colored Negative", command=lambda:
