@@ -6,7 +6,7 @@ from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 
-from border_detectors import sobel_detection  # TODO remove
+from border_detectors import prewit_color_detection  # TODO remove
 
 
 def load_image(row, column):
@@ -37,7 +37,7 @@ def load_image_wrapper():
     interface.remove_images()
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
-        # sobel_detection(interface.current_image, constants.HEIGHT, constants.WIDTH)  # TODO remove
+        # prewit_color_detection(interface.current_image, constants.HEIGHT, constants.WIDTH)  # TODO remove
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:
