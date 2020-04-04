@@ -2,7 +2,7 @@ import numpy as np
 from math import pow, sqrt
 from PIL import Image
 from filters import get_convolution
-from image_operations import lineally_adjust_image_values, lineally_adjust_colored_image_values
+from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
 
 
 def prewit_detection(image, image_height, image_width):
@@ -53,12 +53,24 @@ def prewit_color_detection(image, image_height, image_width):
             new_image[y, x, 0] = sqrt(pow(horizontal_image[y, x, 0], 2) + pow(vertical_image[y, x, 0], 2))
             new_image[y, x, 1] = sqrt(pow(horizontal_image[y, x, 1], 2) + pow(vertical_image[y, x, 1], 2))
             new_image[y, x, 2] = sqrt(pow(horizontal_image[y, x, 2], 2) + pow(vertical_image[y, x, 2], 2))
-    save_colored_image(horizontal_image, save_path + "prewit_colored_horizontal_image.ppm")
-    save_colored_image(vertical_image, save_path + "prewit_colored_vertical_image.ppm")
-    save_colored_image(new_image, save_path + "prewit_colored_generated_image.ppm")
-    image_one = Image.fromarray(lineally_adjust_colored_image_values(horizontal_image, image_width, image_height), "RGB")
-    image_two = Image.fromarray(lineally_adjust_colored_image_values(vertical_image, image_width, image_height), "RGB")
-    image_three = Image.fromarray(lineally_adjust_colored_image_values(new_image, image_width, image_height), "RGB")
+    # red_horizontal = horizontal_image[:, :, 0]
+    # green_horizontal = horizontal_image[:, :, 1]
+    # blue_horizontal = horizontal_image[:, :, 2]
+    # Image.fromarray(lineally_adjust_image_values(red_horizontal, image_width, image_height)).show()
+    # Image.fromarray(lineally_adjust_image_values(green_horizontal, image_width, image_height)).show()
+    # Image.fromarray(lineally_adjust_image_values(blue_horizontal, image_width, image_height)).show()
+    # Image.fromarray(lineally_adjust_and_resize_colored_image_values(horizontal_image, image_width, image_height), "RGB").show()
+
+
+    save_colored_image(lineally_adjust_and_resize_colored_image_values(horizontal_image, image_width, image_height),
+                       save_path + "prewit_colored_horizontal_image.ppm")
+    save_colored_image(lineally_adjust_and_resize_colored_image_values(vertical_image, image_width, image_height),
+                        save_path + "prewit_colored_vertical_image.ppm")
+    save_colored_image(lineally_adjust_and_resize_colored_image_values(new_image, image_width, image_height),
+                        save_path + "prewit_colored_generated_image.ppm")
+    image_one = Image.fromarray(lineally_adjust_and_resize_colored_image_values(horizontal_image, image_width, image_height), "RGB")
+    image_two = Image.fromarray(lineally_adjust_and_resize_colored_image_values(vertical_image, image_width, image_height), "RGB")
+    image_three = Image.fromarray(lineally_adjust_and_resize_colored_image_values(new_image, image_width, image_height), "RGB")
     image_one.show()
     image_two.show()
     image_three.show()

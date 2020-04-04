@@ -181,6 +181,66 @@ def lineally_adjust_colored_image_values(pixels, width, height):
     return adjusted_image
 
 
+
+def lineally_adjust_and_resize_colored_image_values(pixels, width, height):
+    red_max_value = np.max(pixels[:, :, 0])
+    red_min_value = np.min(pixels[:, :, 0])
+    green_max_value = np.max(pixels[:, :, 1])
+    green_min_value = np.min(pixels[:, :, 1])
+    blue_max_value = np.max(pixels[:, :, 2])
+    blue_min_value = np.min(pixels[:, :, 2])
+    if red_max_value == red_min_value:
+        red_slope = 0
+    else:
+        red_slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (red_max_value - red_min_value)
+    if green_max_value == green_min_value:
+        green_slope = 0
+    else:
+        green_slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (green_max_value - green_min_value)
+    if blue_max_value == blue_min_value:
+        blue_slope = 0
+    else:
+        blue_slope = (MAX_PIXEL_VALUE - MIN_PIXEL_VALUE) / (blue_max_value - blue_min_value)
+    if red_max_value == red_min_value:
+        if red_max_value > MAX_PIXEL_VALUE:
+            red_constant = MAX_PIXEL_VALUE
+        elif red_min_value < MIN_PIXEL_VALUE:
+            red_constant = MIN_PIXEL_VALUE
+        else:
+            red_constant = red_max_value
+    else:
+        red_constant = -red_slope * red_min_value
+    if green_max_value == green_min_value:
+        if green_max_value > MAX_PIXEL_VALUE:
+            green_constant = MAX_PIXEL_VALUE
+        elif green_min_value < MIN_PIXEL_VALUE:
+            green_constant = MIN_PIXEL_VALUE
+        else:
+            green_constant = green_max_value
+    else:
+        green_constant = -green_slope * green_min_value
+    if blue_max_value == blue_min_value:
+        if blue_max_value > MAX_PIXEL_VALUE:
+            blue_constant = MAX_PIXEL_VALUE
+        elif blue_min_value < MIN_PIXEL_VALUE:
+            blue_constant = MIN_PIXEL_VALUE
+        else:
+            blue_constant = blue_max_value
+    else:
+        blue_constant = -blue_slope * blue_min_value
+    adjusted_image = np.zeros((height, width, 3), dtype=np.uint8)
+
+    for y in range(0, height):
+        for x in range(0, width):
+            current_red_value = int(pixels[x, y][0])
+            current_green_value = int(pixels[x, y][1])
+            current_blue_value = int(pixels[x, y][2])
+            adjusted_image[x, y, 0] = int(red_slope * current_red_value + red_constant)
+            adjusted_image[x, y, 1] = int(green_slope * current_green_value + green_constant)
+            adjusted_image[x, y, 0] = int(blue_slope * current_blue_value + blue_constant)
+    return adjusted_image
+
+
 def get_max_and_min_value(pixels, width, height):
     max_value = None
     min_value = None
