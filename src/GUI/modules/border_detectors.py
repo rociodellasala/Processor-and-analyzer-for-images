@@ -1,5 +1,5 @@
 import numpy as np
-from math import pow, sqrt
+from math import pow, sqrt, fabs
 from PIL import Image
 from filters import get_convolution
 from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
@@ -193,6 +193,37 @@ def laplacian_method(image, image_height, image_width):
     image.show()
 
 
+def laplacian_method_with_slope_evaluation(image, image_height, image_width):
+    pixels = np.array(image)
+    matrix = get_laplacian_matrix()
+    new_image = np.zeros((image_height, image_width))
+    window_y_center = 1
+    window_x_center = 1
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            new_image[y, x] = get_convolution(pixels, x, y, matrix, 3)
+    horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width)
+    vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width)
+    new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    save_image(new_image, save_path + "laplacian_generated_with_slope_image.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+
+
+def get_laplacian_matrix():
+    matrix = np.zeros((3, 3))
+    matrix[0, 0] = 0
+    matrix[0, 1] = -1
+    matrix[0, 2] = 0
+    matrix[1, 0] = -1
+    matrix[1, 1] = 4
+    matrix[1, 2] = -1
+    matrix[2, 0] = 0
+    matrix[2, 1] = -1
+    matrix[2, 2] = 0
+    return matrix
+
+
 def horizontal_zero_crossing(image, image_height, image_width):
     horizontal_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
@@ -231,6 +262,44 @@ def vertical_zero_crossing(image, image_height, image_width):
     return vertical_image
 
 
+def horizontal_zero_crossing_with_slope(image, image_height, image_width):
+    horizontal_image = np.zeros((image_height, image_width))
+    for y in range(0, image_height):
+        for x in range(0, image_width - 1):
+            value = image[y, x] * image[y, x + 1]
+            if value < 0:
+                horizontal_image[y, x] = int(fabs(image[y, x]) + fabs(image[y, x + 1]))
+            elif value == 0 and image[y, x] != 0:
+                if x + 2 < image_width:
+                    value = image[y, x + 2] * image[y, x]
+                    if value < 0:
+                        horizontal_image[y, x] = int(fabs(image[y, x]) + fabs(image[y, x + 2]))
+                    else:
+                        horizontal_image[y, x] = 0
+            else:
+                horizontal_image[y, x] = 0
+    return horizontal_image
+
+
+def vertical_zero_crossing_with_slope(image, image_height, image_width):
+    vertical_image = np.zeros((image_height, image_width))
+    for y in range(0, image_height - 1):
+        for x in range(0, image_width):
+            value = image[y, x] * image[y + 1, x]
+            if value < 0:
+                vertical_image[y, x] = int(fabs(image[y, x]) + fabs(image[y + 1, x]))
+            elif value == 0 and image[y, x] != 0:
+                if y + 2 < image_height:
+                    value = image[y + 2, x] * image[y, x]
+                    if value < 0:
+                        vertical_image[y, x] = int(fabs(image[y, x]) + fabs(image[y + 2, x]))
+                    else:
+                        vertical_image[y, x] = 0
+            else:
+                vertical_image[y, x] = 0
+    return vertical_image
+
+
 def and_sinthesis(horizontal_image, vertical_image, image_height, image_width):
     new_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
@@ -253,19 +322,12 @@ def or_sinthesis(horizontal_image, vertical_image, image_height, image_width):
     return new_image
 
 
-def get_laplacian_matrix():
-    matrix = np.zeros((3, 3))
-    matrix[0, 0] = 0
-    matrix[0, 1] = -1
-    matrix[0, 2] = 0
-    matrix[1, 0] = -1
-    matrix[1, 1] = 4
-    matrix[1, 2] = -1
-    matrix[2, 0] = 0
-    matrix[2, 1] = -1
-    matrix[2, 2] = 0
-    print(matrix)
-    return matrix
+def module_sinthesis(horizontal_image, vertical_image, image_height, image_width):
+    new_image = np.zeros((image_height, image_width))
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            new_image[y, x] = int(sqrt(pow(horizontal_image[y, x], 2) + pow(vertical_image[y, x], 2)))
+    return new_image
 
 
 def save_image(image, file_path):
