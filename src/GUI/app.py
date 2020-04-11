@@ -1,4 +1,5 @@
 from tkinter import messagebox, ttk, Menu
+
 from src.GUI.draw_menu import DrawMenu
 from src.GUI.filters_menu import FiltersMenu
 from src.GUI.function_menu import FunctionMenu
