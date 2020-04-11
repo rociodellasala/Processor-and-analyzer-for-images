@@ -227,13 +227,14 @@ def get_laplacian_matrix():
 def laplacian_gaussian_method(image, image_height, image_width, sigma):
     n = 2 * sigma + 1
     pixels = np.array(image)
-    matrix = get_laplacian_matrix(n, sigma)
+    matrix = get_laplacian_gaussian_matrix(n, sigma)
     new_image = np.zeros((image_height, image_width))
     window_y_center = int(n / 2)
     window_x_center = int(n / 2)
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, matrix, n)
+    #TODO fix black image is the result dont know why
     horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width)
     vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width)
     new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
@@ -249,6 +250,7 @@ def get_laplacian_gaussian_matrix(size, sigma):
     for y in range(0, size):
         for x in range(0, size):
             matrix[y, x] = gausian_laplacian_function(x - x_center, y - y_center, sigma)
+    print(matrix)
     return matrix
 
 
@@ -257,7 +259,7 @@ def gausian_laplacian_function(x, y, sigma):
     sigma_to_the_third = sigma_squared * sigma
     factor = - 1 / (sqrt(2 * pi) * sigma_to_the_third)
     expression = (x * x + y * y) / sigma_squared
-    return factor * (2 - expression) * exp(expression / 2)
+    return factor * (2 - expression) * exp(-expression / 2)
 
 
 def horizontal_zero_crossing(image, image_height, image_width):
