@@ -1,5 +1,5 @@
 import numpy as np
-from math import pow, sqrt, fabs
+from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
 from filters import get_convolution
 from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
@@ -222,6 +222,42 @@ def get_laplacian_matrix():
     matrix[2, 1] = -1
     matrix[2, 2] = 0
     return matrix
+
+
+def laplacian_gaussian_method(image, image_height, image_width, sigma):
+    n = 2 * sigma + 1
+    pixels = np.array(image)
+    matrix = get_laplacian_matrix(n, sigma)
+    new_image = np.zeros((image_height, image_width))
+    window_y_center = int(n / 2)
+    window_x_center = int(n / 2)
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            new_image[y, x] = get_convolution(pixels, x, y, matrix, n)
+    horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width)
+    vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width)
+    new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    save_image(new_image, save_path + "laplacian_gaussian_generated_with_slope_image.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+
+
+def get_laplacian_gaussian_matrix(size, sigma):
+    matrix = np.zeros((size, size))
+    x_center = int(size / 2)
+    y_center = int(size / 2)
+    for y in range(0, size):
+        for x in range(0, size):
+            matrix[y, x] = gausian_laplacian_function(x - x_center, y - y_center, sigma)
+    return matrix
+
+
+def gausian_laplacian_function(x, y, sigma):
+    sigma_squared = sigma * sigma
+    sigma_to_the_third = sigma_squared * sigma
+    factor = - 1 / (sqrt(2 * pi) * sigma_to_the_third)
+    expression = (x * x + y * y) / sigma_squared
+    return factor * (2 - expression) * exp(expression / 2)
 
 
 def horizontal_zero_crossing(image, image_height, image_width):
