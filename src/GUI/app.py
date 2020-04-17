@@ -9,6 +9,7 @@ from src.GUI.interface_info import InterfaceInfo
 from src.GUI.noise_menu import NoiseMenu
 from src.GUI.operations_menu import OperationsMenu
 from src.GUI.pixel_menu import PixelMenu
+from src.GUI.border_detection_menu import BorderDetectionMenu
 
 
 class App:
@@ -46,6 +47,7 @@ class App:
         FunctionMenu(menubar)
         NoiseMenu(menubar)
         FiltersMenu(menubar)
+        BorderDetectionMenu(menubar)
 
 
 app = App()
