@@ -249,7 +249,6 @@ def get_laplacian_gaussian_matrix(size, sigma):
     for y in range(0, size):
         for x in range(0, size):
             matrix[y, x] = gausian_laplacian_function(x - x_center, y - y_center, sigma)
-    print(matrix)
     return matrix
 
 
