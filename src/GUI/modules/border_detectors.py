@@ -187,7 +187,7 @@ def laplacian_method(image, image_height, image_width):
             new_image[y, x] = get_convolution(pixels, x, y, matrix, 3)
     horizontal_image = horizontal_zero_crossing(new_image, image_height, image_width)
     vertical_image = vertical_zero_crossing(new_image, image_height, image_width)
-    new_image = and_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    new_image = or_sinthesis(horizontal_image, vertical_image, image_height, image_width)
     save_image(new_image, save_path + "laplacian_generated_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
@@ -224,8 +224,8 @@ def get_laplacian_matrix():
     return matrix
 
 
-def laplacian_gaussian_method(image, image_height, image_width, sigma):
-    n = 2 * sigma + 1
+def laplacian_gaussian_method(image, image_height, image_width, sigma, threshold):
+    n = 6 * sigma + 1
     pixels = np.array(image)
     matrix = get_laplacian_gaussian_matrix(n, sigma)
     new_image = np.zeros((image_height, image_width))
@@ -234,9 +234,8 @@ def laplacian_gaussian_method(image, image_height, image_width, sigma):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, matrix, n)
-    #TODO fix black image is the result dont know why
-    horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width)
-    vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width)
+    horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
+    vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
     new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
     save_image(new_image, save_path + "laplacian_gaussian_generated_with_slope_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
@@ -300,18 +299,20 @@ def vertical_zero_crossing(image, image_height, image_width):
     return vertical_image
 
 
-def horizontal_zero_crossing_with_slope(image, image_height, image_width):
+def horizontal_zero_crossing_with_slope(image, image_height, image_width, threshold):
     horizontal_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
         for x in range(0, image_width - 1):
             value = image[y, x] * image[y, x + 1]
             if value < 0:
-                horizontal_image[y, x] = int(fabs(image[y, x]) + fabs(image[y, x + 1]))
+                total = int(fabs(image[y, x]) + fabs(image[y, x + 1]))
+                horizontal_image[y, x] = constants.MAX_COLOR_VALUE if total >= threshold else 0
             elif value == 0 and image[y, x] != 0:
                 if x + 2 < image_width:
                     value = image[y, x + 2] * image[y, x]
                     if value < 0:
-                        horizontal_image[y, x] = int(fabs(image[y, x]) + fabs(image[y, x + 2]))
+                        total = int(fabs(image[y, x]) + fabs(image[y, x + 2]))
+                        horizontal_image[y, x] = constants.MAX_COLOR_VALUE if total >= threshold else 0
                     else:
                         horizontal_image[y, x] = 0
             else:
@@ -319,18 +320,20 @@ def horizontal_zero_crossing_with_slope(image, image_height, image_width):
     return horizontal_image
 
 
-def vertical_zero_crossing_with_slope(image, image_height, image_width):
+def vertical_zero_crossing_with_slope(image, image_height, image_width, threshold):
     vertical_image = np.zeros((image_height, image_width))
     for y in range(0, image_height - 1):
         for x in range(0, image_width):
             value = image[y, x] * image[y + 1, x]
             if value < 0:
-                vertical_image[y, x] = int(fabs(image[y, x]) + fabs(image[y + 1, x]))
+                total = int(fabs(image[y, x]) + fabs(image[y + 1, x]))
+                vertical_image[y, x] = constants.MAX_COLOR_VALUE if total >= threshold else 0
             elif value == 0 and image[y, x] != 0:
                 if y + 2 < image_height:
                     value = image[y + 2, x] * image[y, x]
                     if value < 0:
-                        vertical_image[y, x] = int(fabs(image[y, x]) + fabs(image[y + 2, x]))
+                        total = int(fabs(image[y, x]) + fabs(image[y + 2, x]))
+                        vertical_image[y, x] = constants.MAX_COLOR_VALUE if total >= threshold else 0
                     else:
                         vertical_image[y, x] = 0
             else:
