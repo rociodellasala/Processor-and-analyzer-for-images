@@ -37,8 +37,8 @@ def load_image_wrapper():
     interface.remove_images()
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
-        # laplacian_gaussian_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 10)
-        laplacian_method(interface.current_image, constants.HEIGHT, constants.WIDTH)
+        laplacian_gaussian_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 1)
+        #laplacian_method(interface.current_image, constants.HEIGHT, constants.WIDTH)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:
