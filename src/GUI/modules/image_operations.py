@@ -359,16 +359,16 @@ def calculate_histogram(image, width, height):
     return grey_levels
 
 
-def image_threshold(image, width, height, threshold):
-    pixels = image.load()
-    new_image = np.zeros((height, width))
-    for y in range(0, height):
-        for x in range(0, width):
-            current_value = 0 if int(pixels[x, y]) <= threshold else MAX_PIXEL_VALUE
-            new_image[y, x] = current_value
-    save_image(new_image, save_path + "threshold_image.ppm")
-    img = Image.fromarray(new_image)
-    img.show()
+# def image_threshold(image, width, height, threshold):
+#     pixels = image.load()
+#     new_image = np.zeros((height, width))
+#     for y in range(0, height):
+#         for x in range(0, width):
+#             current_value = 0 if int(pixels[x, y]) <= threshold else MAX_PIXEL_VALUE
+#             new_image[y, x] = current_value
+#     save_image(new_image, save_path + "threshold_image.ppm")
+#     img = Image.fromarray(new_image)
+#     img.show()
 
 
 def image_equalization(image, width, height):

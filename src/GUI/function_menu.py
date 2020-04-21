@@ -3,7 +3,7 @@ from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from image_operations import gamma_pow_function
 from image_operations import dynamic_range_compression
-from image_operations import image_threshold
+from threshold_calculator import image_threshold
 from image_operations import image_equalization
 from image_operations import grey_level_histogram
 
