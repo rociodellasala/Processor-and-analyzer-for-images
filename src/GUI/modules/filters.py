@@ -232,6 +232,24 @@ def isotropic_diffusion_filter(image, image_height, image_width, t_max, sigma):
         for y in range(window_y_center, image_height - window_y_center):
             for x in range(window_x_center, image_width - window_x_center):
                 new_image[y, x] = get_diffusion_value(pixels, x, y, sigma, False, False)
+        pixels = new_image
+    save_image(new_image, save_path + "isotropic_diffusion.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
+
+
+def anisotropic_diffusion_filter(image, image_height, image_width, t_max, sigma):
+    new_image = np.zeros((image_height, image_width))
+    window_size = 3
+    pixels = np.array(image)
+    window_y_center = int(window_size / 2)
+    window_x_center = int(window_size / 2)
+    for t in range(0, t_max):
+        for y in range(window_y_center, image_height - window_y_center):
+            for x in range(window_x_center, image_width - window_x_center):
+                new_image[y, x] = get_diffusion_value(pixels, x, y, sigma, True, True)
+        pixels = new_image
     save_image(new_image, save_path + "isotropic_diffusion.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
