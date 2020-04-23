@@ -42,6 +42,7 @@ def otsu_threshold_with_color(image, image_height, image_width):
     thresholds[1] = green_threshold
     thresholds[2] = blue_threshold
     colored_image_threshold(pixels, image_width, image_height, thresholds)
+    return thresholds
 
 
 def otsu_threshold(image, image_height, image_width, show_result=True):

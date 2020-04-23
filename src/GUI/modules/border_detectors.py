@@ -176,7 +176,7 @@ def get_sobel_vertical_matrix():
     return matrix
 
 
-def laplacian_method(image, image_height, image_width):
+def laplacian_method(image, image_height, image_width, sinthesis_method):
     pixels = np.array(image)
     matrix = get_laplacian_matrix()
     new_image = np.zeros((image_height, image_width))
@@ -187,13 +187,18 @@ def laplacian_method(image, image_height, image_width):
             new_image[y, x] = get_convolution(pixels, x, y, matrix, 3)
     horizontal_image = horizontal_zero_crossing(new_image, image_height, image_width)
     vertical_image = vertical_zero_crossing(new_image, image_height, image_width)
-    new_image = or_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    if sinthesis_method == "and":
+        new_image = and_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    elif sinthesis_method == "or":
+        new_image = or_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    else:
+        new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
     save_image(new_image, save_path + "laplacian_generated_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
 
 
-def laplacian_method_with_slope_evaluation(image, image_height, image_width, threshold):
+def laplacian_method_with_slope_evaluation(image, image_height, image_width, threshold, sinthesis_method):
     pixels = np.array(image)
     matrix = get_laplacian_matrix()
     new_image = np.zeros((image_height, image_width))
@@ -204,7 +209,12 @@ def laplacian_method_with_slope_evaluation(image, image_height, image_width, thr
             new_image[y, x] = get_convolution(pixels, x, y, matrix, 3)
     horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
     vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
-    new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    if sinthesis_method == "and":
+        new_image = and_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    elif sinthesis_method == "or":
+        new_image = or_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    else:
+        new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
     save_image(new_image, save_path + "laplacian_generated_with_slope_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
@@ -224,7 +234,7 @@ def get_laplacian_matrix():
     return matrix
 
 
-def laplacian_gaussian_method(image, image_height, image_width, sigma, threshold):
+def laplacian_gaussian_method(image, image_height, image_width, sigma, threshold, sinthesis_method):
     n = 6 * sigma + 1
     pixels = np.array(image)
     matrix = get_laplacian_gaussian_matrix(n, sigma)
@@ -236,7 +246,12 @@ def laplacian_gaussian_method(image, image_height, image_width, sigma, threshold
             new_image[y, x] = get_convolution(pixels, x, y, matrix, n)
     horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
     vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
-    new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    if sinthesis_method == "and":
+        new_image = and_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    elif sinthesis_method == "or":
+        new_image = or_sinthesis(horizontal_image, vertical_image, image_height, image_width)
+    else:
+        new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
     save_image(new_image, save_path + "laplacian_gaussian_generated_with_slope_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()

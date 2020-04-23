@@ -42,13 +42,6 @@ def load_image_wrapper():
         # laplacian_gaussian_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 10)
         # laplacian_method_with_slope_evaluation(interface.current_image, constants.HEIGHT, constants.WIDTH, 10)
         # laplacian_method(interface.current_image, constants.HEIGHT, constants.WIDTH)
-        #global_threshold(interface.current_image, constants.HEIGHT, constants.WIDTH)
-        #otsu_threshold(interface.current_image, constants.HEIGHT, constants.WIDTH)
-        # otsu_threshold_with_color(interface.current_image, constants.HEIGHT, constants.WIDTH)
-        # bilateral_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 4, 7)
-        # isotropic_diffusion_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 3, 100)
-        anisotropic_diffusion_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 20, 100)
-
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:

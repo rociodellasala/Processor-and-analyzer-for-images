@@ -222,7 +222,7 @@ def get_border_enhancement_window():
     return sliding_window
 
 
-def isotropic_diffusion_filter(image, image_height, image_width, t_max, sigma):
+def isotropic_diffusion_filter(image, image_height, image_width, t_max):
     new_image = np.zeros((image_height, image_width))
     window_size = 3
     pixels = np.array(image)
@@ -231,7 +231,7 @@ def isotropic_diffusion_filter(image, image_height, image_width, t_max, sigma):
     for t in range(0, t_max):
         for y in range(window_y_center, image_height - window_y_center):
             for x in range(window_x_center, image_width - window_x_center):
-                new_image[y, x] = get_diffusion_value(pixels, x, y, sigma, False, False)
+                new_image[y, x] = get_diffusion_value(pixels, x, y, 1, False, False)
         pixels = new_image
     save_image(new_image, save_path + "isotropic_diffusion.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
