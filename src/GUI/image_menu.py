@@ -47,7 +47,7 @@ def load_image_wrapper():
         # otsu_threshold_with_color(interface.current_image, constants.HEIGHT, constants.WIDTH)
         # bilateral_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 4, 7)
         # isotropic_diffusion_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 3, 100)
-        anisotropic_diffusion_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 20, 100)
+        anisotropic_diffusion_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 30)
 
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
