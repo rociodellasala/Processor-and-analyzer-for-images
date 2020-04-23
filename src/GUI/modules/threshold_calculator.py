@@ -12,6 +12,7 @@ def global_threshold(image, image_height, image_width):
         last_t = current_t
         current_t = calculate_global_threshold(pixels, image_height, image_width, last_t)
     image_threshold(image, image_width, image_height, current_t)
+    return current_t
 
 
 def calculate_global_threshold(pixels, image_height, image_width, t):
@@ -28,7 +29,22 @@ def calculate_global_threshold(pixels, image_height, image_width, t):
     return (m1 + m2) / 2
 
 
-def otsu_threshold(image, image_height, image_width):
+def otsu_threshold_with_color(image, image_height, image_width):
+    pixels = np.array(image)
+    red_values = pixels[:, :, 0]
+    green_values = pixels[:, :, 1]
+    blue_values = pixels[:, :, 2]
+    red_threshold = otsu_threshold(red_values, image_height, image_width, False)
+    green_threshold = otsu_threshold(green_values, image_height, image_width, False)
+    blue_threshold = otsu_threshold(blue_values, image_height, image_width, False)
+    thresholds = np.zeros(3)
+    thresholds[0] = red_threshold
+    thresholds[1] = green_threshold
+    thresholds[2] = blue_threshold
+    colored_image_threshold(pixels, image_width, image_height, thresholds)
+
+
+def otsu_threshold(image, image_height, image_width, show_result=True):
     pixels = np.array(image)
     probability = get_probability_distribution(pixels, image_height, image_width)
     probability_acummulated = get_accumulated_probability_distribution(probability)
@@ -38,7 +54,8 @@ def otsu_threshold(image, image_height, image_width):
         global_media += i * probability[i]
     variance = get_variance(global_media, medias, probability_acummulated)
     threshold = get_threshold_from_variance(variance)
-    image_threshold(image, image_width, image_height, threshold)
+    if show_result:
+        image_threshold(image, image_width, image_height, threshold)
     return threshold
 
 
@@ -101,11 +118,34 @@ def image_threshold(image, width, height, threshold):
     save_image(new_image, save_path + "global_threshold_image.ppm")
     img = Image.fromarray(new_image)
     img.show()
+    return new_image
+
+
+def colored_image_threshold(image, width, height, thresholds):
+    pixels = np.array(image)
+    red_values = pixels[:, :, 0]
+    green_values = pixels[:, :, 1]
+    blue_values = pixels[:, :, 2]
+    new_image = np.zeros((height, width, 3), dtype=np.uint8)
+    for y in range(0, height):
+        for x in range(0, width):
+            new_image[y, x, 0] = np.uint8(0 if int(red_values[y, x]) <= thresholds[0] else constants.MAX_COLOR_VALUE)
+            new_image[y, x, 1] = np.uint8(0 if int(green_values[y, x]) <= thresholds[1] else constants.MAX_COLOR_VALUE)
+            new_image[y, x, 2] = np.uint8(0 if int(blue_values[y, x]) <= thresholds[2] else constants.MAX_COLOR_VALUE)
+    save_colored_image(new_image, save_path + "colored_threshold_image.ppm")
+    img = Image.fromarray(new_image, 'RGB')
+    img.show()
 
 
 def save_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
+    img.save(file_path)
+
+
+def save_colored_image(image, file_path):
+    img = Image.fromarray(image)
+    img = img.convert("RGB")
     img.save(file_path)
 
 
