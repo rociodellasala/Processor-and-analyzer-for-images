@@ -8,7 +8,8 @@ from src.GUI.interface_info import InterfaceInfo
 
 from border_detectors import laplacian_gaussian_method, laplacian_method, laplacian_method_with_slope_evaluation #TODO remove
 from threshold_calculator import global_threshold, otsu_threshold, otsu_threshold_with_color
-from filters import bilateral_filter
+from filters import bilateral_filter, isotropic_diffusion_filter
+
 
 def load_image(row, column):
     interface = InterfaceInfo.get_instance()
@@ -44,7 +45,8 @@ def load_image_wrapper():
         #global_threshold(interface.current_image, constants.HEIGHT, constants.WIDTH)
         #otsu_threshold(interface.current_image, constants.HEIGHT, constants.WIDTH)
         # otsu_threshold_with_color(interface.current_image, constants.HEIGHT, constants.WIDTH)
-        bilateral_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 4, 7)
+        # bilateral_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 4, 7)
+        isotropic_diffusion_filter(interface.current_image, constants.HEIGHT, constants.WIDTH, 3, 100)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:

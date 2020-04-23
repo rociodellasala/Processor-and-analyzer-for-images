@@ -222,6 +222,58 @@ def get_border_enhancement_window():
     return sliding_window
 
 
+def isotropic_diffusion_filter(image, image_height, image_width, t_max, sigma):
+    new_image = np.zeros((image_height, image_width))
+    window_size = 3
+    pixels = np.array(image)
+    window_y_center = int(window_size / 2)
+    window_x_center = int(window_size / 2)
+    for t in range(0, t_max):
+        for y in range(window_y_center, image_height - window_y_center):
+            for x in range(window_x_center, image_width - window_x_center):
+                new_image[y, x] = get_diffusion_value(pixels, x, y, sigma, False, False)
+    save_image(new_image, save_path + "isotropic_diffusion.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
+
+
+def get_diffusion_value(pixels, x, y, sigma, use_leclerc=True, calculate_coefficient=True):
+    lambda_value = 0.25
+    north_derivative = int(pixels[y + 1, x]) - int(pixels[y, x])
+    south_derivative = int(pixels[y - 1, x]) - int(pixels[y, x])
+    west_derivative = int(pixels[y, x + 1]) - int(pixels[y, x])
+    east_derivative = int(pixels[y, x - 1]) - int(pixels[y, x])
+    if calculate_coefficient:
+        if use_leclerc:
+            north_coefficient = get_leclerc_coefficient(north_derivative, sigma)
+            south_coefficient = get_leclerc_coefficient(south_derivative, sigma)
+            west_coefficient = get_leclerc_coefficient(west_derivative, sigma)
+            east_coefficient = get_leclerc_coefficient(east_derivative, sigma)
+        else:
+            north_coefficient = get_lorentiziano_coefficient(north_derivative, sigma)
+            south_coefficient = get_lorentiziano_coefficient(south_derivative, sigma)
+            west_coefficient = get_lorentiziano_coefficient(west_derivative, sigma)
+            east_coefficient = get_lorentiziano_coefficient(east_derivative, sigma)
+    else:
+        north_coefficient = 1
+        south_coefficient = 1
+        west_coefficient = 1
+        east_coefficient = 1
+
+    return pixels[y, x] + lambda_value * (north_derivative * north_coefficient + south_derivative * south_coefficient +
+                                          west_derivative * west_coefficient + east_derivative * east_coefficient)
+
+
+def get_leclerc_coefficient(x, sigma):
+    return math.exp(-(x * x) / (sigma * sigma))
+
+
+def get_lorentiziano_coefficient(x, sigma):
+    value = ((x * x) / (sigma * sigma)) + 1
+    return 1 / value
+
+
 def save_image(image, file_path):
     img = Image.fromarray(image)
     img = img.convert("I")
