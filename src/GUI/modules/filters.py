@@ -133,7 +133,7 @@ def gaussian_filter(image, image_height, image_width, sigma):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
-    save_image(new_image, save_path + "gussian_filter_image.ppm")
+    save_image(new_image, save_path + "gaussian_filter_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
     image.show()
     return new_image
@@ -153,6 +153,43 @@ def get_gaussian_value(x, y, sigma):
     exponent = -(np.power(x, 2) + np.power(y, 2)) / (np.power(sigma, 2))
     value = (1 / (2 * math.pi * np.power(sigma, 2))) * np.exp(exponent)
     return value
+
+
+def bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size):
+    new_image = np.zeros((image_height, image_width))
+    pixels = np.array(image)
+    window_y_center = int(window_size / 2)
+    window_x_center = int(window_size / 2)
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            sliding_window = get_bilateral_window(pixels, window_size, sigma_s, sigma_r, x, y)
+            new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
+    save_image(new_image, save_path + "bilateral_filter_image.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
+
+
+def get_bilateral_window(pixels, window_size, sigma_s, sigma_r, x, y):
+    starting_row = y - int(window_size / 2)
+    starting_col = x - int(window_size / 2)
+    ending_row = starting_row + window_size
+    ending_col = starting_col + window_size
+    sub_matrix = pixels[starting_row:ending_row, starting_col:ending_col]
+    sliding_window = np.zeros((window_size, window_size))
+    wp = 0
+    for i in range(0, window_size):
+        for j in range(0, window_size):
+            y_center = int(window_size / 2)
+            x_center = int(window_size / 2)
+            k = i - y_center
+            l = j - x_center
+            gaussian_value = -(pow(y_center - k, 2) + pow(x_center - l, 2)) / (2 * sigma_s * sigma_s)
+            r_value = -(pow(abs(int(sub_matrix[y_center, x_center]) - int(sub_matrix[i, j])), 2) /
+                        (2 * sigma_r * sigma_r))
+            sliding_window[i, j] = math.exp(gaussian_value + r_value)
+            wp += sliding_window[i, j]
+    return sliding_window / wp
 
 
 def border_enhancement_filter(image, image_height, image_width):
