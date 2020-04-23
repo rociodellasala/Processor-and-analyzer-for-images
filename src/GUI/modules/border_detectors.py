@@ -193,7 +193,7 @@ def laplacian_method(image, image_height, image_width):
     image.show()
 
 
-def laplacian_method_with_slope_evaluation(image, image_height, image_width):
+def laplacian_method_with_slope_evaluation(image, image_height, image_width, threshold):
     pixels = np.array(image)
     matrix = get_laplacian_matrix()
     new_image = np.zeros((image_height, image_width))
@@ -202,8 +202,8 @@ def laplacian_method_with_slope_evaluation(image, image_height, image_width):
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, matrix, 3)
-    horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width)
-    vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width)
+    horizontal_image = horizontal_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
+    vertical_image = vertical_zero_crossing_with_slope(new_image, image_height, image_width, threshold)
     new_image = module_sinthesis(horizontal_image, vertical_image, image_height, image_width)
     save_image(new_image, save_path + "laplacian_generated_with_slope_image.ppm")
     image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
