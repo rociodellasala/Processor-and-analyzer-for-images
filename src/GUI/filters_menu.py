@@ -132,5 +132,5 @@ class FiltersMenu:
                                                                          constants.HEIGHT))
         filters_menu.add_command(label="Gaussian", command=generate_gaussian_filter_input)
         filters_menu.add_command(label="Bilateral", command=generate_bilateral_filter_input)
+        filters_menu.add_command(label="Isotropic diffusion", command=generate_isotropic_diffusion_filter_input)
         filters_menu.add_command(label="Anisotropic diffusion", command=generate_anisotropic_diffusion_filter_input)
-        filters_menu.add_command(label="Isotropic difussion", command=generate_isotropic_diffusion_filter_input)

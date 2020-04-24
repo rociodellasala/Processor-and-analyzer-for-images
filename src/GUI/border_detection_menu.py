@@ -77,7 +77,7 @@ def generate_laplacian_input():
     if interface.current_image is not None:
         interface.delete_widgets(interface.buttons_frame)
         radio_var = StringVar()
-        radio_var.set("and")
+        radio_var.set("or")
         Radiobutton(interface.buttons_frame, text="And", value="and",
                     variable=radio_var, background=constants.TOP_COLOR).grid(row=0, column=0)
         Radiobutton(interface.buttons_frame, text="Or", value="or",
@@ -105,7 +105,7 @@ def generate_laplacian_gaussian_input():
         sigma.grid(row=0, column=1)
         threshold.grid(row=0, column=3)
         radio_var = StringVar()
-        radio_var.set("and")
+        radio_var.set("or")
         Radiobutton(interface.buttons_frame, text="And", value="and",
                     variable=radio_var, background=constants.TOP_COLOR).grid(row=1, column=0)
         Radiobutton(interface.buttons_frame, text="Or", value="or",
@@ -115,7 +115,7 @@ def generate_laplacian_gaussian_input():
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
                                   command=lambda: laplacian_gaussian_method(interface.current_image,
                                                                             constants.HEIGHT, constants.WIDTH,
-                                                                            int(sigma.get()), int(threshold.get()),
+                                                                            float(sigma.get()), int(threshold.get()),
                                                                             radio_var.get()))
         apply_filter.grid(row=2, column=0)
     else:
@@ -131,7 +131,7 @@ def generate_laplacian_with_slope_input():
         threshold = Entry(interface.buttons_frame)
         threshold.grid(row=0, column=1)
         radio_var = StringVar()
-        radio_var.set("and")
+        radio_var.set("or")
         Radiobutton(interface.buttons_frame, text="And", value="and",
                     variable=radio_var, background=constants.TOP_COLOR).grid(row=1, column=0)
         Radiobutton(interface.buttons_frame, text="Or", value="or",
@@ -160,15 +160,15 @@ class BorderDetectionMenu:
                                                                                             constants.HEIGHT))
         prewit_menu = Menu(border_detection_menu, tearoff=0)
         border_detection_menu.add_cascade(label="Prewitt", menu=prewit_menu)
-        prewit_menu.add_command(label="Color", command=prewit_color_detection_wrapper)
         prewit_menu.add_command(label="B&W", command=prewit_detection_wrapper)
+        prewit_menu.add_command(label="Color", command=prewit_color_detection_wrapper)
         sobel_menu = Menu(border_detection_menu, tearoff=0)
         border_detection_menu.add_cascade(label="Sobel", menu=sobel_menu)
-        sobel_menu.add_command(label="Color", command=sobel_color_detection_wrapper)
         sobel_menu.add_command(label="B&W", command=sobel_detection_wrapper)
+        sobel_menu.add_command(label="Color", command=sobel_color_detection_wrapper)
         border_detection_menu.add_command(label="Four directions", command=generate_four_direction_input)
         border_detection_menu.add_command(label="Laplacian", command=generate_laplacian_input)
-        border_detection_menu.add_command(label="Laplacian Gaussian", command=generate_laplacian_gaussian_input)
         border_detection_menu.add_command(label="Laplacian with slope", command=generate_laplacian_with_slope_input)
+        border_detection_menu.add_command(label="Laplacian Gaussian", command=generate_laplacian_gaussian_input)
 
 

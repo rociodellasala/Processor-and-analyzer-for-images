@@ -301,7 +301,7 @@ def get_laplacian_matrix():
 
 
 def laplacian_gaussian_method(image, image_height, image_width, sigma, threshold, sinthesis_method):
-    n = 6 * sigma + 1
+    n = int(6 * sigma + 1)
     pixels = np.array(image)
     matrix = get_laplacian_gaussian_matrix(n, sigma)
     new_image = np.zeros((image_height, image_width))
