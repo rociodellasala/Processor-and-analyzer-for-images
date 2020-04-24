@@ -15,8 +15,8 @@ def rotate_matrix_with_angle(matrix, dim, angle):
         return matrix
     for i in range (0, times):
         matrix = rotate_matrix(matrix, dim)
-    print(angle)
-    print_matrix(matrix, dim)
+    # print(angle)
+    # print_matrix(matrix, dim)
     return matrix
 
 

@@ -3,6 +3,7 @@ from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
 from filters import get_convolution
 from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
+from matrix_operations import rotate_matrix_with_angle
 from src.GUI import gui_constants as constants
 
 
@@ -174,6 +175,49 @@ def get_sobel_vertical_matrix():
     matrix[2, 1] = 2
     matrix[2, 2] = 1
     return matrix
+
+
+def four_direction_border_detection(image, image_height, image_width):
+    pixels = np.array(image)
+    horizontal_matrix = get_sobel_horizontal_matrix()
+    first_diagonal_matrix = rotate_matrix_with_angle(horizontal_matrix, 3, 45)
+    vertical_matrix = rotate_matrix_with_angle(first_diagonal_matrix, 3, 45)
+    second_diagonal_matrix = rotate_matrix_with_angle(vertical_matrix, 3, 45)
+    horizontal_image = np.zeros((image_height, image_width))
+    first_diagonal_image = np.zeros((image_height, image_width))
+    vertical_image = np.zeros((image_height, image_width))
+    second_diagonal_image = np.zeros((image_height, image_width))
+    new_image = np.zeros((image_height, image_width))
+    window_y_center = 1
+    window_x_center = 1
+    current_values = np.zeros(4)
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            horizontal_image[y, x] = get_convolution(pixels, x, y, horizontal_matrix, 3)
+            first_diagonal_image[y, x] = get_convolution(pixels, x, y, first_diagonal_matrix, 3)
+            vertical_image[y, x] = get_convolution(pixels, x, y, vertical_matrix, 3)
+            second_diagonal_image[y, x] = get_convolution(pixels, x, y, second_diagonal_matrix, 3)
+            current_values[0] = horizontal_image[y, x]
+            current_values[1] = first_diagonal_image[y, x]
+            current_values[2] = vertical_image[y, x]
+            current_values[3] = second_diagonal_image[y, x]
+            new_image[y, x] = np.max(current_values)
+    save_image(horizontal_image, save_path + "horizontal_image.ppm")
+    save_image(first_diagonal_image, save_path + "first_diagonal_image.ppm")
+    save_image(vertical_image, save_path + "vertical_image.ppm")
+    save_image(second_diagonal_image, save_path + "second_diagonal_image.ppm")
+    save_image(new_image, save_path + "four_directions_generated_image.ppm")
+    image_one = Image.fromarray(lineally_adjust_image_values(horizontal_image, image_width, image_height))
+    image_two = Image.fromarray(lineally_adjust_image_values(first_diagonal_image, image_width, image_height))
+    image_three = Image.fromarray(lineally_adjust_image_values(vertical_image, image_width, image_height))
+    image_four = Image.fromarray(lineally_adjust_image_values(second_diagonal_image, image_width, image_height))
+    image_five = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image_one.show()
+    image_two.show()
+    image_three.show()
+    image_four.show()
+    image_five.show()
+
 
 
 def laplacian_method(image, image_height, image_width, sinthesis_method):

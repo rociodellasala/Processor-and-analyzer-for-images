@@ -6,7 +6,7 @@ from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 
-from border_detectors import laplacian_gaussian_method, laplacian_method, laplacian_method_with_slope_evaluation #TODO remove
+from border_detectors import four_direction_border_detection #TODO remove
 from threshold_calculator import global_threshold, otsu_threshold, otsu_threshold_with_color
 from filters import bilateral_filter, isotropic_diffusion_filter, anisotropic_diffusion_filter
 
@@ -39,9 +39,7 @@ def load_image_wrapper():
     interface.remove_images()
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
-        # laplacian_gaussian_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 10)
-        # laplacian_method_with_slope_evaluation(interface.current_image, constants.HEIGHT, constants.WIDTH, 10)
-        # laplacian_method(interface.current_image, constants.HEIGHT, constants.WIDTH)
+        four_direction_border_detection(interface.current_image, constants.HEIGHT, constants.WIDTH)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:
