@@ -42,6 +42,7 @@ def sobel_color_detection_wrapper():
 
 def four_direction_input():
     interface = InterfaceInfo.get_instance()
+    interface.delete_widgets(interface.buttons_frame)
     if interface.current_image is None:
         messagebox.showerror(title="Error", message="You must upload an image to detect borders")
     else:
@@ -66,6 +67,8 @@ def four_direction_input():
 
 
 def border_enhancement_filter_wrapper(image, width, height):
+    interface = InterfaceInfo.get_instance()
+    interface.delete_widgets(interface.buttons_frame)
     if image is None:
         messagebox.showerror(title="Error", message="You need to upload an image to get its negative")
     else:
