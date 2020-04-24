@@ -70,7 +70,6 @@ def get_probability_distribution(pixels, image_height, image_width):
     return probability / size
 
 
-
 def get_accumulated_probability_distribution(probability):
     probability_acummulated = np.zeros(constants.MAX_COLOR_VALUE + 1)
     probability_acummulated[0] = probability[0]

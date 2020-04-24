@@ -177,9 +177,9 @@ def get_sobel_vertical_matrix():
     return matrix
 
 
-def four_direction_border_detection(image, image_height, image_width):
+def four_direction_border_detection(image, image_height, image_width, famous_matrix=1):
     pixels = np.array(image)
-    horizontal_matrix = get_sobel_horizontal_matrix()
+    horizontal_matrix = get_famous_horizontal_matrix(famous_matrix)
     first_diagonal_matrix = rotate_matrix_with_angle(horizontal_matrix, 3, 45)
     vertical_matrix = rotate_matrix_with_angle(first_diagonal_matrix, 3, 45)
     second_diagonal_matrix = rotate_matrix_with_angle(vertical_matrix, 3, 45)
@@ -218,6 +218,28 @@ def four_direction_border_detection(image, image_height, image_width):
     image_four.show()
     image_five.show()
 
+
+def get_famous_horizontal_matrix(famous_matrix):
+    if famous_matrix == 1:
+        return get_sobel_horizontal_matrix()
+    elif famous_matrix == 2:
+        return get_prewit_horizontal_matrix()
+    else:
+        return get_kirsh_horizontal_matrix()
+
+
+def get_kirsh_horizontal_matrix():
+    matrix = np.zeros((3, 3))
+    matrix[0, 0] = -3
+    matrix[1, 0] = -3
+    matrix[2, 0] = -3
+    matrix[0, 1] = -3
+    matrix[1, 1] = 0
+    matrix[2, 1] = -3
+    matrix[0, 2] = 5
+    matrix[1, 2] = 5
+    matrix[2, 2] = 5
+    return matrix
 
 
 def laplacian_method(image, image_height, image_width, sinthesis_method):
