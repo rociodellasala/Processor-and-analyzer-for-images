@@ -114,7 +114,7 @@ def generate_laplacian_gaussian_input():
                     variable=radio_var, background=constants.TOP_COLOR).grid(row=1, column=2)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
                                   command=lambda: laplacian_gaussian_method(interface.current_image,
-                                                                            constants.WIDTH, constants.HEIGHT,
+                                                                            constants.HEIGHT, constants.WIDTH,
                                                                             int(sigma.get()), int(threshold.get()),
                                                                             radio_var.get()))
         apply_filter.grid(row=2, column=0)
