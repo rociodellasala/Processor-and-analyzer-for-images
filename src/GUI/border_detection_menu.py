@@ -40,15 +40,12 @@ def sobel_color_detection_wrapper():
         sobel_color_detection(interface.current_image, constants.HEIGHT, constants.WIDTH)
 
 
-def four_direction_input():
+def generate_four_direction_input():
     interface = InterfaceInfo.get_instance()
     interface.delete_widgets(interface.buttons_frame)
     if interface.current_image is None:
         messagebox.showerror(title="Error", message="You must upload an image to detect borders")
     else:
-        # ttk.Label(interface.buttons_frame, text="Prewitt", background=constants.TOP_COLOR).grid(row=0, column=0)
-        # ttk.Label(interface.buttons_frame, text="Sobel", background=constants.TOP_COLOR).grid(row=1, column=0)
-        # ttk.Label(interface.buttons_frame, text="Kirsh", background=constants.TOP_COLOR).grid(row=0, column=2)
         radio_var = IntVar()
         radio_var.set(1)
         Radiobutton(interface.buttons_frame, text="Prewitt", value=2, variable=radio_var,
@@ -169,7 +166,7 @@ class BorderDetectionMenu:
         border_detection_menu.add_cascade(label="Sobel", menu=sobel_menu)
         sobel_menu.add_command(label="Color", command=sobel_color_detection_wrapper)
         sobel_menu.add_command(label="B&W", command=sobel_detection_wrapper)
-        border_detection_menu.add_command(label="Four directions", command=four_direction_input)
+        border_detection_menu.add_command(label="Four directions", command=generate_four_direction_input)
         border_detection_menu.add_command(label="Laplacian", command=generate_laplacian_input)
         border_detection_menu.add_command(label="Laplacian Gaussian", command=generate_laplacian_gaussian_input)
         border_detection_menu.add_command(label="Laplacian with slope", command=generate_laplacian_with_slope_input)
