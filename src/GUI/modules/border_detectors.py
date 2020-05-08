@@ -453,6 +453,65 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     return new_image
 
 
+def get_susan_mask():
+    matrix = np.ones((7, 7))
+    matrix[0, 0] = 0
+    matrix[0, 1] = 0
+    matrix[0, 6] = 0
+    matrix[0, 5] = 0
+    matrix[1, 0] = 0
+    matrix[1, 6] = 0
+    matrix[6, 0] = 0
+    matrix[6, 1] = 0
+    matrix[6, 6] = 0
+    matrix[6, 5] = 0
+    matrix[5, 0] = 0
+    matrix[5, 6] = 0
+    return matrix
+
+
+def calculate_same_value_pixel(image, current_y, current_x, circular_mask, max_difference):
+    counter = 0
+    difference = 0
+    current_value = image[current_y, current_x]
+    for y in range(-int(len(circular_mask)/2), int(len(circular_mask)/2 + 1)):
+        for x in range(-int(len(circular_mask[0])/2), int(len(circular_mask[0])/2 + 1)):
+            if circular_mask[y, x] == 1:
+                neighbour_value = image[y + current_y, x + current_x]
+                if neighbour_value >= current_value:
+                    difference = neighbour_value - current_value
+                else:
+                    difference = current_value - neighbour_value
+                if difference <= max_difference:
+                    counter += 1
+
+    size = np.sum(circular_mask)
+    return 1 - counter / size
+
+
+def susan_method(image, image_height, image_width, max_difference):
+    image = np.array(image)
+    circular_mask = get_susan_mask()
+    tolerance = 0.15
+    window_y_center = 3
+    window_x_center = 3
+    new_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
+    for y in range(window_y_center, image_height - window_y_center):
+        for x in range(window_x_center, image_width - window_x_center):
+            counter = calculate_same_value_pixel(image, y, x, circular_mask, max_difference)
+            if counter <= tolerance:
+                new_image[y, x, 2] = image[y, x]
+            elif tolerance <= counter <= 0.5 + tolerance:
+                new_image[y, x, 1] = constants.MAX_COLOR_VALUE
+            elif 0.5 + tolerance <= counter <= 0.75 + tolerance:
+                new_image[y, x, 0] = constants.MAX_COLOR_VALUE
+            else:
+                new_image[y, x, 2] = image[y, x]
+    save_colored_image(new_image, save_path + "susan_generated_image.ppm")
+    img = Image.fromarray(new_image, 'RGB')
+    img.show()
+
+
 def horizontal_zero_crossing(image, image_height, image_width):
     horizontal_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
