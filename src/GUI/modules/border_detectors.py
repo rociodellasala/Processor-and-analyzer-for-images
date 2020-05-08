@@ -401,7 +401,7 @@ def suppress_false_maximums(synthesized_image, angle_matrix, image_height, image
                     (synthesized_image[after_y, after_x] > synthesized_image[y, x]):
                 new_image[y, x] = 0
             else:
-                new_image[y, x] = constants.MAX_COLOR_VALUE
+                new_image[y, x] = synthesized_image[y, x]
     return new_image
 
 
