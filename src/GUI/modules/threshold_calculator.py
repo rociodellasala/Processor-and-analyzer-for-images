@@ -4,14 +4,14 @@ from math import pow
 from src.GUI import gui_constants as constants
 
 
-def global_threshold(image, image_height, image_width):
+def global_threshold(image, image_height, image_width, load=True, show=True):
     pixels = np.array(image)
     current_t = int(np.mean(pixels))
     last_t = -1
     while abs(last_t - current_t) <= 0.5:
         last_t = current_t
         current_t = calculate_global_threshold(pixels, image_height, image_width, last_t)
-    image_threshold(image, image_width, image_height, current_t)
+    image_threshold(image, image_width, image_height, current_t, load, show)
     return current_t
 
 
@@ -108,16 +108,20 @@ def get_threshold_from_variance(variance):
     return np.mean(possible_thresholds[1:])
 
 
-def image_threshold(image, width, height, threshold):
-    pixels = image.load()
+def image_threshold(image, width, height, threshold, load=True, show=True):
+    if load:
+        pixels = image.load()
+    else:
+        pixels = np.array(image)
     new_image = np.zeros((height, width))
     for y in range(0, height):
         for x in range(0, width):
             current_value = 0 if int(pixels[x, y]) <= threshold else constants.MAX_COLOR_VALUE
             new_image[y, x] = current_value
-    save_image(new_image, save_path + "global_threshold_image.ppm")
-    img = Image.fromarray(new_image)
-    img.show()
+    if show:
+        save_image(new_image, save_path + "global_threshold_image.ppm")
+        img = Image.fromarray(new_image)
+        img.show()
     return new_image
 
 

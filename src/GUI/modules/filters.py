@@ -155,7 +155,7 @@ def get_gaussian_value(x, y, sigma):
     return value
 
 
-def bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size):
+def bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, show_image=True):
     new_image = np.zeros((image_height, image_width))
     pixels = np.array(image)
     window_y_center = int(window_size / 2)
@@ -164,9 +164,10 @@ def bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_
         for x in range(window_x_center, image_width - window_x_center):
             sliding_window = get_bilateral_window(pixels, window_size, sigma_s, sigma_r, x, y)
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
-    save_image(new_image, save_path + "bilateral_filter_image.ppm")
-    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
-    image.show()
+    if show_image:
+        save_image(new_image, save_path + "bilateral_filter_image.ppm")
+        image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+        image.show()
     return new_image
 
 

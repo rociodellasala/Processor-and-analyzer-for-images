@@ -1,9 +1,10 @@
 import numpy as np
 from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
-from filters import get_convolution
+from filters import get_convolution, bilateral_filter
 from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
 from matrix_operations import rotate_matrix_with_angle
+from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
 
 
@@ -92,7 +93,7 @@ def get_prewit_vertical_matrix():
     return matrix
 
 
-def sobel_detection(image, image_height, image_width):
+def sobel_detection(image, image_height, image_width, show_images=True):
     pixels = np.array(image)
     horizontal_matrix = get_sobel_horizontal_matrix()
     horizontal_image = np.zeros((image_height, image_width))
@@ -106,15 +107,18 @@ def sobel_detection(image, image_height, image_width):
             horizontal_image[y, x] = get_convolution(pixels, x, y, horizontal_matrix, 3)
             vertical_image[y, x] = get_convolution(pixels, x, y, vertical_matrix, 3)
             new_image[y, x] = sqrt(pow(horizontal_image[y, x], 2) + pow(vertical_image[y, x], 2))
-    save_image(horizontal_image, save_path + "sobel_horizontal_image.ppm")
-    save_image(vertical_image, save_path + "sobel_vertical_image.ppm")
-    save_image(new_image, save_path + "sobel_generated_image.ppm")
-    image_one = Image.fromarray(lineally_adjust_image_values(horizontal_image, image_width, image_height))
-    image_two = Image.fromarray(lineally_adjust_image_values(vertical_image, image_width, image_height))
-    image_three = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
-    image_one.show()
-    image_two.show()
-    image_three.show()
+    if show_images:
+        save_image(horizontal_image, save_path + "sobel_horizontal_image.ppm")
+        save_image(vertical_image, save_path + "sobel_vertical_image.ppm")
+        save_image(new_image, save_path + "sobel_generated_image.ppm")
+        image_one = Image.fromarray(lineally_adjust_image_values(horizontal_image, image_width, image_height))
+        image_two = Image.fromarray(lineally_adjust_image_values(vertical_image, image_width, image_height))
+        image_three = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+        image_one.show()
+        image_two.show()
+        image_three.show()
+    return [horizontal_image, vertical_image, new_image]
+
 
 
 def sobel_color_detection(image, image_height, image_width):
@@ -339,6 +343,114 @@ def gausian_laplacian_function(x, y, sigma):
     factor = - 1 / (sqrt(2 * pi) * sigma_to_the_third)
     expression = (x * x + y * y) / sigma_squared
     return factor * (2 - expression) * exp(-expression / 2)
+
+
+def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width):
+    angle_matrix = np.zeros((image_height, image_width))
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            if horizontal_image[y, x] == 0:
+                angle_matrix[y, x] = 90
+            else:
+                vertical_value = vertical_image[y, x]
+                horizontal_value = horizontal_image[y, x]
+                angle = np.arctan(vertical_value / horizontal_value)
+                angle = angle * 180 / np.pi
+                if (0 <= angle < 22.5) or (157.5 <= angle <= 180):
+                    angle = 0
+                elif 22.5 <= angle < 67.5:
+                    angle = 45
+                elif 67.5 <= angle < 112.5:
+                    angle = 90
+                else:
+                    angle = 135
+                angle_matrix[y, x] = angle
+    return angle_matrix
+
+
+def get_x_increment(angle):
+    if angle == 0 or angle == 45:
+        return 1
+    elif angle == 135:
+        return -1
+    else:
+        return 0
+
+
+def get_y_increment(angle):
+    if angle == 90 or angle == 45 or angle == 135:
+        return -1
+    else:
+        return 0
+
+
+def suppress_false_maximums(synthesized_image, angle_matrix, image_height, image_width):
+    new_image = np.zeros((image_height, image_width))
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            x_increment = get_x_increment(angle_matrix[y, x])
+            y_increment = get_y_increment(angle_matrix[y, x])
+            before_x = x - x_increment
+            before_y = y - y_increment
+            after_x = x + x_increment
+            after_y = y + y_increment
+            if (0 <= before_x < image_width and 0 <= before_y < image_height) and \
+                    (synthesized_image[before_y, before_x] > synthesized_image[y, x]):
+                new_image[y, x] = 0
+            elif (0 <= after_x < image_width and 0 <= after_y < image_height) and \
+                    (synthesized_image[after_y, after_x] > synthesized_image[y, x]):
+                new_image[y, x] = 0
+            else:
+                new_image[y, x] = constants.MAX_COLOR_VALUE
+    return new_image
+
+
+def has_border_neighbours(suppressed_image, high_threshold, new_image, image_height, image_width, x, y,
+                          four_neighbours):
+    if four_neighbours:
+        increments = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+    else:
+        increments = [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]]
+    for i in range(0, len(increments)):
+        new_x = x + increments[i][1]
+        new_y = y + increments[i][0]
+        if 0 <= new_x < image_width and 0 <= new_y < image_height:
+            if suppressed_image[new_y, new_x] > high_threshold or new_image[new_y, new_x] == constants.MAX_COLOR_VALUE:
+                return True
+    return False
+
+
+def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True):
+    filtered_image = bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, False)
+    images = sobel_detection(filtered_image, image_height, image_width, False)
+    horizontal_image = images[0]
+    vertical_image = images[1]
+    synthesized_image = images[2]
+    angle_matrix = get_angle_matrix(horizontal_image, vertical_image, image_height, image_width)
+    suppressed_image = suppress_false_maximums(synthesized_image, angle_matrix, image_height, image_width)
+    min_pixel_value = int(np.min(suppressed_image))
+    max_pixel_value = int(np.max(suppressed_image))
+    deviation = int(np.std(suppressed_image))
+    threshold = global_threshold(suppressed_image, image_height, image_width, False, False)
+    low_threshold = max(min_pixel_value, threshold - deviation)
+    high_threshold = min(threshold + deviation, max_pixel_value)
+    new_image = np.zeros((image_height, image_width))
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            current_value = suppressed_image[y, x]
+            if current_value <= low_threshold:
+                new_image[y, x] = 0
+            elif current_value > high_threshold:
+                new_image[y, x] = constants.MAX_COLOR_VALUE
+            elif has_border_neighbours(suppressed_image, high_threshold, new_image, image_height,
+                                       image_width, x, y, four_neighbours):
+                new_image[y, x] = constants.MAX_COLOR_VALUE
+            else:
+                new_image[y, x] = 0
+    save_image(new_image, save_path + "canny_generated_image.ppm")
+    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+    image.show()
+    return new_image
 
 
 def horizontal_zero_crossing(image, image_height, image_width):
