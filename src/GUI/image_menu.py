@@ -38,7 +38,7 @@ def load_image_wrapper():
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
         # four_direction_border_detection(interface.current_image, constants.HEIGHT, constants.WIDTH, 1)
-        # canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 1, 2, 3)
+        canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 10, 10, 3)
         # susan_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 27)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
@@ -68,3 +68,5 @@ class ImageMenu:
         image_menu.add_command(label="Save", command=save_image)
         image_menu.add_separator()
         image_menu.add_command(label="Exit", command=interface.root.quit)
+
+

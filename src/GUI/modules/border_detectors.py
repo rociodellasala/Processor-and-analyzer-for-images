@@ -354,8 +354,7 @@ def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width
             else:
                 vertical_value = vertical_image[y, x]
                 horizontal_value = horizontal_image[y, x]
-                angle = np.arctan(vertical_value / horizontal_value)
-                angle = angle * 180 / np.pi
+                angle = get_angle(vertical_value, horizontal_value)
                 if (0 <= angle < 22.5) or (157.5 <= angle <= 180):
                     angle = 0
                 elif 22.5 <= angle < 67.5:
@@ -366,6 +365,21 @@ def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width
                     angle = 135
                 angle_matrix[y, x] = angle
     return angle_matrix
+
+
+def get_angle(vertical_value, horizontal_value):
+    if horizontal_value == 0:
+        return 90
+    elif vertical_value == 0:
+        return 0
+    elif horizontal_value > 0:
+        angle = np.arctan(vertical_value / horizontal_value)
+        angle = angle * 180 / np.pi
+        return (angle + 360) % 180
+    elif horizontal_value < 0:
+        angle = np.arctan(vertical_value / horizontal_value)
+        angle = angle * 180 / np.pi
+        return (angle + 180) % 180
 
 
 def get_x_increment(angle):
