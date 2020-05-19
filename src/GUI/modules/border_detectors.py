@@ -354,7 +354,8 @@ def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width
             else:
                 vertical_value = vertical_image[y, x]
                 horizontal_value = horizontal_image[y, x]
-                angle = get_angle(vertical_value, horizontal_value)
+                angle = ( np.arctan2(vertical_value, horizontal_value) * 180 ) / np.pi
+                # angle = get_angle(vertical_value, horizontal_value)
                 if (0 <= angle < 22.5) or (157.5 <= angle <= 180):
                     angle = 0
                 elif 22.5 <= angle < 67.5:
@@ -364,6 +365,7 @@ def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width
                 else:
                     angle = 135
                 angle_matrix[y, x] = angle
+
     return angle_matrix
 
 
@@ -434,7 +436,7 @@ def has_border_neighbours(suppressed_image, high_threshold, new_image, image_hei
     return False
 
 
-def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True):
+def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True):
     filtered_image = bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, False)
     images = sobel_detection(filtered_image, image_height, image_width, False)
     horizontal_image = images[0]
@@ -457,13 +459,14 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
             elif current_value > high_threshold:
                 new_image[y, x] = constants.MAX_COLOR_VALUE
             elif has_border_neighbours(suppressed_image, high_threshold, new_image, image_height,
-                                       image_width, x, y, four_neighbours):
+                                       image_width, x, y, False):
                 new_image[y, x] = constants.MAX_COLOR_VALUE
             else:
                 new_image[y, x] = 0
-    save_image(new_image, save_path + "canny_generated_image.ppm")
-    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
-    image.show()
+    if show_image:
+        save_image(new_image, save_path + "canny_generated_image.ppm")
+        image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+        image.show()
     return new_image
 
 
