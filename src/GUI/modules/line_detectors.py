@@ -30,10 +30,17 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
                         if value <= epsilon:
                             accumulator[rho, theta] += 1
 
+    arr = np.zeros((8, 2))
+    index = 0
     for rho in range(0, rows):
         for theta in range(0, cols):
             if accumulator[rho, theta] >= threshold:
-                draw_lines(rho, theta, image, image_height, image_width)
+                current_rho = min_rho + rho * delta_rho
+                current_theta = (-np.pi / 2) + (theta * delta_theta)
+                draw_lines(current_rho, current_theta, image, image_height, image_width)
+                arr[index, 0] = current_rho
+                arr[index, 1] = current_theta
+                index += 1
 
     save_image(image, save_path + "hough_transform.ppm")
     image = Image.fromarray(lineally_adjust_image_values(image, image_width, image_height))
@@ -53,6 +60,7 @@ def draw_lines(rho, theta, image, image_height, image_width):
     origin_ordenate = y0 - slope * x0
     for x in range(0, image_width):
         y = int(slope * x + origin_ordenate)
+        # y = int(- ((np.cos(theta) / np.sin(theta)) * x) + rho / np.sin(theta))
         if 0 <= y < image_height:
             image[y, x] = constants.MAX_COLOR_VALUE
     print("aca")
