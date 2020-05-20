@@ -29,11 +29,15 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
                         value = abs(current_rho - x * np.cos(current_theta) - y * np.sin(current_theta))
                         if value <= epsilon:
                             accumulator[rho, theta] += 1
-
+    arr = np.zeros((10, 2))
+    index = 0
     for rho in range(0, rows):
         for theta in range(0, cols):
             if accumulator[rho, theta] >= threshold:
-                draw_lines(rho, theta, image, image_height, image_width)
+                # draw_lines(rho, theta, image, image_height, image_width)
+                arr[index, 0] = rho
+                arr[index, 1] = theta
+                index += 1
 
     save_image(image, save_path + "hough_transform.ppm")
     image = Image.fromarray(lineally_adjust_image_values(image, image_width, image_height))
