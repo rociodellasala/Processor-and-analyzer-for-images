@@ -70,6 +70,8 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
                    bottom_right_vertex_x, bottom_right_vertex_y):
     pixels = np.array(image)
     new_image = np.ones((image_height, image_width)) * 3
+    lin = []
+    lout = []
     color_sum = 0
     square_height = (bottom_right_vertex_y - top_left_vertex_y) + 1
     square_width = (bottom_right_vertex_x - top_left_vertex_x) + 1
@@ -80,18 +82,31 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
             color_sum += pixels[y, x]
     for y in range(top_left_vertex_y, bottom_right_vertex_y + 1):
         new_image[y, top_left_vertex_x - 1] = -1
+        lin.append((top_left_vertex_x - 1, y))
         new_image[y, bottom_right_vertex_x + 1] = -1
+        lin.append((bottom_right_vertex_x + 1, y))
         new_image[y, top_left_vertex_x - 2] = 1
+        lout.append((top_left_vertex_x - 2, y))
         new_image[y, bottom_right_vertex_x + 2] = 1
+        lout.append((bottom_right_vertex_x + 2, y))
+
     for x in range(top_left_vertex_x, bottom_right_vertex_x + 1):
         new_image[top_left_vertex_y - 1, x] = -1
+        lin.append((x, top_left_vertex_y - 1))
         new_image[bottom_right_vertex_y + 1, x] = -1
+        lin.append((x, top_left_vertex_y + 1))
         new_image[top_left_vertex_y - 2, x] = 1
+        lout.append((x, top_left_vertex_y - 2))
         new_image[bottom_right_vertex_y + 2, x] = 1
+        lout.append((x, top_left_vertex_y + 2))
     new_image[top_left_vertex_y - 1, top_left_vertex_x - 1] = 1
+    lout.append((top_left_vertex_x - 1, top_left_vertex_y - 1))
     new_image[bottom_right_vertex_y + 1, top_left_vertex_x - 1] = 1
+    lout.append((top_left_vertex_x - 1, bottom_right_vertex_y + 1))
     new_image[bottom_right_vertex_y + 1, bottom_right_vertex_x + 1] = 1
+    lout.append((bottom_right_vertex_x + 1, bottom_right_vertex_y + 1))
     new_image[top_left_vertex_y - 1, bottom_right_vertex_x + 1] = 1
+    lout.append((bottom_right_vertex_x + 1, top_left_vertex_y - 1))
     # for y in range(top_left_vertex_y - 4, bottom_right_vertex_y + 5):
     #     for x in range(top_left_vertex_x - 4, bottom_right_vertex_x + 5):
     #         print(int(new_image[y, x]), end=' ')
