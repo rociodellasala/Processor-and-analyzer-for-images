@@ -1,5 +1,6 @@
 from src.GUI import gui_constants as color
-from tkinter import Frame, ttk, TOP, BOTH, BOTTOM, Tk
+from tkinter import Frame, ttk, TOP, BOTH, BOTTOM, Canvas, Tk
+from src.GUI import gui_constants as constants
 
 
 class InterfaceInfo:
@@ -17,6 +18,7 @@ class InterfaceInfo:
             self.buttons_frame = None
             self.image_frame = None
             self.footer_frame = None
+            self.canvas = None
             InterfaceInfo.__instance = self
 
     @staticmethod
@@ -57,11 +59,18 @@ class InterfaceInfo:
         self.left_image = None
         self.right_image = None
 
+    def generate_canvas(self):
+        self.canvas = Canvas(self.image_frame, width=constants.WIDTH, heigh=constants.HEIGHT, bg='white')
+        self.canvas.pack(side="left")
+
     def delete_widgets(self, frame):
         for widget in frame.winfo_children():
             widget.destroy()
         if frame is self.image_frame:
             self.clean_images()
+
+    def get_canvas(self):
+        return self.canvas
 
     def remove_images(self):
         self.clean_images()

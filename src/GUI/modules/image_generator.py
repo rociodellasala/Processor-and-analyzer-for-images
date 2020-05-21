@@ -3,24 +3,25 @@ from math import sqrt
 from math import pow
 from tkinter import messagebox
 from src.GUI import gui_constants
+import numpy as np
 
 
 # Rectangle draw functions
 def generate_rectangle(image_name, image_width, image_height, rectangle_width, rectangle_height, filled):
     if image_width >= 2 * rectangle_width and image_height >= 2 * rectangle_height:
-        new_image = Image.new("L", (int(image_width), int(image_height)))
-        pixels = new_image.load()
+        new_image = np.zeros((image_height, image_width))
         starting_x = int(image_width / 2 - rectangle_width / 2)
         ending_x = int(image_width / 2 + rectangle_width / 2)
         starting_y = int(image_height / 2 - rectangle_height / 2)
         ending_y = int(image_height / 2 + rectangle_height / 2)
         if filled:
-            draw_filled_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+            draw_filled_rectangle(new_image, starting_x, ending_x, starting_y, ending_y)
         else:
-            draw_empty_rectangle(pixels, starting_x, ending_x, starting_y, ending_y)
+            draw_empty_rectangle(new_image, starting_x, ending_x, starting_y, ending_y)
         global save_path
-        new_image.save(save_path + image_name)
-        new_image.show()
+        save_image(new_image, save_path + image_name)
+        image = Image.fromarray(new_image)
+        image.show()
     else:
         messagebox.showerror(title="Error", message="Width must be at least 2 times greater than the image width "
                                                     "and height must be at least 2 times grater than image height")
@@ -29,7 +30,7 @@ def generate_rectangle(image_name, image_width, image_height, rectangle_width, r
 def draw_filled_rectangle(pixels, left, right, upper, lower):
     for x in range(left, right + 1):
         for y in range(upper, lower + 1):
-            pixels[x, y] = 255
+            pixels[y, x] = 255
     return pixels
 
 
@@ -42,13 +43,13 @@ def draw_empty_rectangle(pixels, left, right, upper, lower):
 
 def draw_horizontal_line(pixels, height, starting_x, ending_x):
     for x in range(starting_x, ending_x + 1):
-        pixels[x, height] = 255
+        pixels[height, x] = 255
     return pixels
 
 
 def draw_vertical_line(pixels, width, starting_y, ending_y):
     for y in range(starting_y, ending_y + 1):
-        pixels[width, y] = 255
+        pixels[y, width] = 255
     return pixels
 
 
@@ -129,6 +130,12 @@ def color_faded_image(image_width, image_height, red, green, blue):
     global save_path
     new_image.save(save_path + "color_fading.png")
     new_image.show()
+
+
+def save_image(image, file_path):
+    img = Image.fromarray(image)
+    img = img.convert("I")
+    img.save(file_path)
 
 
 save_path = "../../draws/"

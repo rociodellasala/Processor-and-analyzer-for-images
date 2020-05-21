@@ -92,10 +92,10 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
     new_image[bottom_right_vertex_y + 1, top_left_vertex_x - 1] = 1
     new_image[bottom_right_vertex_y + 1, bottom_right_vertex_x + 1] = 1
     new_image[top_left_vertex_y - 1, bottom_right_vertex_x + 1] = 1
-    for y in range(top_left_vertex_y - 4, bottom_right_vertex_y + 5):
-        for x in range(top_left_vertex_x - 4, bottom_right_vertex_x + 5):
-            print(int(new_image[y, x]), end=' ')
-        print("")
+    # for y in range(top_left_vertex_y - 4, bottom_right_vertex_y + 5):
+    #     for x in range(top_left_vertex_x - 4, bottom_right_vertex_x + 5):
+    #         print(int(new_image[y, x]), end=' ')
+    #     print("")
     object_color = int(color_sum / square_size)
 
 

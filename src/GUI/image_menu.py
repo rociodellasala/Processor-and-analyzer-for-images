@@ -5,9 +5,10 @@ from image_access import open_file_name
 from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
-
+import numpy as np
 from border_detectors import four_direction_border_detection, canny_method, susan_method #TODO remove
 from line_detectors import hough_transform, pixel_exchange #TODO remove
+
 
 def load_image(row, column):
     interface = InterfaceInfo.get_instance()
@@ -25,10 +26,11 @@ def load_image(row, column):
         # PhotoImage class is used to add image to widgets, icons etc
         image = ImageTk.PhotoImage(image)
         # create a label
-        panel = ttk.Label(interface.image_frame, image=image)
+        # panel = ttk.Label(interface.image_frame, image=image)
+        interface.generate_canvas()
+        interface.canvas.create_image(0, 0, image=image, anchor="nw")
         # set the image as img
-        panel.image = image
-        panel.grid(row=row, column=column)
+        interface.canvas.image = image
         return image_instance
 
 
@@ -41,7 +43,7 @@ def load_image_wrapper():
         # canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 10, 10, 3)
         # susan_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 27)
         # hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 15, 0.9)
-        pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 50, 53, 53)
+        # pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 50, 53, 53)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:
