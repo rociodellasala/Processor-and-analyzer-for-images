@@ -7,7 +7,7 @@ from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 
 from border_detectors import four_direction_border_detection, canny_method, susan_method #TODO remove
-from line_detectors import hough_transform #TODO remove
+from line_detectors import hough_transform, pixel_exchange #TODO remove
 
 def load_image(row, column):
     interface = InterfaceInfo.get_instance()
@@ -40,7 +40,8 @@ def load_image_wrapper():
         # four_direction_border_detection(interface.current_image, constants.HEIGHT, constants.WIDTH, 1)
         # canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 10, 10, 3)
         # susan_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 27)
-        hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 15, 0.9)
+        # hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 15, 0.9)
+        pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 50, 53, 53)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:
