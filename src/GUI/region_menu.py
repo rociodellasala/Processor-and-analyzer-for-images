@@ -6,6 +6,7 @@ from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from src.GUI.region_selector import Region
+from src.GUI.modules.line_detectors import pixel_exchange
 
 
 def region_information():
@@ -16,12 +17,20 @@ def region_information():
         region = Region()
 
 
-def pixel_exchange():
+def pixel_exchange_wrapper():
     interface = InterfaceInfo.get_instance()
     if interface.current_image is None:
         messagebox.showerror(title="Error", message="You must upload an image to mark a region")
     else:
         region = Region()
+        ttk.Label(interface.buttons_frame, text="Press OK when selection is ready",
+                  background=constants.TOP_COLOR).grid(row=0, column=0)
+        apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: pixel_exchange(interface.current_image,
+                                                                constants.WIDTH, constants.HEIGHT,
+                                                                region.start_x, region.start_y, region.end_x,
+                                                                 region.end_y))
+        apply_filter.grid(row=1, column=0)
 
 
 class RegionMenu:
@@ -29,6 +38,6 @@ class RegionMenu:
         image_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Region", menu=image_menu)
         image_menu.add_command(label="Information", command=region_information)
-        image_menu.add_command(label="Pixel exchange", command=pixel_exchange)
+        image_menu.add_command(label="Pixel exchange", command=pixel_exchange_wrapper)
 
 
