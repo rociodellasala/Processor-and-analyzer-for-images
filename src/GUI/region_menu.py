@@ -7,6 +7,7 @@ from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from src.GUI.region_selector import Region
 
+
 def region_information():
     interface = InterfaceInfo.get_instance()
     if interface.current_image is None:
