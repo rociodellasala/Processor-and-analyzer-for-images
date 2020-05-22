@@ -75,21 +75,19 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
     lout = []
     object_color = get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
                                     bottom_right_vertex_y, lin, lout)
-    for i in range(0, max_iterations):
-        new_lin = []
-        new_lout = []
-        iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
-        iterate_over_lin(image_height, image_width, new_image, lin, new_lin)
-        lin = new_lin
-        lout = new_lout
+    # for i in range(0, max_iterations):
+    #     new_lin = []
+    #     new_lout = []
+    #     iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
+    #     iterate_over_lin(image_height, image_width, new_image, lin, new_lin)
+    #     lin = new_lin
+    #     lout = new_lout
     border_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
     for y in range(0, image_height):
         for x in range(0, image_width):
-            border_image[y, x, 0] = pixels[y, x]
-    for pixel in lin:
-        x = pixel[0]
-        y = pixel[1]
-        border_image[y, x, 2] = 255
+            border_image[y, x, 0] = np.uint8(pixels[y, x])
+            if new_image[y, x] == -1 or new_image[y, x] == 1:
+                border_image[y, x, 2] = np.uint8(255)
     save_colored_image(border_image, save_path + "pixel_exchange_image.ppm")
     img = Image.fromarray(lineally_adjust_colored_image_values(border_image, image_width, image_height), 'RGB')
     img.show()
@@ -107,7 +105,7 @@ def iterate_over_lout(image, image_height, image_width, new_image, object_color,
                 x_increment = directions[i][0]
                 y_increment = directions[i][1]
                 if (0 <= x_increment + current_x < image_width and 0 <= y_increment + current_y < image_height and
-                        image[current_y + y_increment, current_x + x_increment] == 3):
+                        new_image[current_y + y_increment, current_x + x_increment] == 3):
                     new_image[current_y + y_increment, current_x + x_increment] = 1
                     new_lout.append((current_x + x_increment, current_y + y_increment))
         else:
