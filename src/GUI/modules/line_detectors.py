@@ -2,7 +2,8 @@ import numpy as np
 from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
 from filters import get_convolution, bilateral_filter
-from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
+from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values, \
+    lineally_adjust_colored_image_values
 from matrix_operations import rotate_matrix_with_angle
 from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
@@ -77,10 +78,21 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
     for i in range(0, max_iterations):
         new_lin = []
         new_lout = []
-        iterate_over_lout(image, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
+        iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
         iterate_over_lin(image_height, image_width, new_image, lin, new_lin)
         lin = new_lin
         lout = new_lout
+    border_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            border_image[y, x, 0] = pixels[y, x]
+    for pixel in lin:
+        x = pixel[0]
+        y = pixel[1]
+        border_image[y, x, 2] = 255
+    save_colored_image(border_image, save_path + "pixel_exchange_image.ppm")
+    img = Image.fromarray(lineally_adjust_colored_image_values(border_image, image_width, image_height), 'RGB')
+    img.show()
 
 
 def iterate_over_lout(image, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin):
