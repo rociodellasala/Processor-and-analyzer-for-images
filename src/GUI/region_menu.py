@@ -29,7 +29,7 @@ def pixel_exchange_wrapper():
                                   command=lambda: pixel_exchange(interface.current_image,
                                                                 constants.WIDTH, constants.HEIGHT,
                                                                 region.start_x, region.start_y, region.end_x,
-                                                                 region.end_y, 100, 400))
+                                                                 region.end_y, 40, 400))
         apply_filter.grid(row=1, column=0)
 
 
