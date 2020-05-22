@@ -89,7 +89,7 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
             if new_image[y, x] == -1 or new_image[y, x] == 1:
                 border_image[y, x, 2] = np.uint8(255)
     save_colored_image(border_image, save_path + "pixel_exchange_image.ppm")
-    img = Image.fromarray(lineally_adjust_colored_image_values(border_image, image_width, image_height), 'RGB')
+    img = Image.fromarray(border_image, 'RGB')
     img.show()
 
 
