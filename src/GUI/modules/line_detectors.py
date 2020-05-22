@@ -156,11 +156,11 @@ def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bo
         new_image[top_left_vertex_y - 1, x] = -1
         lin.append((x, top_left_vertex_y - 1))
         new_image[bottom_right_vertex_y + 1, x] = -1
-        lin.append((x, top_left_vertex_y + 1))
+        lin.append((x, bottom_right_vertex_y + 1))
         new_image[top_left_vertex_y - 2, x] = 1
         lout.append((x, top_left_vertex_y - 2))
         new_image[bottom_right_vertex_y + 2, x] = 1
-        lout.append((x, top_left_vertex_y + 2))
+        lout.append((x, bottom_right_vertex_y + 2))
 
     new_image[top_left_vertex_y - 1, top_left_vertex_x - 1] = 1
     lout.append((top_left_vertex_x - 1, top_left_vertex_y - 1))
@@ -170,6 +170,10 @@ def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bo
     lout.append((bottom_right_vertex_x + 1, bottom_right_vertex_y + 1))
     new_image[top_left_vertex_y - 1, bottom_right_vertex_x + 1] = 1
     lout.append((bottom_right_vertex_x + 1, top_left_vertex_y - 1))
+    # for y in range(top_left_vertex_y - 4, bottom_right_vertex_y + 5):
+    #     for x in range(top_left_vertex_x - 4, bottom_right_vertex_x + 5):
+    #         print(int(new_image[y, x]), end=' ' if new_image[y, x] >= 0 else '  ')
+    #     print("")
     return int(color_sum / square_size)
 
 
