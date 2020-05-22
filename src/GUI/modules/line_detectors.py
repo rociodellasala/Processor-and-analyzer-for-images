@@ -75,13 +75,13 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
     lout = []
     object_color = get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
                                     bottom_right_vertex_y, lin, lout)
-    # for i in range(0, max_iterations):
-    #     new_lin = []
-    #     new_lout = []
-    #     iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
-    #     iterate_over_lin(image_height, image_width, new_image, lin, new_lin)
-    #     lin = new_lin
-    #     lout = new_lout
+    for i in range(0, max_iterations):
+        new_lin = []
+        new_lout = []
+        iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
+        iterate_over_lin(image_height, image_width, new_image, lin, new_lin)
+        lin = new_lin
+        lout = new_lout
     border_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
     for y in range(0, image_height):
         for x in range(0, image_width):
