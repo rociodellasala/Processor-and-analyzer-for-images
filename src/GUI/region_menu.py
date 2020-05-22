@@ -27,7 +27,7 @@ def pixel_exchange_wrapper():
                   background=constants.TOP_COLOR).grid(row=0, column=0)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
                                   command=lambda: pixel_exchange(interface.current_image,
-                                                                constants.WIDTH, constants.HEIGHT,
+                                                                constants.HEIGHT, constants.WIDTH,
                                                                 region.start_x, region.start_y, region.end_x,
                                                                  region.end_y, 40, 400))
         apply_filter.grid(row=1, column=0)
