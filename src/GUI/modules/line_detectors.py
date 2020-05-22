@@ -71,15 +71,15 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
                    bottom_right_vertex_y, epsilon, max_iterations):
     pixels = np.array(image)
     new_image = np.ones((image_height, image_width)) * 3
-    lin = []
-    lout = []
+    lin = {}
+    lout = {}
     object_color = get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
                                     bottom_right_vertex_y, lin, lout)
     for i in range(0, max_iterations):
-        new_lin = []
-        new_lout = []
+        new_lin = {}
+        new_lout = {}
         iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
-        iterate_over_lin(image_height, image_width, new_image, lin, new_lin)
+        iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout)
         lin = new_lin
         lout = new_lout
     border_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
@@ -100,19 +100,19 @@ def iterate_over_lout(image, image_height, image_width, new_image, object_color,
         current_y = pixel[1]
         if abs(image[current_y, current_x] - object_color) <= epsilon:
             new_image[current_y, current_x] = -1
-            new_lin.append((current_x, current_y))
+            new_lin[(current_x, current_y)] = -1
             for i in range(0, 4):
                 x_increment = directions[i][0]
                 y_increment = directions[i][1]
                 if (0 <= x_increment + current_x < image_width and 0 <= y_increment + current_y < image_height and
                         new_image[current_y + y_increment, current_x + x_increment] == 3):
                     new_image[current_y + y_increment, current_x + x_increment] = 1
-                    new_lout.append((current_x + x_increment, current_y + y_increment))
+                    new_lout[(current_x + x_increment, current_y + y_increment)] = 1
         else:
-            new_lout.append((current_x, current_y))
+            new_lout[(current_x, current_y)] = 1
 
 
-def iterate_over_lin(image_height, image_width, new_image, lin, new_lin):
+def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout):
     directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
     for pixel in lin:
         blue_count = 0
@@ -123,12 +123,12 @@ def iterate_over_lin(image_height, image_width, new_image, lin, new_lin):
             y_increment = directions[i][1]
             new_x = current_x + x_increment
             new_y = current_y + y_increment
-            if 0 <= new_x < image_width and 0 <= new_y <= image_height and new_image[new_y, new_x] == 1:
+            if 0 <= new_x < image_width and 0 <= new_y <= image_height and (new_x, new_y) in new_lout:
                 blue_count += 1
         if blue_count == 0:
             new_image[new_y, new_x] = -3
         else:
-            new_lin.append((current_x, current_y))
+            new_lin[(current_x, current_y)] = -1
 
 
 def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
@@ -144,32 +144,32 @@ def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bo
 
     for y in range(top_left_vertex_y, bottom_right_vertex_y + 1):
         new_image[y, top_left_vertex_x - 1] = -1
-        lin.append((top_left_vertex_x - 1, y))
+        lin[(top_left_vertex_x - 1, y)] = -1
         new_image[y, bottom_right_vertex_x + 1] = -1
-        lin.append((bottom_right_vertex_x + 1, y))
+        lin[(bottom_right_vertex_x + 1, y)] = -1
         new_image[y, top_left_vertex_x - 2] = 1
-        lout.append((top_left_vertex_x - 2, y))
+        lout[(top_left_vertex_x - 2, y)] = 1
         new_image[y, bottom_right_vertex_x + 2] = 1
-        lout.append((bottom_right_vertex_x + 2, y))
+        lout[(bottom_right_vertex_x + 2, y)] = 1
 
     for x in range(top_left_vertex_x, bottom_right_vertex_x + 1):
         new_image[top_left_vertex_y - 1, x] = -1
-        lin.append((x, top_left_vertex_y - 1))
+        lin[(x, top_left_vertex_y - 1)] = -1
         new_image[bottom_right_vertex_y + 1, x] = -1
-        lin.append((x, bottom_right_vertex_y + 1))
+        lin[(x, bottom_right_vertex_y + 1)] = -1
         new_image[top_left_vertex_y - 2, x] = 1
-        lout.append((x, top_left_vertex_y - 2))
+        lout[(x, top_left_vertex_y - 2)] = 1
         new_image[bottom_right_vertex_y + 2, x] = 1
-        lout.append((x, bottom_right_vertex_y + 2))
+        lout[(x, bottom_right_vertex_y + 2)] = 1
 
     new_image[top_left_vertex_y - 1, top_left_vertex_x - 1] = 1
-    lout.append((top_left_vertex_x - 1, top_left_vertex_y - 1))
+    lout[(top_left_vertex_x - 1, top_left_vertex_y - 1)] = 1
     new_image[bottom_right_vertex_y + 1, top_left_vertex_x - 1] = 1
-    lout.append((top_left_vertex_x - 1, bottom_right_vertex_y + 1))
+    lout[(top_left_vertex_x - 1, bottom_right_vertex_y + 1)] = 1
     new_image[bottom_right_vertex_y + 1, bottom_right_vertex_x + 1] = 1
-    lout.append((bottom_right_vertex_x + 1, bottom_right_vertex_y + 1))
+    lout[(bottom_right_vertex_x + 1, bottom_right_vertex_y + 1)] = 1
     new_image[top_left_vertex_y - 1, bottom_right_vertex_x + 1] = 1
-    lout.append((bottom_right_vertex_x + 1, top_left_vertex_y - 1))
+    lout[(bottom_right_vertex_x + 1, top_left_vertex_y - 1)] = 1
     # for y in range(top_left_vertex_y - 4, bottom_right_vertex_y + 5):
     #     for x in range(top_left_vertex_x - 4, bottom_right_vertex_x + 5):
     #         print(int(new_image[y, x]), end=' ' if new_image[y, x] >= 0 else '  ')

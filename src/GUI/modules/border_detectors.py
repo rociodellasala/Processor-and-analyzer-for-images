@@ -6,6 +6,7 @@ from image_operations import lineally_adjust_image_values, lineally_adjust_and_r
 from matrix_operations import rotate_matrix_with_angle
 from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
+from skimage.filters import threshold_multiotsu
 
 
 def prewit_detection(image, image_height, image_width):
@@ -347,23 +348,32 @@ def gausian_laplacian_function(x, y, sigma):
 
 def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width):
     angle_matrix = np.zeros((image_height, image_width))
+    count_0 = 0
+    count_45 = 0
+    count90 = 0
+    count_135 = 0
     for y in range(0, image_height):
         for x in range(0, image_width):
             if horizontal_image[y, x] == 0:
                 angle_matrix[y, x] = 90
+                count90 += 1
             else:
                 vertical_value = vertical_image[y, x]
                 horizontal_value = horizontal_image[y, x]
-                angle = ( np.arctan2(vertical_value, horizontal_value) * 180 ) / np.pi
+                angle = ( np.arctan2(fabs(vertical_value), horizontal_value) * 180 ) / np.pi
                 # angle = get_angle(vertical_value, horizontal_value)
                 if (0 <= angle < 22.5) or (157.5 <= angle <= 180):
                     angle = 0
+                    count_0 += 1
                 elif 22.5 <= angle < 67.5:
                     angle = 45
+                    count_45 += 1
                 elif 67.5 <= angle < 112.5:
                     angle = 90
+                    count90 += 90
                 else:
                     angle = 135
+                    count_135 += 1
                 angle_matrix[y, x] = angle
 
     return angle_matrix
@@ -444,12 +454,16 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     synthesized_image = images[2]
     angle_matrix = get_angle_matrix(horizontal_image, vertical_image, image_height, image_width)
     suppressed_image = suppress_false_maximums(synthesized_image, angle_matrix, image_height, image_width)
-    min_pixel_value = int(np.min(suppressed_image))
-    max_pixel_value = int(np.max(suppressed_image))
-    deviation = int(np.std(suppressed_image))
-    threshold = global_threshold(suppressed_image, image_height, image_width, False, False)
-    low_threshold = max(min_pixel_value, threshold - deviation)
-    high_threshold = min(threshold + deviation, max_pixel_value)
+    # min_pixel_value = int(np.min(suppressed_image))
+    # max_pixel_value = int(np.max(suppressed_image))
+    # deviation = int(np.std(suppressed_image))
+    threshold = threshold_multiotsu(suppressed_image)
+    # threshold = global_threshold(suppressed_image, image_height, image_width, False, False)
+    # low_threshold = max(min_pixel_value, threshold - deviation)
+    # high_threshold = min(threshold + deviation, max_pixel_value)
+    low_threshold = threshold[0]
+    high_threshold = threshold[1]
+    high_threshold = low_threshold + 30
     new_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
         for x in range(0, image_width):
@@ -459,7 +473,7 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
             elif current_value > high_threshold:
                 new_image[y, x] = constants.MAX_COLOR_VALUE
             elif has_border_neighbours(suppressed_image, high_threshold, new_image, image_height,
-                                       image_width, x, y, False):
+                                       image_width, x, y, four_neighbours):
                 new_image[y, x] = constants.MAX_COLOR_VALUE
             else:
                 new_image[y, x] = 0
@@ -489,7 +503,6 @@ def get_susan_mask():
 
 def calculate_same_value_pixel(image, current_y, current_x, circular_mask, max_difference):
     counter = 0
-    difference = 0
     current_value = image[current_y, current_x]
     for y in range(-int(len(circular_mask)/2), int(len(circular_mask)/2 + 1)):
         for x in range(-int(len(circular_mask[0])/2), int(len(circular_mask[0])/2 + 1)):
