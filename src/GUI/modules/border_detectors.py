@@ -421,7 +421,7 @@ def suppress_false_maximums(synthesized_image, angle_matrix, image_height, image
             after_x = x + x_increment
             after_y = y + y_increment
             if (0 <= before_x < image_width and 0 <= before_y < image_height) and \
-                    (synthesized_image[before_y, before_x] > synthesized_image[y, x]):
+                    (synthesized_image[before_y, before_x] >= synthesized_image[y, x]):
                 new_image[y, x] = 0
             elif (0 <= after_x < image_width and 0 <= after_y < image_height) and \
                     (synthesized_image[after_y, after_x] > synthesized_image[y, x]):
@@ -463,7 +463,7 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     # high_threshold = min(threshold + deviation, max_pixel_value)
     low_threshold = threshold[0]
     high_threshold = threshold[1]
-    high_threshold = low_threshold + 30
+    high_threshold = low_threshold + 50
     new_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
         for x in range(0, image_width):
