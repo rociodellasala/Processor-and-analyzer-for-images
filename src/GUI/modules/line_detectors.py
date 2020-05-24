@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
 from filters import get_convolution, bilateral_filter
@@ -15,10 +16,12 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
     max_size = max(image_height, image_width)
     max_rho = np.sqrt(2) * max_size
     min_rho = - np.sqrt(2) * max_size
-    delta_rho = max_size * 0.1
-    rows = int((max_rho - min_rho) / delta_rho)
+    delta_rho = 1
+    rows = int((max_rho - min_rho) / delta_rho) + 1
     delta_theta = (15 / 180) * np.pi
     cols = int(((np.pi / 2) - (- np.pi / 2)) / delta_theta)
+    cols = 2
+    thetas = [0, np.pi / 2]
     accumulator = np.zeros((rows, cols))
     for y in range(0, image_height):
         for x in range(0, image_width):
@@ -26,18 +29,20 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
                 for rho in range(0, rows):
                     for theta in range(0, cols):
                         current_rho = min_rho + rho * delta_rho
-                        current_theta = (-np.pi / 2) + (theta * delta_theta)
+                        # current_theta = (-np.pi / 2) + (theta * delta_theta)
+                        current_theta = thetas[theta]
                         value = abs(current_rho - x * np.cos(current_theta) - y * np.sin(current_theta))
                         if value <= epsilon:
                             accumulator[rho, theta] += 1
 
-    arr = np.zeros((8, 2))
+    arr = np.zeros((10000, 2))
     index = 0
     for rho in range(0, rows):
         for theta in range(0, cols):
             if accumulator[rho, theta] >= threshold:
                 current_rho = min_rho + rho * delta_rho
-                current_theta = (-np.pi / 2) + (theta * delta_theta)
+                # current_theta = (-np.pi / 2) + (theta * delta_theta)
+                current_theta = thetas[theta]
                 draw_lines(current_rho, current_theta, image, image_height, image_width)
                 arr[index, 0] = current_rho
                 arr[index, 1] = current_theta
@@ -57,13 +62,18 @@ def draw_lines(rho, theta, image, image_height, image_width):
     y1 = int(y0 + 1000 * (a))
     x2 = int(x0 - 1000 * (-b))
     y2 = int(y0 - 1000 * (a))
-    slope = (y2 - y1) / (x2 - x1)
-    origin_ordenate = y0 - slope * x0
-    for x in range(0, image_width):
-        y = int(slope * x + origin_ordenate)
-        # y = int(- ((np.cos(theta) / np.sin(theta)) * x) + rho / np.sin(theta))
-        if 0 <= y < image_height:
-            image[y, x] = constants.MAX_COLOR_VALUE
+    # cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 3)
+    if x1 == x2:
+        for y in range(0, image_width):
+            image[y, int(x0)] = constants.MAX_COLOR_VALUE
+    else:
+        slope = (y2 - y1) / (x2 - x1)
+        origin_ordenate = y0 - slope * x0
+        for x in range(0, image_width):
+            y = int(slope * x + origin_ordenate)
+            # y = int(- ((np.cos(theta) / np.sin(theta)) * x) + rho / np.sin(theta))
+            if 0 <= y < image_height:
+                image[y, x] = constants.MAX_COLOR_VALUE
     print("aca")
 
 
