@@ -35,8 +35,8 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
                         if value <= epsilon:
                             accumulator[rho, theta] += 1
 
-    arr = np.zeros((10000, 2))
-    index = 0
+    # arr = np.zeros((10000, 2))
+    # index = 0
     for rho in range(0, rows):
         for theta in range(0, cols):
             if accumulator[rho, theta] >= threshold:
@@ -44,13 +44,74 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
                 # current_theta = (-np.pi / 2) + (theta * delta_theta)
                 current_theta = thetas[theta]
                 draw_lines(current_rho, current_theta, image, image_height, image_width)
-                arr[index, 0] = current_rho
-                arr[index, 1] = current_theta
-                index += 1
+                # arr[index, 0] = current_rho
+                # arr[index, 1] = current_theta
+                # index += 1
 
     save_image(image, save_path + "hough_transform.ppm")
     image = Image.fromarray(lineally_adjust_image_values(image, image_width, image_height))
     image.show()
+
+
+def circular_hough_transform(image, image_height, image_width, threshold, epsilon, radius):
+    original = np.array(image)
+    image = canny_method(image, image_height, image_width, 10, 10, 3, show_image=False)
+    max_radius = radius + 5;
+    min_radius = radius - 5;
+    delta_radius = 0.1
+    radius_quantity = int((max_radius - min_radius) / delta_radius + 1)
+    a = image_width / 2
+    max_a = a + 2
+    min_a = a - 2
+    delta_a = 0.1
+    a_quantity = int((max_a - min_a) / delta_a + 1)
+    b = image_height / 2
+    max_b = b + 2
+    min_b = b - 2
+    delta_b = 0.1
+    b_quantity = int((max_b - min_b) / delta_b + 1)
+    accumulator = np.zeros((radius_quantity, a_quantity, b_quantity))
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            if image[y, x] == constants.MAX_COLOR_VALUE:
+                for radius_index in range(0, radius_quantity):
+                    for a_index in range(0, a_quantity):
+                        for b_index in range(0, b_quantity):
+                            current_radius = min_radius + radius_index * delta_radius
+                            current_a = min_a + a_index * delta_a
+                            current_b = min_b + b_index * delta_b
+                            x_difference = pow(x - current_a, 2)
+                            y_difference = pow(y - current_b, 2)
+                            squared_radius = pow(current_radius, 2)
+                            value = abs(x_difference + y_difference - squared_radius)
+                        if value <= epsilon:
+                            accumulator[radius_index, a_index, b_index] += 1
+
+    arr = np.zeros((10000, 3))
+    index = 0
+    new_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            new_image[y, x, 0] = original[y, x]
+            new_image[y, x, 1] = original[y, x]
+            new_image[y, x, 2] = original[y, x]
+
+    for radius_index in range(0, radius_quantity):
+        for a_index in range(0, a_quantity):
+            for b_index in range(0, b_quantity):
+                if accumulator[radius_index, a_index, b_index] >= threshold:
+                    current_radius = min_radius + delta_radius * radius_index
+                    current_a = min_a + delta_a * a_index
+                    current_b = min_b + delta_b * b_index
+                    draw_circle(current_radius, current_a, current_b, new_image, image_height, image_width, epsilon)
+                    arr[index, 0] = current_radius
+                    arr[index, 1] = current_a
+                    arr[index, 2] = current_b
+                    index += 1
+
+    save_colored_image(new_image, save_path + "circular_hough_transform.ppm")
+    img = Image.fromarray(new_image, 'RGB')
+    img.show()
 
 
 def draw_lines(rho, theta, image, image_height, image_width):
@@ -73,8 +134,35 @@ def draw_lines(rho, theta, image, image_height, image_width):
             y = int(slope * x + origin_ordenate)
             # y = int(- ((np.cos(theta) / np.sin(theta)) * x) + rho / np.sin(theta))
             if 0 <= y < image_height:
-                image[y, x] = constants.MAX_COLOR_VALUE
-    print("aca")
+                image[y, x, 0] = 0
+                image[y, x, 1] = constants.MAX_COLOR_VALUE
+                image[y, x, 2] = 0
+
+
+def draw_circle(radius, a, b, image, image_height, image_width, epsilon):
+    x_start = int(a - radius)
+    x_end = int(a + radius)
+    y_start = int(b - radius)
+    y_end = int(b + radius)
+
+    for y in range(y_start, y_end + 1):
+        for x in range(x_start, x_end + 1):
+            if 0 <= x < image_width and 0 <= y < image_height:
+                x_difference = pow(x - a, 2)
+                y_difference = pow(y - b, 2)
+                squared_radius = pow(radius, 2)
+                value = abs(x_difference + y_difference - squared_radius)
+                if value <= epsilon:
+                    image[y, x, 0] = 0
+                    image[y, x, 1] = constants.MAX_COLOR_VALUE
+                    image[y, x, 2] = 0
+                    for i in range(1, 5):
+                        image[y + i, x, 1] = constants.MAX_COLOR_VALUE
+                        image[y - i, x, 1] = constants.MAX_COLOR_VALUE
+                        image[y, x + i, 1] = constants.MAX_COLOR_VALUE
+                        image[y, x - i, 1] = constants.MAX_COLOR_VALUE
+                        image[y, x, 1] = constants.MAX_COLOR_VALUE
+
 
 
 def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
