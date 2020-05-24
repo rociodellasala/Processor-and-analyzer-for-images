@@ -20,8 +20,8 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
     rows = int((max_rho - min_rho) / delta_rho) + 1
     delta_theta = (15 / 180) * np.pi
     cols = int(((np.pi / 2) - (- np.pi / 2)) / delta_theta)
-    cols = 2
-    thetas = [0, np.pi / 2]
+    cols = 6
+    thetas = [0, np.pi / 8, np.pi / 6, np.pi / 4, np.pi / 3, np.pi / 2]
     accumulator = np.zeros((rows, cols))
     for y in range(0, image_height):
         for x in range(0, image_width):
