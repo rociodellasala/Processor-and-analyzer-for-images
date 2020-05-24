@@ -80,14 +80,26 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
         new_lout = {}
         iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
         iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout)
-        lin = new_lin
-        lout = new_lout
+        second_lin = {}
+        second_lout = {}
+        remove_extra_lin(pixels, image_height, image_width, new_image, new_lin, second_lin, second_lout, object_color,
+                         epsilon)
+        remove_extra_lout(image_height, image_width, new_image, new_lout, second_lin, second_lout)
+        lin = second_lin
+        lout = second_lout
+        # lin = new_lin
+        # lout = new_lout
     border_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
     for y in range(0, image_height):
         for x in range(0, image_width):
-            border_image[y, x, 0] = np.uint8(pixels[y, x])
             if new_image[y, x] == -1 or new_image[y, x] == 1:
-                border_image[y, x, 2] = np.uint8(255)
+                border_image[y, x, 1] = np.uint8(255)
+            else:
+                border_image[y, x, 0] = np.uint8(pixels[y, x])
+                border_image[y, x, 1] = np.uint8(pixels[y, x])
+                border_image[y, x, 2] = np.uint8(pixels[y, x])
+
+
     save_colored_image(border_image, save_path + "pixel_exchange_image.ppm")
     img = Image.fromarray(border_image, 'RGB')
     img.show()
@@ -123,12 +135,47 @@ def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lou
             y_increment = directions[i][1]
             new_x = current_x + x_increment
             new_y = current_y + y_increment
-            if 0 <= new_x < image_width and 0 <= new_y <= image_height and (new_x, new_y) in new_lout:
+            if 0 <= new_x < image_width and 0 <= new_y < image_height and (new_x, new_y) in new_lout:
                 blue_count += 1
         if blue_count == 0:
             new_image[new_y, new_x] = -3
         else:
             new_lin[(current_x, current_y)] = -1
+
+
+def remove_extra_lin(image, image_height, image_width, new_image, lin, second_lin, second_lout, object_color, epsilon):
+    directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
+    for pixel in lin:
+        current_x = pixel[0]
+        current_y = pixel[1]
+        if abs(image[current_y, current_x] - object_color) > epsilon:
+            second_lout[(current_x, current_y)] = 1
+            new_image[current_y, current_x] = 1
+            for i in range(0, 4):
+                new_x = current_x + directions[i][1]
+                new_y = current_y + directions[i][0]
+                if 0 <= new_x < image_width and 0 <= new_y < image_height and new_image[new_y, new_x] == -3:
+                    new_image[new_y, new_x] = -1
+                    second_lin[(new_x, new_y)] = -1
+        else:
+            second_lin[(current_x, current_y)] = -1
+
+
+def remove_extra_lout(image_height, image_width, new_image, lout, second_lin, second_lout):
+    directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
+    for pixel in lout:
+        current_x = pixel[0]
+        current_y = pixel[1]
+        lin_count = 0
+        for i in range(0, 4):
+            new_x = current_x + directions[i][1]
+            new_y = current_y + directions[i][0]
+            if 0 <= new_x < image_width and 0 <= new_y < image_height and (new_x, new_y) in second_lin:
+                lin_count += 1
+        if lin_count == 0:
+            new_image[current_y, current_x] = 3
+        else:
+            second_lout[(current_x, current_y)] = 1
 
 
 def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,

@@ -40,7 +40,7 @@ def load_image_wrapper():
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
         # four_direction_border_detection(interface.current_image, constants.HEIGHT, constants.WIDTH, 1)
-        canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 10, 10, 3)
+        # canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 10, 10, 3)
         # susan_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 27)
         # hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 15, 0.9)
         # pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 50, 53, 53)
