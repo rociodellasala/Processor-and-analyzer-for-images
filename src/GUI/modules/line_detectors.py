@@ -200,9 +200,15 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
             if new_image[y, x] == -1 or new_image[y, x] == 1:
                 border_image[y, x, 1] = np.uint8(255)
             else:
-                border_image[y, x, 0] = np.uint8(pixels[y, x])
-                border_image[y, x, 1] = np.uint8(pixels[y, x])
-                border_image[y, x, 2] = np.uint8(pixels[y, x])
+                if is_gray:
+                    border_image[y, x, 0] = np.uint8(pixels[y, x])
+                    border_image[y, x, 1] = np.uint8(pixels[y, x])
+                    border_image[y, x, 2] = np.uint8(pixels[y, x])
+                else:
+                    border_image[y, x, 0] = np.uint8(pixels[y, x, 0])
+                    border_image[y, x, 1] = np.uint8(pixels[y, x, 1])
+                    border_image[y, x, 2] = np.uint8(pixels[y, x, 2])
+
 
 
     save_colored_image(border_image, save_path + "pixel_exchange_image.ppm")
@@ -238,7 +244,7 @@ def has_same_color_as_object(image, y, x, object_color, epsilon, is_gray):
         current_color[1] = image[y, x, 1]
         current_color[2] = image[y, x, 2]
         value = 1 - np.linalg.norm(current_color - object_color) / (sqrt(3) * 256)
-        return value > 1 - epsilon
+        return value >= 0.8
 
 
 def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout):
@@ -255,7 +261,7 @@ def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lou
             if 0 <= new_x < image_width and 0 <= new_y < image_height and (new_x, new_y) in new_lout:
                 blue_count += 1
         if blue_count == 0:
-            new_image[new_y, new_x] = -3
+            new_image[current_y, current_x] = -3
         else:
             new_lin[(current_x, current_y)] = -1
 
