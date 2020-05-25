@@ -35,7 +35,7 @@ class Region:
 
         # create rectangle if not yet exist
         # if not self.rect:
-        select_opts2 = dict(dash=(4, 4), fill='', outline='lime green')
+        select_opts2 = dict(dash=(1, 1), fill='', outline='lime green')
         self.rect = self.canvas.create_rectangle(self.x, self.y, 1, 1, **select_opts2)
 
     def on_move_press(self, event):

@@ -173,22 +173,22 @@ def draw_circle(radius, a, b, image, image_height, image_width, epsilon):
 
 
 def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
-                   bottom_right_vertex_y, epsilon, max_iterations):
+                   bottom_right_vertex_y, epsilon, max_iterations, is_gray=False):
     pixels = np.array(image)
     new_image = np.ones((image_height, image_width)) * 3
     lin = {}
     lout = {}
     object_color = get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
-                                    bottom_right_vertex_y, lin, lout)
+                                    bottom_right_vertex_y, lin, lout, is_gray)
     for i in range(0, max_iterations):
         new_lin = {}
         new_lout = {}
-        iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin)
+        iterate_over_lout(pixels, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin, is_gray)
         iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout)
         second_lin = {}
         second_lout = {}
         remove_extra_lin(pixels, image_height, image_width, new_image, new_lin, second_lin, second_lout, object_color,
-                         epsilon)
+                         epsilon, is_gray)
         remove_extra_lout(image_height, image_width, new_image, new_lout, second_lin, second_lout)
         lin = second_lin
         lout = second_lout
@@ -210,12 +210,12 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
     img.show()
 
 
-def iterate_over_lout(image, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin):
+def iterate_over_lout(image, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin, is_gray):
     directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
     for pixel in lout:
         current_x = pixel[0]
         current_y = pixel[1]
-        if abs(image[current_y, current_x] - object_color) <= epsilon:
+        if has_same_color_as_object(image, current_y, current_x, object_color, epsilon, is_gray):
             new_image[current_y, current_x] = -1
             new_lin[(current_x, current_y)] = -1
             for i in range(0, 4):
@@ -227,6 +227,18 @@ def iterate_over_lout(image, image_height, image_width, new_image, object_color,
                     new_lout[(current_x + x_increment, current_y + y_increment)] = 1
         else:
             new_lout[(current_x, current_y)] = 1
+
+
+def has_same_color_as_object(image, y, x, object_color, epsilon, is_gray):
+    if is_gray:
+        return abs(image[y, x] - object_color) <= epsilon
+    else:
+        current_color = np.zeros(3)
+        current_color[0] = image[y, x, 0]
+        current_color[1] = image[y, x, 1]
+        current_color[2] = image[y, x, 2]
+        value = 1 - np.linalg.norm(current_color - object_color) / (sqrt(3) * 256)
+        return value > 1 - epsilon
 
 
 def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout):
@@ -248,12 +260,12 @@ def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lou
             new_lin[(current_x, current_y)] = -1
 
 
-def remove_extra_lin(image, image_height, image_width, new_image, lin, second_lin, second_lout, object_color, epsilon):
+def remove_extra_lin(image, image_height, image_width, new_image, lin, second_lin, second_lout, object_color, epsilon, is_gray):
     directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]
     for pixel in lin:
         current_x = pixel[0]
         current_y = pixel[1]
-        if abs(image[current_y, current_x] - object_color) > epsilon:
+        if not has_same_color_as_object(image, current_y, current_x, object_color, epsilon, is_gray):
             second_lout[(current_x, current_y)] = 1
             new_image[current_y, current_x] = 1
             for i in range(0, 4):
@@ -284,15 +296,22 @@ def remove_extra_lout(image_height, image_width, new_image, lout, second_lin, se
 
 
 def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
-                     bottom_right_vertex_y, lin, lout):
-    color_sum = 0
+                     bottom_right_vertex_y, lin, lout, is_gray):
+    color_sum = np.zeros(3)
+    if is_gray:
+        color_sum = 0
     square_height = (bottom_right_vertex_y - top_left_vertex_y) + 1
     square_width = (bottom_right_vertex_x - top_left_vertex_x) + 1
     square_size = square_height * square_width
     for y in range(top_left_vertex_y, bottom_right_vertex_y + 1):
         for x in range(top_left_vertex_x, bottom_right_vertex_x + 1):
             new_image[y, x] = -3
-            color_sum += pixels[y, x]
+            if is_gray:
+                color_sum += pixels[y, x]
+            else:
+                color_sum[0] += pixels[y, x, 0]
+                color_sum[1] += pixels[y, x, 1]
+                color_sum[2] += pixels[y, x, 2]
 
     for y in range(top_left_vertex_y, bottom_right_vertex_y + 1):
         new_image[y, top_left_vertex_x - 1] = -1
@@ -326,7 +345,14 @@ def get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bo
     #     for x in range(top_left_vertex_x - 4, bottom_right_vertex_x + 5):
     #         print(int(new_image[y, x]), end=' ' if new_image[y, x] >= 0 else '  ')
     #     print("")
-    return int(color_sum / square_size)
+    if is_gray:
+        return int(color_sum / square_size)
+    else:
+        color_sum = color_sum / square_size
+        color_sum[0] = int(color_sum[0])
+        color_sum[1] = int(color_sum[1])
+        color_sum[2] = int(color_sum[2])
+        return color_sum
 
 
 def save_image(image, file_path):
