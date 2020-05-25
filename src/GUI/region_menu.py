@@ -35,7 +35,7 @@ def pixel_exchange_wrapper():
                                                                           constants.HEIGHT, constants.WIDTH,
                                                                           interface.current_image_name, region.start_x,
                                                                           region.start_y, region.end_x, region.end_y, 40
-                                                                          , 400, 2, False, False))
+                                                                          , 400, 14, False, False))
         apply_filter.grid(row=1, column=0)
 
 

@@ -194,7 +194,6 @@ def pixel_exchange_in_video(image, image_height, image_width, image_name, top_le
     last_slash_pos = image_name.rfind("/")
     absolute_path = image_name[0:last_slash_pos + 1]
     image_name = image_name[last_slash_pos + 1:]
-    # current_number = [int(s) for s in image_name.split() if s.isdigit()]
     current_number = int(re.findall(r'\d+', image_name)[0])
     start = image_name.find("" + str(current_number))
     prefix = image_name[0:start]
@@ -203,7 +202,7 @@ def pixel_exchange_in_video(image, image_height, image_width, image_name, top_le
     new_image, lin, lout, pixels = pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left_vertex_y
                                                   , bottom_right_vertex_x, bottom_right_vertex_y, epsilon,
                                                   max_iterations, is_gray, False)
-    generated_image_name = "pixel_exchange_" + prefix + str(current_number) + extension
+    generated_image_name = "../../videos/generated/pixel_exchange_" + prefix + str(current_number) + extension
     generate_image_with_border(pixels, image_height, image_width, new_image, generated_image_name, is_gray, show_image)
     for current_image_index in range(current_number + 1, current_number + quantity):
         image_name = absolute_path + prefix + str(current_image_index) + extension
@@ -212,9 +211,11 @@ def pixel_exchange_in_video(image, image_height, image_width, image_name, top_le
         new_image, lin, lout, pixels = pixel_exchange(image, image_height, image_width, top_left_vertex_x,
                                                       top_left_vertex_y, bottom_right_vertex_x, bottom_right_vertex_y,
                                                       epsilon, max_iterations, is_gray, False)
-        generated_image_name = "pixel_exchange_" + prefix + str(current_image_index) + extension
-        generate_image_with_border(pixels, image_height, image_width, new_image, generated_image_name, is_gray,
-                                   show_image)
+        generated_image_name = "../../videos/generated/pixel_exchange_" + prefix + str(current_image_index) + extension
+        border_image = generate_image_with_border(pixels, image_height, image_width, new_image, generated_image_name,
+                                                  is_gray, show_image)
+    img = Image.fromarray(border_image, 'RGB')
+    img.show()
 
 
 def iterate_pixel_exchange(pixels, image_height, image_width, new_image, lin, lout, max_iterations, object_color,
@@ -239,7 +240,7 @@ def generate_image_with_border(pixels, image_height, image_width, new_image, ima
     for y in range(0, image_height):
         for x in range(0, image_width):
             if new_image[y, x] == -1 or new_image[y, x] == 1:
-                border_image[y, x, 1] = np.uint8(255)
+                border_image[y, x, 2] = np.uint8(255)
             else:
                 if is_gray:
                     border_image[y, x, 0] = np.uint8(pixels[y, x])
@@ -254,6 +255,7 @@ def generate_image_with_border(pixels, image_height, image_width, new_image, ima
     if show_image:
         img = Image.fromarray(border_image, 'RGB')
         img.show()
+    return border_image
 
 
 def iterate_over_lout(image, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin, is_gray):
