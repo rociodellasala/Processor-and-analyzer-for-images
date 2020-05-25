@@ -42,8 +42,8 @@ def load_image_wrapper():
         # four_direction_border_detection(interface.current_image, constants.HEIGHT, constants.WIDTH, 1)
         # canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 10, 10, 3)
         # susan_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 27)
-        # hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 100, 0.9)
-        circular_hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 5, 0.9, 100)
+        hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 65, 0.9)
+        # circular_hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 5, 0.9, 100)
 
         # pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 50, 53, 53)
     elif interface.image_to_copy is None:

@@ -37,20 +37,24 @@ def hough_transform(image, image_height, image_width, threshold, epsilon):
 
     # arr = np.zeros((10000, 2))
     # index = 0
+    new_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            new_image[y, x] = image[y, x]
     for rho in range(0, rows):
         for theta in range(0, cols):
             if accumulator[rho, theta] >= threshold:
                 current_rho = min_rho + rho * delta_rho
                 # current_theta = (-np.pi / 2) + (theta * delta_theta)
                 current_theta = thetas[theta]
-                draw_lines(current_rho, current_theta, image, image_height, image_width)
+                draw_lines(current_rho, current_theta, new_image, image_height, image_width)
                 # arr[index, 0] = current_rho
                 # arr[index, 1] = current_theta
                 # index += 1
 
-    save_image(image, save_path + "hough_transform.ppm")
-    image = Image.fromarray(lineally_adjust_image_values(image, image_width, image_height))
-    image.show()
+    save_colored_image(new_image, save_path + "hough_transform.ppm")
+    img = Image.fromarray(new_image, 'RGB')
+    img.show()
 
 
 def circular_hough_transform(image, image_height, image_width, threshold, epsilon, radius):
@@ -126,7 +130,10 @@ def draw_lines(rho, theta, image, image_height, image_width):
     # cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 3)
     if x1 == x2:
         for y in range(0, image_width):
-            image[y, int(x0)] = constants.MAX_COLOR_VALUE
+            image[y, int(x0), 0] = constants.MAX_COLOR_VALUE
+            image[y, int(x0), 1] = 0
+            image[y, int(x0), 2] = 0
+
     else:
         slope = (y2 - y1) / (x2 - x1)
         origin_ordenate = y0 - slope * x0
@@ -134,8 +141,8 @@ def draw_lines(rho, theta, image, image_height, image_width):
             y = int(slope * x + origin_ordenate)
             # y = int(- ((np.cos(theta) / np.sin(theta)) * x) + rho / np.sin(theta))
             if 0 <= y < image_height:
-                image[y, x, 0] = 0
-                image[y, x, 1] = constants.MAX_COLOR_VALUE
+                image[y, x, 0] = constants.MAX_COLOR_VALUE
+                image[y, x, 1] = 0
                 image[y, x, 2] = 0
 
 
