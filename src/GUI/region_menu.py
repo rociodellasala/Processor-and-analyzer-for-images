@@ -6,7 +6,7 @@ from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from src.GUI.region_selector import Region
-from src.GUI.modules.line_detectors import pixel_exchange
+from src.GUI.modules.line_detectors import pixel_exchange, pixel_exchange_in_video
 
 
 def region_information():
@@ -26,10 +26,16 @@ def pixel_exchange_wrapper():
         ttk.Label(interface.buttons_frame, text="Press Apply when selection is ready",
                   background=constants.TOP_COLOR).grid(row=0, column=0)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
-                                  command=lambda: pixel_exchange(interface.current_image,
-                                                                constants.HEIGHT, constants.WIDTH,
-                                                                region.start_x, region.start_y, region.end_x,
-                                                                 region.end_y, 40, 400, False))
+                                  # command=lambda: pixel_exchange(interface.current_image,
+                                  #                               constants.HEIGHT, constants.WIDTH,
+                                  #                               region.start_x, region.start_y, region.end_x,
+                                  #                                region.end_y, 40, 400, False))
+                                  #
+                                  command=lambda: pixel_exchange_in_video(interface.current_image,
+                                                                          constants.HEIGHT, constants.WIDTH,
+                                                                          interface.current_image_name, region.start_x,
+                                                                          region.start_y, region.end_x, region.end_y, 40
+                                                                          , 400, 2, False, False))
         apply_filter.grid(row=1, column=0)
 
 

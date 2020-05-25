@@ -14,6 +14,7 @@ def load_image(row, column):
     interface = InterfaceInfo.get_instance()
     file_name = open_file_name()
     if file_name:
+        interface.current_image_name = file_name
         if file_name.endswith(".RAW"):
             raw_image = read_raw_image(file_name)
             image = Image.frombytes('L', (int(raw_image[1][0]), int(raw_image[1][1])), raw_image[0])

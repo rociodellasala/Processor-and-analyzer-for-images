@@ -9,6 +9,7 @@ from matrix_operations import rotate_matrix_with_angle
 from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
 from border_detectors import canny_method
+import re
 
 
 def hough_transform(image, image_height, image_width, threshold, epsilon):
@@ -171,15 +172,53 @@ def draw_circle(radius, a, b, image, image_height, image_width, epsilon):
                         image[y, x, 1] = constants.MAX_COLOR_VALUE
 
 
-
 def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
-                   bottom_right_vertex_y, epsilon, max_iterations, is_gray=False):
+                   bottom_right_vertex_y, epsilon, max_iterations, is_gray=False, show_image=True):
     pixels = np.array(image)
     new_image = np.ones((image_height, image_width)) * 3
     lin = {}
     lout = {}
     object_color = get_object_color(new_image, pixels, top_left_vertex_x, top_left_vertex_y, bottom_right_vertex_x,
                                     bottom_right_vertex_y, lin, lout, is_gray)
+    result = iterate_pixel_exchange(pixels, image_height, image_width, new_image, lin, lout, max_iterations, object_color,
+                           epsilon, is_gray)
+    if show_image:
+        generate_image_with_border(pixels, image_height, image_width, new_image, save_path + "pixel_exchange_image.ppm",
+                               is_gray, show_image)
+    return result
+
+
+def pixel_exchange_in_video(image, image_height, image_width, image_name, top_left_vertex_x, top_left_vertex_y,
+                            bottom_right_vertex_x, bottom_right_vertex_y, epsilon, max_iterations, quantity,
+                            is_gray=False, show_image=True):
+    last_slash_pos = image_name.rfind("/")
+    absolute_path = image_name[0:last_slash_pos + 1]
+    image_name = image_name[last_slash_pos + 1:]
+    # current_number = [int(s) for s in image_name.split() if s.isdigit()]
+    current_number = int(re.findall(r'\d+', image_name)[0])
+    start = image_name.find("" + str(current_number))
+    prefix = image_name[0:start]
+    suffix_start = image_name.find(".")
+    extension = image_name[suffix_start:]
+    new_image, lin, lout, pixels = pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left_vertex_y
+                                                  , bottom_right_vertex_x, bottom_right_vertex_y, epsilon,
+                                                  max_iterations, is_gray, False)
+    generated_image_name = "pixel_exchange_" + prefix + str(current_number) + extension
+    generate_image_with_border(pixels, image_height, image_width, new_image, generated_image_name, is_gray, show_image)
+    for current_image_index in range(current_number + 1, current_number + quantity):
+        image_name = absolute_path + prefix + str(current_image_index) + extension
+        image = Image.open(image_name)
+        image = image.resize((constants.WIDTH, constants.HEIGHT), Image.ANTIALIAS)
+        new_image, lin, lout, pixels = pixel_exchange(image, image_height, image_width, top_left_vertex_x,
+                                                      top_left_vertex_y, bottom_right_vertex_x, bottom_right_vertex_y,
+                                                      epsilon, max_iterations, is_gray, False)
+        generated_image_name = "pixel_exchange_" + prefix + str(current_image_index) + extension
+        generate_image_with_border(pixels, image_height, image_width, new_image, generated_image_name, is_gray,
+                                   show_image)
+
+
+def iterate_pixel_exchange(pixels, image_height, image_width, new_image, lin, lout, max_iterations, object_color,
+                           epsilon, is_gray):
     for i in range(0, max_iterations):
         new_lin = {}
         new_lout = {}
@@ -192,8 +231,10 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
         remove_extra_lout(image_height, image_width, new_image, new_lout, second_lin, second_lout)
         lin = second_lin
         lout = second_lout
-        # lin = new_lin
-        # lout = new_lout
+    return [new_image, lin, lout, pixels]
+
+
+def generate_image_with_border(pixels, image_height, image_width, new_image, image_path, is_gray, show_image=True):
     border_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
     for y in range(0, image_height):
         for x in range(0, image_width):
@@ -209,11 +250,10 @@ def pixel_exchange(image, image_height, image_width, top_left_vertex_x, top_left
                     border_image[y, x, 1] = np.uint8(pixels[y, x, 1])
                     border_image[y, x, 2] = np.uint8(pixels[y, x, 2])
 
-
-
-    save_colored_image(border_image, save_path + "pixel_exchange_image.ppm")
-    img = Image.fromarray(border_image, 'RGB')
-    img.show()
+    save_colored_image(border_image, image_path)
+    if show_image:
+        img = Image.fromarray(border_image, 'RGB')
+        img.show()
 
 
 def iterate_over_lout(image, image_height, image_width, new_image, object_color, epsilon, lout, new_lout, new_lin, is_gray):

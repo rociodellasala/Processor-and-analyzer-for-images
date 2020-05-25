@@ -12,6 +12,7 @@ class InterfaceInfo:
         else:
             self.root = Tk()
             self.current_image = None
+            self.current_image_name = None
             self.image_to_copy = None
             self.left_image = None
             self.right_image = None
@@ -56,6 +57,7 @@ class InterfaceInfo:
 
     def clean_images(self):
         self.current_image = None
+        self.current_image_name = None
         self.left_image = None
         self.right_image = None
 
