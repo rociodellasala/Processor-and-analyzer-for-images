@@ -1,11 +1,14 @@
-from tkinter import Menu, Entry, messagebox, ttk, Radiobutton, StringVar, IntVar
+from tkinter import Menu, Entry, messagebox, ttk, Radiobutton, StringVar, IntVar, BooleanVar
+
+from line_detectors import pixel_exchange_in_video
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from border_detectors import prewit_detection, sobel_detection, \
     prewit_color_detection, sobel_color_detection
 from filters import border_enhancement_filter
 from border_detectors import laplacian_method, laplacian_method_with_slope_evaluation,\
-    laplacian_gaussian_method, four_direction_border_detection
+    laplacian_gaussian_method, four_direction_border_detection, canny_method, susan_method
+from src.GUI.region_selector import Region
 
 
 def prewit_detection_wrapper():
@@ -149,6 +152,73 @@ def generate_laplacian_with_slope_input():
         messagebox.showerror(title="Error", message="You must upload an image to apply isotropic diffusion filter")
 
 
+def pixel_exchange_wrapper():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is None:
+        messagebox.showerror(title="Error", message="You must upload an image to mark a region")
+    else:
+        region = Region()
+        ttk.Label(interface.buttons_frame, text="Press Apply when selection is ready",
+                  background=constants.TOP_COLOR).grid(row=0, column=0)
+        apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
+                                  # command=lambda: pixel_exchange(interface.current_image,
+                                  #                               constants.HEIGHT, constants.WIDTH,
+                                  #                               region.start_x, region.start_y, region.end_x,
+                                  #                                region.end_y, 40, 400, False))
+                                  #
+                                  command=lambda: pixel_exchange_in_video(interface.current_image,
+                                                                          constants.HEIGHT, constants.WIDTH,
+                                                                          interface.current_image_name, region.start_x,
+                                                                          region.start_y, region.end_x, region.end_y, 40
+                                                                          , 400, 14, False, False))
+        apply_filter.grid(row=1, column=0)
+
+
+def generate_canny_method_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Sigma S", background=constants.TOP_COLOR).grid(row=0, column=0)
+        sigma_s = Entry(interface.buttons_frame)
+        sigma_s.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Sigma R", background=constants.TOP_COLOR).grid(row=1, column=0)
+        sigma_r = Entry(interface.buttons_frame)
+        sigma_r.grid(row=1, column=1)
+        ttk.Label(interface.buttons_frame, text="Windows size", background=constants.TOP_COLOR).grid(row=0, column=2)
+        windows_size = Entry(interface.buttons_frame)
+        windows_size.grid(row=0, column=3)
+        radio_var = BooleanVar()
+        radio_var.set(True)
+        Radiobutton(interface.buttons_frame, text="Four neighbours", value=True,
+                    variable=radio_var, background=constants.TOP_COLOR).grid(row=0, column=4)
+        Radiobutton(interface.buttons_frame, text="Eight neighbours", value=False,
+                    variable=radio_var, background=constants.TOP_COLOR).grid(row=1, column=4)
+        apply_method = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: canny_method(interface.current_image, constants.HEIGHT,
+                                                               constants.WIDTH, int(sigma_s.get()), int(sigma_r.get()),
+                                                               int(windows_size.get()), radio_var.get()))
+        apply_method.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to canny method")
+
+
+def generate_susan_method_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="T difference", background=constants.TOP_COLOR).grid(row=0, column=0)
+        t_difference = Entry(interface.buttons_frame)
+        t_difference.grid(row=0, column=1)
+        apply_method = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: susan_method(interface.current_image, constants.HEIGHT,
+                                                               constants.WIDTH, int(t_difference.get())))
+        apply_method.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to canny method")
+
+
 class BorderDetectionMenu:
     def __init__(self, menubar):
         interface = InterfaceInfo.get_instance()
@@ -170,5 +240,8 @@ class BorderDetectionMenu:
         border_detection_menu.add_command(label="Laplacian", command=generate_laplacian_input)
         border_detection_menu.add_command(label="Laplacian with slope", command=generate_laplacian_with_slope_input)
         border_detection_menu.add_command(label="Laplacian Gaussian", command=generate_laplacian_gaussian_input)
+        border_detection_menu.add_command(label="Canny Detector", command=generate_canny_method_input)
+        border_detection_menu.add_command(label="Susan Detector", command=generate_susan_method_input)
+        border_detection_menu.add_command(label="Pixel exchange", command=pixel_exchange_wrapper)
 
 
