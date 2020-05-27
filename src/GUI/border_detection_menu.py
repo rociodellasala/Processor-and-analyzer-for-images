@@ -1,6 +1,6 @@
 from tkinter import Menu, Entry, messagebox, ttk, Radiobutton, StringVar, IntVar, BooleanVar
 
-from line_detectors import pixel_exchange_in_video
+from line_detectors import pixel_exchange_in_video, circular_hough_transform, hough_transform
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from border_detectors import prewit_detection, sobel_detection, \
@@ -200,7 +200,7 @@ def generate_canny_method_input():
         apply_method.grid(row=2, column=0)
     else:
         interface.reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image to canny method")
+        messagebox.showerror(title="Error", message="You must upload an image to apply canny method")
 
 
 def generate_susan_method_input():
@@ -216,7 +216,50 @@ def generate_susan_method_input():
         apply_method.grid(row=2, column=0)
     else:
         interface.reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image to canny method")
+        messagebox.showerror(title="Error", message="You must upload an image to apply susan method")
+
+
+def generate_hough_circle_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
+        threshold = Entry(interface.buttons_frame)
+        threshold.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Epsilon", background=constants.TOP_COLOR).grid(row=1, column=0)
+        epsilon = Entry(interface.buttons_frame)
+        epsilon.grid(row=1, column=1)
+        ttk.Label(interface.buttons_frame, text="Radius", background=constants.TOP_COLOR).grid(row=0, column=2)
+        radius = Entry(interface.buttons_frame)
+        radius.grid(row=0, column=3)
+        apply_method = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: circular_hough_transform(interface.current_image, constants.HEIGHT,
+                                                               constants.WIDTH, int(threshold.get()), float(epsilon.get()),
+                                                                int(radius.get())))
+        apply_method.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to apply hough")
+
+
+def generate_line_circle_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
+        threshold = Entry(interface.buttons_frame)
+        threshold.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Epsilon", background=constants.TOP_COLOR).grid(row=1, column=0)
+        epsilon = Entry(interface.buttons_frame)
+        epsilon.grid(row=1, column=1)
+        apply_method = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: hough_transform(interface.current_image, constants.HEIGHT,
+                                                                           constants.WIDTH, int(threshold.get()),
+                                                                           float(epsilon.get())))
+        apply_method.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to apply hough")
 
 
 class BorderDetectionMenu:
@@ -242,6 +285,10 @@ class BorderDetectionMenu:
         border_detection_menu.add_command(label="Laplacian Gaussian", command=generate_laplacian_gaussian_input)
         border_detection_menu.add_command(label="Canny Detector", command=generate_canny_method_input)
         border_detection_menu.add_command(label="Susan Detector", command=generate_susan_method_input)
+        hough_menu = Menu(border_detection_menu, tearoff=0)
+        border_detection_menu.add_cascade(label="Hough", menu=hough_menu)
+        hough_menu.add_command(label="Circle", command=generate_hough_circle_input)
+        hough_menu.add_command(label="Lines", command=generate_line_circle_input)
         border_detection_menu.add_command(label="Pixel exchange", command=pixel_exchange_wrapper)
 
 
