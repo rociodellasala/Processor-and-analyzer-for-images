@@ -424,12 +424,13 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
 
 def convert_colored_image_to_grayscale(image, width, height, show_image=True):
     grayscale_image = np.zeros((height, width))
+    pixels = np.array(image)
     for y in range(0, height):
         for x in range(0, width):
-            red_value_squared = pow(image[y, x, 0], 2)
-            green_value_squared = pow(image[y, x, 1], 2)
-            blue_value_squared = pow(image[y, x, 2], 2)
-            gray_value = sqrt(red_value_squared + green_value_squared + blue_value_squared)
+            red_value_squared = pow(pixels[y, x, 0], 2)
+            green_value_squared = pow(pixels[y, x, 1], 2)
+            blue_value_squared = pow(pixels[y, x, 2], 2)
+            gray_value = sqrt(red_value_squared + green_value_squared + blue_value_squared) / sqrt(3)
             grayscale_image[y, x] = gray_value
     if show_image:
         save_image(grayscale_image, save_path + "grayscale_image.ppm")

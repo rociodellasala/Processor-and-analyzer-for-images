@@ -446,8 +446,12 @@ def has_border_neighbours(suppressed_image, high_threshold, new_image, image_hei
     return False
 
 
-def colored_canny(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True):
-    gray_scale_image = convert_colored_image_to_grayscale(image, image_width, image_height, True)
+def colored_canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True,
+                         show_image=True):
+    gray_scale_image = convert_colored_image_to_grayscale(image, image_width, image_height, False)
+    border_image = canny_method(gray_scale_image, image_height, image_width, sigma_s, sigma_r, window_size,
+                                four_neighbours, show_image, False)
+    return border_image
 
 
 def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True,
@@ -459,13 +463,7 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     synthesized_image = images[2]
     angle_matrix = get_angle_matrix(horizontal_image, vertical_image, image_height, image_width)
     suppressed_image = suppress_false_maximums(synthesized_image, angle_matrix, image_height, image_width)
-    # min_pixel_value = int(np.min(suppressed_image))
-    # max_pixel_value = int(np.max(suppressed_image))
-    # deviation = int(np.std(suppressed_image))
     threshold = threshold_multiotsu(suppressed_image)
-    # threshold = global_threshold(suppressed_image, image_height, image_width, False, False)
-    # low_threshold = max(min_pixel_value, threshold - deviation)
-    # high_threshold = min(threshold + deviation, max_pixel_value)
     low_threshold = threshold[0]
     high_threshold = threshold[1]
     high_threshold = low_threshold + 50
