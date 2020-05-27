@@ -4,9 +4,8 @@ from PIL import Image
 from filters import get_convolution, bilateral_filter
 from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values, convert_colored_image_to_grayscale
 from matrix_operations import rotate_matrix_with_angle
-from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
-from skimage.filters import threshold_multiotsu
+# from skimage.filters import threshold_multiotsu
 
 
 def prewit_detection(image, image_height, image_width):
@@ -454,6 +453,15 @@ def colored_canny_method(image, image_height, image_width, sigma_s, sigma_r, win
     return border_image
 
 
+def normalize(image, image_height, image_width):
+    max_val = np.amax(image)
+    min_val = np.amin(image)
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            image[y][x] = int((((image[y][x] - min_val) / (max_val - min_val)) * 255))
+    return image
+
+
 def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True,
                  load_image=True):
     filtered_image = bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, False, load_image)
@@ -461,30 +469,61 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     horizontal_image = images[0]
     vertical_image = images[1]
     synthesized_image = images[2]
+    synthesized_image = normalize(synthesized_image, image_height, image_width)
     angle_matrix = get_angle_matrix(horizontal_image, vertical_image, image_height, image_width)
     suppressed_image = suppress_false_maximums(synthesized_image, angle_matrix, image_height, image_width)
-    threshold = threshold_multiotsu(suppressed_image)
-    low_threshold = threshold[0]
-    high_threshold = threshold[1]
-    high_threshold = low_threshold + 50
-    new_image = np.zeros((image_height, image_width))
+    # threshold = threshold_multiotsu(suppressed_image)
+    # low_threshold = threshold[0]
+    high_threshold = np.amax(suppressed_image) * 0.14;
+    low_threshold = np.amax(suppressed_image) * 0.06;
+    # high_threshold = low_threshold + 50
+    umbralized_image = umbralization_with_two_thresholds(suppressed_image, image_height, image_width, high_threshold,
+                                                         low_threshold)
+    border_image = hysteresis(umbralized_image, image_height, image_width, four_neighbours)
+    if show_image:
+        save_image(border_image, save_path + "canny_generated_image.ppm")
+        image = Image.fromarray(lineally_adjust_image_values(border_image, image_width, image_height))
+        image.show()
+    return border_image
+
+
+def umbralization_with_two_thresholds(image, image_height, image_width, high_threshold, low_threshold):
+    umbralized_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
         for x in range(0, image_width):
-            current_value = suppressed_image[y, x]
+            current_value = image[y, x]
             if current_value <= low_threshold:
-                new_image[y, x] = 0
+                umbralized_image[y, x] = 0
             elif current_value > high_threshold:
-                new_image[y, x] = constants.MAX_COLOR_VALUE
-            elif has_border_neighbours(suppressed_image, high_threshold, new_image, image_height,
-                                       image_width, x, y, four_neighbours):
-                new_image[y, x] = constants.MAX_COLOR_VALUE
+                umbralized_image[y, x] = constants.MAX_COLOR_VALUE
             else:
-                new_image[y, x] = 0
-    if show_image:
-        save_image(new_image, save_path + "canny_generated_image.ppm")
-        image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
-        image.show()
-    return new_image
+                umbralized_image[y, x] = constants.MAX_COLOR_VALUE / 2
+    return umbralized_image
+
+
+def has_border_neighbours_without_thresholds(image, image_height, image_width, x, y, four_neighbours):
+    if four_neighbours:
+        increments = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+    else:
+        increments = [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]]
+    for i in range(0, len(increments)):
+        new_x = x + increments[i][1]
+        new_y = y + increments[i][0]
+        if 0 <= new_x < image_width and 0 <= new_y < image_height and image[new_y, new_x] == constants.MAX_COLOR_VALUE:
+            return True
+    return False
+
+
+def hysteresis(image, image_height, image_width, four_neighbours):
+    border_image = np.zeros((image_height, image_width))
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            if image[y, x] == constants.MAX_COLOR_VALUE:
+                border_image[y, x] = constants.MAX_COLOR_VALUE
+            elif border_image[y, x] == constants.MAX_COLOR_VALUE / 2 and \
+                    has_border_neighbours_without_thresholds(image, image_height, image_width, x, y, four_neighbours):
+                border_image[y, x] = constants.MAX_COLOR_VALUE
+    return border_image
 
 
 def get_susan_mask():
