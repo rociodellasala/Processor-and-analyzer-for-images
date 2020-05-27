@@ -26,16 +26,16 @@ def pixel_exchange_wrapper():
         ttk.Label(interface.buttons_frame, text="Press Apply when selection is ready",
                   background=constants.TOP_COLOR).grid(row=0, column=0)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
-                                  # command=lambda: pixel_exchange(interface.current_image,
-                                  #                               constants.HEIGHT, constants.WIDTH,
-                                  #                               region.start_x, region.start_y, region.end_x,
-                                  #                                region.end_y, 40, 400, False))
-                                  #
-                                  command=lambda: pixel_exchange_in_video(interface.current_image,
-                                                                          constants.HEIGHT, constants.WIDTH,
-                                                                          interface.current_image_name, region.start_x,
-                                                                          region.start_y, region.end_x, region.end_y, 40
-                                                                          , 400, 14, False, False))
+                                  command=lambda: pixel_exchange(interface.current_image,
+                                                                constants.HEIGHT, constants.WIDTH,
+                                                                region.start_x, region.start_y, region.end_x,
+                                                                 region.end_y, 40, 400, True))
+
+                                  # command=lambda: pixel_exchange_in_video(interface.current_image,
+                                  #                                         constants.HEIGHT, constants.WIDTH,
+                                  #                                         interface.current_image_name, region.start_x,
+                                  #                                         region.start_y, region.end_x, region.end_y, 40
+                                  #                                         , 400, 14, False, False))
         apply_filter.grid(row=1, column=0)
 
 

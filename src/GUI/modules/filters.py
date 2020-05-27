@@ -155,9 +155,11 @@ def get_gaussian_value(x, y, sigma):
     return value
 
 
-def bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, show_image=True):
+def bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, show_image=True, load_image=True):
     new_image = np.zeros((image_height, image_width))
-    pixels = np.array(image)
+    pixels = image
+    if load_image:
+        pixels = np.array(image)
     window_y_center = int(window_size / 2)
     window_x_center = int(window_size / 2)
     for y in range(window_y_center, image_height - window_y_center):

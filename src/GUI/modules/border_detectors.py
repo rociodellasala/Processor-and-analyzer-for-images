@@ -2,7 +2,7 @@ import numpy as np
 from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
 from filters import get_convolution, bilateral_filter
-from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values
+from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values, convert_colored_image_to_grayscale
 from matrix_operations import rotate_matrix_with_angle
 from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
@@ -446,8 +446,13 @@ def has_border_neighbours(suppressed_image, high_threshold, new_image, image_hei
     return False
 
 
-def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True):
-    filtered_image = bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, False)
+def colored_canny(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True):
+    gray_scale_image = convert_colored_image_to_grayscale(image, image_width, image_height, True)
+
+
+def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size, four_neighbours=True, show_image=True,
+                 load_image=True):
+    filtered_image = bilateral_filter(image, image_height, image_width, sigma_s, sigma_r, window_size, False, load_image)
     images = sobel_detection(filtered_image, image_height, image_width, False)
     horizontal_image = images[0]
     vertical_image = images[1]

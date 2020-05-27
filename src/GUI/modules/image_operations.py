@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from PIL import Image
-from math import log10
+from math import log10, sqrt
 from math import pow
 
 MAX_PIXEL_VALUE = 255
@@ -420,6 +420,22 @@ def copy_pixels(x_original, y_original, width_original, height_original, x_copy,
     save_image(new_image, save_path + "copy_image.ppm")
     img = Image.fromarray(new_image)
     img.show()
+
+
+def convert_colored_image_to_grayscale(image, width, height, show_image=True):
+    grayscale_image = np.zeros((height, width))
+    for y in range(0, height):
+        for x in range(0, width):
+            red_value_squared = pow(image[y, x, 0], 2)
+            green_value_squared = pow(image[y, x, 1], 2)
+            blue_value_squared = pow(image[y, x, 2], 2)
+            gray_value = sqrt(red_value_squared + green_value_squared + blue_value_squared)
+            grayscale_image[y, x] = gray_value
+    if show_image:
+        save_image(grayscale_image, save_path + "grayscale_image.ppm")
+        img = Image.fromarray(grayscale_image)
+        img.show()
+    return grayscale_image
 
 
 def save_image(image, file_path):
