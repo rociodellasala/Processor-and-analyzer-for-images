@@ -7,7 +7,7 @@ from border_detectors import prewit_detection, sobel_detection, \
     prewit_color_detection, sobel_color_detection
 from filters import border_enhancement_filter
 from border_detectors import laplacian_method, laplacian_method_with_slope_evaluation,\
-    laplacian_gaussian_method, four_direction_border_detection, canny_method, susan_method
+    laplacian_gaussian_method, four_direction_border_detection, canny_method, susan_method, colored_canny_method
 from src.GUI.region_selector import Region
 
 
@@ -203,6 +203,35 @@ def generate_canny_method_input():
         messagebox.showerror(title="Error", message="You must upload an image to apply canny method")
 
 
+def generate_canny_color_method_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Sigma S", background=constants.TOP_COLOR).grid(row=0, column=0)
+        sigma_s = Entry(interface.buttons_frame)
+        sigma_s.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Sigma R", background=constants.TOP_COLOR).grid(row=1, column=0)
+        sigma_r = Entry(interface.buttons_frame)
+        sigma_r.grid(row=1, column=1)
+        ttk.Label(interface.buttons_frame, text="Windows size", background=constants.TOP_COLOR).grid(row=0, column=2)
+        windows_size = Entry(interface.buttons_frame)
+        windows_size.grid(row=0, column=3)
+        radio_var = BooleanVar()
+        radio_var.set(True)
+        Radiobutton(interface.buttons_frame, text="Four neighbours", value=True,
+                    variable=radio_var, background=constants.TOP_COLOR).grid(row=0, column=4)
+        Radiobutton(interface.buttons_frame, text="Eight neighbours", value=False,
+                    variable=radio_var, background=constants.TOP_COLOR).grid(row=1, column=4)
+        apply_method = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: colored_canny_method(interface.current_image, constants.HEIGHT,
+                                                               constants.WIDTH, int(sigma_s.get()), int(sigma_r.get()),
+                                                               int(windows_size.get()), radio_var.get()))
+        apply_method.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to apply canny method")
+
+
 def generate_susan_method_input():
     interface = InterfaceInfo.get_instance()
     if interface.current_image is not None:
@@ -283,7 +312,10 @@ class BorderDetectionMenu:
         border_detection_menu.add_command(label="Laplacian", command=generate_laplacian_input)
         border_detection_menu.add_command(label="Laplacian with slope", command=generate_laplacian_with_slope_input)
         border_detection_menu.add_command(label="Laplacian Gaussian", command=generate_laplacian_gaussian_input)
-        border_detection_menu.add_command(label="Canny Detector", command=generate_canny_method_input)
+        canny_menu = Menu(border_detection_menu, tearoff=0)
+        border_detection_menu.add_cascade(label="Canny", menu=canny_menu)
+        canny_menu.add_command(label="B&W", command=generate_canny_method_input)
+        canny_menu.add_command(label="Color", command=generate_canny_color_method_input)
         border_detection_menu.add_command(label="Susan Detector", command=generate_susan_method_input)
         hough_menu = Menu(border_detection_menu, tearoff=0)
         border_detection_menu.add_cascade(label="Hough", menu=hough_menu)
