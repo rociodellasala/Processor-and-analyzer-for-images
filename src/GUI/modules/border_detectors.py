@@ -6,7 +6,7 @@ from image_operations import lineally_adjust_image_values, lineally_adjust_and_r
 from matrix_operations import rotate_matrix_with_angle
 from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
-from skimage.filters import threshold_multiotsu
+#from skimage.filters import threshold_multiotsu
 
 
 def prewit_detection(image, image_height, image_width):
@@ -462,13 +462,14 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     # min_pixel_value = int(np.min(suppressed_image))
     # max_pixel_value = int(np.max(suppressed_image))
     # deviation = int(np.std(suppressed_image))
-    threshold = threshold_multiotsu(suppressed_image)
+    # threshold = threshold_multiotsu(suppressed_image)
+    threshold = 50
     # threshold = global_threshold(suppressed_image, image_height, image_width, False, False)
     # low_threshold = max(min_pixel_value, threshold - deviation)
     # high_threshold = min(threshold + deviation, max_pixel_value)
-    low_threshold = threshold[0]
-    high_threshold = threshold[1]
-    high_threshold = low_threshold + 50
+    low_threshold = 100
+    # high_threshold = threshold[1]
+    high_threshold = 150
     new_image = np.zeros((image_height, image_width))
     for y in range(0, image_height):
         for x in range(0, image_width):
