@@ -360,6 +360,7 @@ def get_angle_matrix(horizontal_image, vertical_image, image_height, image_width
                 vertical_value = vertical_image[y, x]
                 horizontal_value = horizontal_image[y, x]
                 angle = ( np.arctan2(fabs(vertical_value), horizontal_value) * 180 ) / np.pi
+                # angle = ( np.arctan2(fabs(vertical_value), horizontal_value) * 180 ) / np.pi
                 # angle = get_angle(vertical_value, horizontal_value)
                 if (0 <= angle < 22.5) or (157.5 <= angle <= 180):
                     angle = 0
@@ -469,7 +470,7 @@ def canny_method(image, image_height, image_width, sigma_s, sigma_r, window_size
     horizontal_image = images[0]
     vertical_image = images[1]
     synthesized_image = images[2]
-    synthesized_image = normalize(synthesized_image, image_height, image_width)
+    # synthesized_image = normalize(synthesized_image, image_height, image_width)
     angle_matrix = get_angle_matrix(horizontal_image, vertical_image, image_height, image_width)
     suppressed_image = suppress_false_maximums(synthesized_image, angle_matrix, image_height, image_width)
     # threshold = threshold_multiotsu(suppressed_image)
