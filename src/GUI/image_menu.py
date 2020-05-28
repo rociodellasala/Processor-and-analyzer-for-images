@@ -40,14 +40,6 @@ def load_image_wrapper():
     interface.remove_images()
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
-        # four_direction_border_detection(interface.current_image, constants.HEIGHT, constants.WIDTH, 1)
-        canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 25, 3, four_neighbours=False)
-        # colored_canny_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 2, 25, 3, four_neighbours=False)
-        # susan_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 27)
-        # hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 65, 0.9)
-        # circular_hough_transform(interface.current_image, constants.HEIGHT, constants.WIDTH, 5, 0.9, 100)
-
-        # pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, 50, 50, 53, 53)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:

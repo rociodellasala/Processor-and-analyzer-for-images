@@ -269,22 +269,13 @@ def generate_line_circle_input():
         messagebox.showerror(title="Error", message="You must upload an image to apply hough")
 
 
-def pixel_exchange_wrapper():
+def pixel_exchange_grey_wrapper():
     interface = InterfaceInfo.get_instance()
     if interface.current_image is None:
         messagebox.showerror(title="Error", message="You must upload an image to mark a region")
     else:
         interface.delete_widgets(interface.buttons_frame)
         region = Region()
-        ttk.Label(interface.buttons_frame, text="Press Apply when selection is ready",
-                  background=constants.TOP_COLOR).grid(row=0, column=0)
-        apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
-                                  command=lambda: generate_pixel_exchange_input(region, interface))
-        apply_filter.grid(row=1, column=0)
-
-
-def generate_pixel_exchange_input(region, interface):
-    if region.start_x != None and region.start_y != None and region.end_x != None and region.end_y != None:
         interface.delete_widgets(interface.buttons_frame)
         ttk.Label(interface.buttons_frame, text="Epsilon", background=constants.TOP_COLOR).grid(row=0, column=0)
         epsilon = Entry(interface.buttons_frame)
@@ -292,15 +283,52 @@ def generate_pixel_exchange_input(region, interface):
         ttk.Label(interface.buttons_frame, text="Max iterations", background=constants.TOP_COLOR).grid(row=1, column=0)
         max_iterations = Entry(interface.buttons_frame)
         max_iterations.grid(row=1, column=1)
-        radio_var = BooleanVar()
-        radio_var.set(True)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
-                                  command=lambda: pixel_exchange(interface.current_image,constants.HEIGHT, constants.WIDTH,
-                                                                 region.start_x, region.start_y, region.end_x,region.end_y,
-                                                                 float(epsilon.get()), int(max_iterations.get()), False))
+                                  command=lambda: generate_pixel_exchange_grey_input(interface, region,
+                                                                                      float(epsilon.get()),
+                                                                                     int(max_iterations.get())))
         apply_filter.grid(row=2, column=0)
-    else:
+
+
+def generate_pixel_exchange_grey_input(interface, region, epsilon, max_iterations):
+    if region.start_x is None or region.start_y is None or region.end_x is None or region.end_y is None:
         messagebox.showerror(title="Error", message="You have to mark a region before")
+    elif abs(region.start_x - region.end_x) == 0:
+        messagebox.showerror(title="Error", message="You have to mark a bigger region")
+    else:
+        pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, region.start_x, region.start_y,
+                       region.end_x, region.end_y, epsilon, max_iterations, True)
+
+
+def pixel_exchange_color_wrapper():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is None:
+        messagebox.showerror(title="Error", message="You must upload an image to mark a region")
+    else:
+        interface.delete_widgets(interface.buttons_frame)
+        region = Region()
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Epsilon", background=constants.TOP_COLOR).grid(row=0, column=0)
+        epsilon = Entry(interface.buttons_frame)
+        epsilon.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Max iterations", background=constants.TOP_COLOR).grid(row=1, column=0)
+        max_iterations = Entry(interface.buttons_frame)
+        max_iterations.grid(row=1, column=1)
+        apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: generate_pixel_exchange_color_input(interface, region,
+                                                                                      float(epsilon.get()),
+                                                                                     int(max_iterations.get())))
+        apply_filter.grid(row=2, column=0)
+
+
+def generate_pixel_exchange_color_input(interface, region, epsilon, max_iterations):
+    if region.start_x is None or region.start_y is None or region.end_x is None or region.end_y is None:
+        messagebox.showerror(title="Error", message="You have to mark a region before")
+    elif abs(region.start_x - region.end_x) == 0:
+        messagebox.showerror(title="Error", message="You have to mark a bigger region")
+    else:
+        pixel_exchange(interface.current_image, constants.HEIGHT, constants.WIDTH, region.start_x, region.start_y,
+                       region.end_x, region.end_y, epsilon, max_iterations, False)
 
 
 def pixel_exchange_video_wrapper():
@@ -310,32 +338,36 @@ def pixel_exchange_video_wrapper():
     else:
         interface.delete_widgets(interface.buttons_frame)
         region = Region()
-        ttk.Label(interface.buttons_frame, text="Press Apply when selection is ready",
-                  background=constants.TOP_COLOR).grid(row=0, column=0)
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Epsilon", background=constants.TOP_COLOR).grid(row=0, column=0)
+        epsilon = Entry(interface.buttons_frame)
+        epsilon.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Max iterations", background=constants.TOP_COLOR).grid(row=1, column=0)
+        max_iterations = Entry(interface.buttons_frame)
+        max_iterations.grid(row=1, column=1)
+        ttk.Label(interface.buttons_frame, text="Quantity", background=constants.TOP_COLOR).grid(row=0, column=2)
+        quantity = Entry(interface.buttons_frame)
+        quantity.grid(row=0, column=3)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
-                                 command=lambda: generate_pixel_exchange_video_input(region, interface))
-        apply_filter.grid(row=1, column=0)
+                                  command=lambda: generate_pixel_exchange_video_input(interface, region, float(epsilon.get()),
+                                                                          int(max_iterations.get()),
+                                                                          int(quantity.get())))
+        apply_filter.grid(row=2, column=0)
 
 
-def generate_pixel_exchange_video_input(region, interface):
-    interface.delete_widgets(interface.buttons_frame)
-    ttk.Label(interface.buttons_frame, text="Epsilon", background=constants.TOP_COLOR).grid(row=0, column=0)
-    epsilon = Entry(interface.buttons_frame)
-    epsilon.grid(row=0, column=1)
-    ttk.Label(interface.buttons_frame, text="Max iterations", background=constants.TOP_COLOR).grid(row=1, column=0)
-    max_iterations = Entry(interface.buttons_frame)
-    max_iterations.grid(row=1, column=1)
-    ttk.Label(interface.buttons_frame, text="Quantity", background=constants.TOP_COLOR).grid(row=0, column=2)
-    quantity = Entry(interface.buttons_frame)
-    quantity.grid(row=0, column=3)
-    apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
-                              command=lambda: pixel_exchange_in_video(interface.current_image,constants.HEIGHT,
-                                                                      constants.WIDTH, interface.current_image_name,
-                                                                      region.start_x, region.start_y, region.end_x,
-                                                                      region.end_y, float(epsilon.get()),
-                                                                      int(max_iterations.get()), int(quantity.get()),
-                                                                      False, False))
-    apply_filter.grid(row=2, column=0)
+def generate_pixel_exchange_video_input(interface, region, epsilon, max_iterations, quantity):
+    if region.start_x is None or region.start_y is None or region.end_x is None or region.end_y is None:
+        messagebox.showerror(title="Error", message="You have to mark a region before")
+    elif abs(region.start_x - region.end_x) == 0:
+        messagebox.showerror(title="Error", message="You have to mark a bigger region")
+    else:
+        pixel_exchange_in_video(interface.current_image, constants.HEIGHT,
+                                constants.WIDTH, interface.current_image_name,
+                                region.start_x, region.start_y, region.end_x,
+                                region.end_y, epsilon,
+                                max_iterations,
+                                quantity,
+                                False, False)
 
 
 class BorderDetectionMenu:
@@ -370,7 +402,10 @@ class BorderDetectionMenu:
         hough_menu.add_command(label="Lines", command=generate_line_circle_input)
         pixel_exchange = Menu(border_detection_menu, tearoff=0)
         border_detection_menu.add_cascade(label="Pixel exchange", menu=pixel_exchange)
-        pixel_exchange.add_command(label="Photo", command=pixel_exchange_wrapper)
+        photo_menu = Menu(pixel_exchange, tearoff=0)
+        pixel_exchange.add_cascade(label="Photo", menu=photo_menu)
+        photo_menu.add_command(label="Grey", command=pixel_exchange_grey_wrapper)
+        photo_menu.add_command(label="Color", command=pixel_exchange_color_wrapper)
         pixel_exchange.add_command(label="Video", command=pixel_exchange_video_wrapper)
 
 

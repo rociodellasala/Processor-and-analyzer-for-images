@@ -285,8 +285,8 @@ def has_same_color_as_object(image, y, x, object_color, epsilon, is_gray):
         current_color[0] = image[y, x, 0]
         current_color[1] = image[y, x, 1]
         current_color[2] = image[y, x, 2]
-        value = 1 - np.linalg.norm(current_color - object_color) / (sqrt(3) * 256)
-        return value >= 0.8
+        value = np.linalg.norm(current_color - object_color) / (sqrt(3) * 256)
+        return value <= epsilon
 
 
 def iterate_over_lin(image_height, image_width, new_image, lin, new_lin, new_lout):
