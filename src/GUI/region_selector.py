@@ -47,7 +47,6 @@ class Region:
     def on_button_release(self, event):
         self.end_x = event.x
         self.end_y = event.y
-        self.calculate_region()
         pass
 
     def reset_region_selector(self):
@@ -57,26 +56,5 @@ class Region:
         self.end_y = None
         self.start_x = None
         self.start_y = None
-
-    def calculate_region(self):
-        pixels = np.array(self.current_image)
-        # self.end_x -= 2
-        # self.end_y -= 2
-        # self.start_x -= 2
-        # self.start_y -= 2
-        print("Top left")
-        print(self.start_x)
-        print(self.start_y)
-        print("Bottom right")
-        print(self.end_x)
-        print(self.end_y)
-        print("imprimiendo colores")
-        # for i in range(self.start_x, self.end_x):
-        #     for j in range(self.start_y, self.end_y):
-        #         if pixels[j, i] != constants.MAX_COLOR_VALUE:
-        #             print("negro")
-        # print("----------------------")
-        print(pixels[self.start_y, self.start_x])
-        print(pixels[self.end_y, self.end_x])
 
 
