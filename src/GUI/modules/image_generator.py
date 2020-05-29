@@ -20,7 +20,7 @@ def generate_rectangle(image_name, image_width, image_height, rectangle_width, r
             draw_empty_rectangle(new_image, starting_x, ending_x, starting_y, ending_y)
         global save_path
         # save_image(new_image, save_path + image_name)
-        save_image(new_image, save_path + "empty_rectangle.ppm")
+        save_image(new_image, save_path + "rectangle.ppm")
 
         image = Image.fromarray(new_image)
         image.show()

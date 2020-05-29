@@ -10,6 +10,7 @@ from threshold_calculator import global_threshold
 from src.GUI import gui_constants as constants
 from border_detectors import canny_method
 import re
+import time
 
 
 def hough_transform(image, image_height, image_width, threshold, epsilon):
@@ -220,6 +221,7 @@ def pixel_exchange_in_video(image, image_height, image_width, image_name, top_le
 
 def iterate_pixel_exchange(pixels, image_height, image_width, new_image, lin, lout, max_iterations, object_color,
                            epsilon, is_gray):
+    start_time = time.time()
     for i in range(0, max_iterations):
         new_lin = {}
         new_lout = {}
@@ -232,6 +234,7 @@ def iterate_pixel_exchange(pixels, image_height, image_width, new_image, lin, lo
         remove_extra_lout(image_height, image_width, new_image, new_lout, second_lin, second_lout)
         lin = second_lin
         lout = second_lout
+    print(time.time() - start_time)
     return [new_image, lin, lout, pixels]
 
 
