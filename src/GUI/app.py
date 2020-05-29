@@ -10,6 +10,7 @@ from src.GUI.noise_menu import NoiseMenu
 from src.GUI.operations_menu import OperationsMenu
 from src.GUI.pixel_menu import PixelMenu
 from src.GUI.border_detection_menu import BorderDetectionMenu
+from src.GUI.line_detection_menu import LineDetectorMenu
 
 
 class App:
@@ -48,6 +49,7 @@ class App:
         NoiseMenu(menubar)
         FiltersMenu(menubar)
         BorderDetectionMenu(menubar)
+        LineDetectorMenu(menubar)
 
 
 app = App()
