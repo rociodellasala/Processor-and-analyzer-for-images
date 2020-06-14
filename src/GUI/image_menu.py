@@ -6,7 +6,7 @@ from image_access import read_raw_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 import numpy as np
-from border_detectors import four_direction_border_detection, canny_method, susan_method, colored_canny_method #TODO remove
+from border_detectors import four_direction_border_detection, canny_method, susan_method, colored_canny_method, harris_method #TODO remove
 from line_detectors import hough_transform, pixel_exchange, circular_hough_transform #TODO remove
 
 
@@ -40,6 +40,7 @@ def load_image_wrapper():
     interface.remove_images()
     if interface.current_image is None:
         interface.current_image = load_image(0, 0)
+        harris_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 0.8)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:

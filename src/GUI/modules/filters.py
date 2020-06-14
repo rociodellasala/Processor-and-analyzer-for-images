@@ -123,19 +123,24 @@ def get_weighted_median_window():
     return weighted_median_window
 
 
-def gaussian_filter(image, image_height, image_width, sigma):
+def gaussian_filter(image, image_height, image_width, sigma, show_image=True, unread_image=True, window=-1):
     new_image = np.zeros((image_height, image_width))
-    window_size = 2 * sigma + 1
-    pixels = np.array(image)
+    window_size = window
+    if window == -1:
+        window_size = 2 * sigma + 1
+    pixels = image
+    if unread_image:
+        pixels = np.array(image)
     window_y_center = int(window_size / 2)
     window_x_center = int(window_size / 2)
     sliding_window = get_gaussian_window(window_size, sigma)
     for y in range(window_y_center, image_height - window_y_center):
         for x in range(window_x_center, image_width - window_x_center):
             new_image[y, x] = get_convolution(pixels, x, y, sliding_window, window_size)
-    save_image(new_image, save_path + "gaussian_filter_image.ppm")
-    image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
-    image.show()
+    if show_image:
+        save_image(new_image, save_path + "gaussian_filter_image.ppm")
+        image = Image.fromarray(lineally_adjust_image_values(new_image, image_width, image_height))
+        image.show()
     return new_image
 
 

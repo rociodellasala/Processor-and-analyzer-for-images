@@ -1,10 +1,11 @@
 import numpy as np
 from math import pow, sqrt, fabs, exp, pi
 from PIL import Image
-from filters import get_convolution, bilateral_filter
+from filters import get_convolution, bilateral_filter, gaussian_filter
 from image_operations import lineally_adjust_image_values, lineally_adjust_and_resize_colored_image_values, convert_colored_image_to_grayscale
 from matrix_operations import rotate_matrix_with_angle
 from src.GUI import gui_constants as constants
+import cv2
 # from skimage.filters import threshold_multiotsu
 
 
@@ -118,7 +119,6 @@ def sobel_detection(image, image_height, image_width, show_images=True):
         image_two.show()
         image_three.show()
     return [horizontal_image, vertical_image, new_image]
-
 
 
 def sobel_color_detection(image, image_height, image_width):
@@ -581,6 +581,39 @@ def susan_method(image, image_height, image_width, max_difference):
             else:
                 new_image[y, x, 2] = image[y, x]
     save_colored_image(new_image, save_path + "susan_generated_image.ppm")
+    img = Image.fromarray(new_image, 'RGB')
+    img.show()
+
+
+def harris_method(image, image_height, image_width, percentage):
+    sigma = 2
+    # sigma = 0.5
+    pixels = np.array(image)
+    new_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
+    images = sobel_detection(image, image_height, image_width, False)
+    horizontal_image = images[0]
+    vertical_image = images[1]
+    ix_squared = horizontal_image * horizontal_image
+    ix_squared = gaussian_filter(ix_squared, image_height, image_width, sigma, False, False, 7)
+    iy_squared = vertical_image * vertical_image
+    iy_squared = gaussian_filter(iy_squared, image_height, image_width, sigma, False, False, 7)
+    cross_product = horizontal_image * vertical_image
+    cross_product = gaussian_filter(cross_product, image_height, image_width, sigma, False, False, 7)
+    cross_product_squared = cross_product * cross_product
+    trace = ix_squared + iy_squared
+    k = 0.04
+    r = ix_squared * iy_squared - cross_product_squared - k * (trace * trace)
+    # min_value = int(np.max(r) * percentage)
+    min_value = 5
+    for y in range(0, image_height):
+        for x in range(0, image_width):
+            if r[y, x] >= min_value:
+                new_image[y, x, 2] = constants.MAX_COLOR_VALUE
+            else:
+                new_image[y, x, 0] = pixels[y, x]
+                new_image[y, x, 1] = pixels[y, x]
+                new_image[y, x, 2] = pixels[y, x]
+    save_colored_image(new_image, save_path + "harris.ppm")
     img = Image.fromarray(new_image, 'RGB')
     img.show()
 
