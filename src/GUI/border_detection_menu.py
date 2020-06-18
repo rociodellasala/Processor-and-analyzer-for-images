@@ -1,12 +1,25 @@
 from tkinter import Menu, Entry, messagebox, ttk, Radiobutton, StringVar, IntVar, BooleanVar
-
+from src.GUI.image_menu import load_image
 from src.GUI import gui_constants as constants
 from src.GUI.interface_info import InterfaceInfo
 from border_detectors import prewit_detection, sobel_detection, \
     prewit_color_detection, sobel_color_detection
 from filters import border_enhancement_filter
 from border_detectors import laplacian_method, laplacian_method_with_slope_evaluation,\
-    laplacian_gaussian_method, four_direction_border_detection, canny_method, susan_method, colored_canny_method
+    laplacian_gaussian_method, four_direction_border_detection, canny_method, susan_method, colored_canny_method, \
+    compare_images
+
+
+def load_left_image(interface):
+    loaded_image = load_image(0, 0)
+    if loaded_image is not None:
+        interface.left_image = loaded_image
+
+
+def load_right_image(interface):
+    loaded_image = load_image(0, 1)
+    if loaded_image is not None:
+        interface.right_image = loaded_image
 
 
 def prewit_detection_wrapper():
@@ -224,6 +237,28 @@ def generate_susan_method_input():
         messagebox.showerror(title="Error", message="You must upload an image to apply susan method")
 
 
+def generate_sift_method_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None or interface.image_to_copy is not None:
+        interface.reset_parameters()
+
+    interface.delete_widgets(interface.buttons_frame)
+    image_1_button = ttk.Button(interface.buttons_frame, text="Load Image 1",
+                                    command=lambda: load_left_image(interface))
+    image_2_button = ttk.Button(interface.buttons_frame, text="Load Image 2",
+                                    command=lambda: load_right_image(interface))
+    image_1_button.grid(row=0, column=0)
+    image_2_button.grid(row=0, column=1)
+    ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=2)
+    threshold = Entry(interface.buttons_frame)
+    threshold.grid(row=1, column=2)
+    add_button = ttk.Button(interface.buttons_frame, text="Compare",
+                                command=lambda: compare_images(interface.left_image, constants.HEIGHT,
+                                                               constants.WIDTH, interface.right_image,
+                                                               constants.HEIGHT, constants.WIDTH, int(threshold.get())))
+    add_button.grid(row=1, column=0)
+
+
 class BorderDetectionMenu:
     def __init__(self, menubar):
         interface = InterfaceInfo.get_instance()
@@ -250,5 +285,6 @@ class BorderDetectionMenu:
         canny_menu.add_command(label="Grey", command=generate_canny_method_input)
         canny_menu.add_command(label="Color", command=generate_canny_color_method_input)
         border_detection_menu.add_command(label="Susan Detector", command=generate_susan_method_input)
+        border_detection_menu.add_command(label="Sift Comparison", command=generate_sift_method_input)
 
 
