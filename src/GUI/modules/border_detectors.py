@@ -6,6 +6,7 @@ from image_operations import lineally_adjust_image_values, lineally_adjust_and_r
 from matrix_operations import rotate_matrix_with_angle
 from src.GUI import gui_constants as constants
 import cv2
+
 # from skimage.filters import threshold_multiotsu
 
 
@@ -616,6 +617,17 @@ def harris_method(image, image_height, image_width, percentage):
     save_colored_image(new_image, save_path + "harris.ppm")
     img = Image.fromarray(new_image, 'RGB')
     img.show()
+
+
+def sift_method(image, image_height, image_width):
+    # cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    image = cv2.imread('/Users/agustin/Documents/ITBA/5to_Ano/1er_cuatrimestre/ATI/TPS/TP0/ATI-interface/images/Alonso-ElCaminante.jpg')
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    sift = cv2.xfeatures2d.SIFT_create()
+    key_points = sift.detect(image, None)
+    image = cv2.drawKeypoints(gray, key_points, image, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    cv2.imwrite('sift_keypoint.jpg', image)
+    cv2.imshow('ventana', image)
 
 
 def horizontal_zero_crossing(image, image_height, image_width):
