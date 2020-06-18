@@ -619,15 +619,29 @@ def harris_method(image, image_height, image_width, percentage):
     img.show()
 
 
-def sift_method(image, image_height, image_width):
+def sift_method(image, image_height, image_width, is_colored=True):
     # cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    image = cv2.imread('/Users/agustin/Documents/ITBA/5to_Ano/1er_cuatrimestre/ATI/TPS/TP0/ATI-interface/images/Alonso-ElCaminante.jpg')
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    pixels = np.array(image)
+    gray = pixels
+    if is_colored:
+        gray = cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY)
     sift = cv2.xfeatures2d.SIFT_create()
-    key_points = sift.detect(image, None)
-    image = cv2.drawKeypoints(gray, key_points, image, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    cv2.imwrite('sift_keypoint.jpg', image)
-    cv2.imshow('ventana', image)
+    key_points, descriptors = sift.detectAndCompute(gray, None)
+    image = cv2.drawKeypoints(gray, key_points, pixels, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    # cv2.imwrite('sift_keypoint.jpg', image)
+    # cv2.imshow('ventana', image)
+    return [gray, key_points, descriptors]
+
+
+def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width):
+    gray1, key_points1, descriptors1 = sift_method(image1, image1_height, image1_width)
+    gray2, key_points2, descriptors2 = sift_method(image2, image2_height, image2_width)
+    bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
+    matches = bf.match(descriptors1, descriptors2)
+    matches = sorted(matches, key=lambda x: x.distance)
+    quantity = 10
+    matching_image = cv2.drawMatches(gray1, key_points1, gray2, key_points2, matches[:50], gray2, flags=2)
+    cv2.imshow('ventana', matching_image)
 
 
 def horizontal_zero_crossing(image, image_height, image_width):
