@@ -8,6 +8,7 @@ from src.GUI import gui_constants as constants
 import cv2
 
 # from skimage.filters import threshold_multiotsu
+index = 0
 
 
 def prewit_detection(image, image_height, image_width):
@@ -633,15 +634,29 @@ def sift_method(image, image_height, image_width, is_colored=True):
     return [gray, key_points, descriptors]
 
 
-def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width):
+def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width, threshold):
     gray1, key_points1, descriptors1 = sift_method(image1, image1_height, image1_width)
     gray2, key_points2, descriptors2 = sift_method(image2, image2_height, image2_width)
     bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
     matches = bf.match(descriptors1, descriptors2)
     matches = sorted(matches, key=lambda x: x.distance)
-    quantity = 10
-    matching_image = cv2.drawMatches(gray1, key_points1, gray2, key_points2, matches[:50], gray2, flags=2)
+    quantity = get_quantity_based_on_threshold(matches, threshold)
+    # quantity = 10
+    matching_image = cv2.drawMatches(gray1, key_points1, gray2, key_points2, matches[:quantity], gray2, flags=2)
     cv2.imshow('ventana', matching_image)
+    min_dimension = min(len(descriptors1), len(descriptors2))
+    matching_percentage = quantity / min_dimension
+    if matching_percentage >= 0.5:
+        return True
+    return False
+
+
+def get_quantity_based_on_threshold(matches, threshold):
+    quantity = 0
+    for i in range(0, len(matches)):
+        if matches[i].distance <= threshold:
+            quantity += 1
+    return quantity
 
 
 def horizontal_zero_crossing(image, image_height, image_width):

@@ -42,7 +42,7 @@ def load_image_wrapper():
         interface.current_image = load_image(0, 0)
         # harris_method(interface.current_image, constants.HEIGHT, constants.WIDTH, 0.8)
         sift_method(interface.current_image, constants.HEIGHT, constants.WIDTH)
-        compare_images(interface.current_image, constants.HEIGHT, constants.WIDTH, interface.current_image, constants.HEIGHT, constants.WIDTH)
+        compare_images(interface.current_image, constants.HEIGHT, constants.WIDTH, interface.current_image, constants.HEIGHT, constants.WIDTH, 400)
     elif interface.image_to_copy is None:
         interface.image_to_copy = load_image(0, 1)
     else:
