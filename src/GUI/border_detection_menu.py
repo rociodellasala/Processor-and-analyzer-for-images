@@ -237,11 +237,14 @@ def generate_susan_method_input():
         messagebox.showerror(title="Error", message="You must upload an image to apply susan method")
 
 
-def generate_sift_method_input():
+def generate_sift_method_wrapper():
     interface = InterfaceInfo.get_instance()
     if interface.current_image is not None or interface.image_to_copy is not None:
         interface.reset_parameters()
+    generate_sift_method_input(interface)
 
+
+def generate_sift_method_input(interface):
     interface.delete_widgets(interface.buttons_frame)
     image_1_button = ttk.Button(interface.buttons_frame, text="Load Image 1",
                                     command=lambda: load_left_image(interface))
@@ -253,10 +256,18 @@ def generate_sift_method_input():
     threshold = Entry(interface.buttons_frame)
     threshold.grid(row=1, column=2)
     add_button = ttk.Button(interface.buttons_frame, text="Compare",
-                                command=lambda: compare_images(interface.left_image, constants.HEIGHT,
-                                                               constants.WIDTH, interface.right_image,
-                                                               constants.HEIGHT, constants.WIDTH, int(threshold.get())))
+                            command=lambda: call_sift_method(interface, threshold))
     add_button.grid(row=1, column=0)
+
+
+def call_sift_method(interface, threshold):
+    if interface.left_image is not None and interface.right_image is not None:
+        compare_images(interface.left_image, constants.HEIGHT,
+                       constants.WIDTH, interface.right_image,
+                       constants.HEIGHT, constants.WIDTH, int(threshold.get()))
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload two images to apply sift method")
 
 
 class BorderDetectionMenu:
@@ -285,6 +296,6 @@ class BorderDetectionMenu:
         canny_menu.add_command(label="Grey", command=generate_canny_method_input)
         canny_menu.add_command(label="Color", command=generate_canny_color_method_input)
         border_detection_menu.add_command(label="Susan Detector", command=generate_susan_method_input)
-        border_detection_menu.add_command(label="Sift Comparison", command=generate_sift_method_input)
+        border_detection_menu.add_command(label="Sift Comparison", command=generate_sift_method_wrapper)
 
 
