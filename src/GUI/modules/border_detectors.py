@@ -605,8 +605,8 @@ def harris_method(image, image_height, image_width, percentage):
     trace = ix_squared + iy_squared
     k = 0.04
     r = ix_squared * iy_squared - cross_product_squared - k * (trace * trace)
-    # min_value = int(np.max(r) * percentage)
-    min_value = 5
+    min_value = int(np.max(r) * percentage)
+    min_value = 10
     for y in range(0, image_height):
         for x in range(0, image_width):
             if r[y, x] >= min_value:
@@ -620,7 +620,7 @@ def harris_method(image, image_height, image_width, percentage):
     img.show()
 
 
-def sift_method(image, image_height, image_width, is_colored=True):
+def sift_method(image, is_colored=True):
     # cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     pixels = np.array(image)
     gray = pixels
@@ -628,15 +628,18 @@ def sift_method(image, image_height, image_width, is_colored=True):
         gray = cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY)
     sift = cv2.xfeatures2d.SIFT_create()
     key_points, descriptors = sift.detectAndCompute(gray, None)
-    image = cv2.drawKeypoints(gray, key_points, pixels, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    # image = cv2.drawKeypoints(gray, key_points, pixels, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     # cv2.imwrite('sift_keypoint.jpg', image)
     # cv2.imshow('ventana', image)
     return [gray, key_points, descriptors]
 
 
-def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width, threshold):
-    gray1, key_points1, descriptors1 = sift_method(image1, image1_height, image1_width)
-    gray2, key_points2, descriptors2 = sift_method(image2, image2_height, image2_width)
+def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width, threshold, is_colored=True):
+    pixels1 = np.array(image1)
+    pixels2 = np.array(image2)
+    gray1, key_points1, descriptors1 = sift_method(image1, is_colored)
+    gray2, key_points2, descriptors2 = sift_method(image2, is_colored)
+    descriptors1[0][0] = descriptors1[0][0] + 10
     bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
     matches = bf.match(descriptors1, descriptors2)
     matches = sorted(matches, key=lambda x: x.distance)
