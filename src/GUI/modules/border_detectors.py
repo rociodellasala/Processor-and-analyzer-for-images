@@ -96,8 +96,10 @@ def get_prewit_vertical_matrix():
     return matrix
 
 
-def sobel_detection(image, image_height, image_width, show_images=True):
+def sobel_detection(image, image_height, image_width, show_images=True, is_colored=False):
     pixels = np.array(image)
+    if is_colored:
+        pixels = cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY)
     horizontal_matrix = get_sobel_horizontal_matrix()
     horizontal_image = np.zeros((image_height, image_width))
     vertical_matrix = get_sobel_vertical_matrix()
@@ -587,12 +589,11 @@ def susan_method(image, image_height, image_width, max_difference):
     img.show()
 
 
-def harris_method(image, image_height, image_width, percentage):
+def harris_method(image, image_height, image_width, threshold, is_colored=False):
     sigma = 2
-    # sigma = 0.5
     pixels = np.array(image)
     new_image = np.zeros((image_height, image_width, 3), dtype=np.uint8)
-    images = sobel_detection(image, image_height, image_width, False)
+    images = sobel_detection(image, image_height, image_width, False, is_colored)
     horizontal_image = images[0]
     vertical_image = images[1]
     ix_squared = horizontal_image * horizontal_image
@@ -605,40 +606,52 @@ def harris_method(image, image_height, image_width, percentage):
     trace = ix_squared + iy_squared
     k = 0.04
     r = ix_squared * iy_squared - cross_product_squared - k * (trace * trace)
-    min_value = int(np.max(r) * percentage)
-    min_value = 10
+    # min_value = int(np.max(r) * threshold)
+    min_value = threshold
     for y in range(0, image_height):
         for x in range(0, image_width):
             if r[y, x] >= min_value:
                 new_image[y, x, 2] = constants.MAX_COLOR_VALUE
             else:
-                new_image[y, x, 0] = pixels[y, x]
-                new_image[y, x, 1] = pixels[y, x]
-                new_image[y, x, 2] = pixels[y, x]
+                if is_colored:
+                    new_image[y, x, 0] = pixels[y, x, 0]
+                    new_image[y, x, 1] = pixels[y, x, 1]
+                    new_image[y, x, 2] = pixels[y, x, 2]
+                else:
+                    new_image[y, x, 0] = pixels[y, x]
+                    new_image[y, x, 1] = pixels[y, x]
+                    new_image[y, x, 2] = pixels[y, x]
     save_colored_image(new_image, save_path + "harris.ppm")
     img = Image.fromarray(new_image, 'RGB')
     img.show()
 
 
-def sift_method(image, is_colored=True):
+def sift_method(image, image_height, image_width, is_colored=True):
     # cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    pixels = np.array(image)
+    pixels = np.array(image, dtype=np.uint8)
     gray = pixels
     if is_colored:
         gray = cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = lineally_adjust_image_values(pixels, image_width, image_height)
     sift = cv2.xfeatures2d.SIFT_create()
     key_points, descriptors = sift.detectAndCompute(gray, None)
     # image = cv2.drawKeypoints(gray, key_points, pixels, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    # cv2.imwrite('sift_keypoint.jpg', image)
+    # cv2.imwrite(save_path + 'sift_keypoint.jpg', image)
     # cv2.imshow('ventana', image)
     return [gray, key_points, descriptors]
 
 
-def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width, threshold, is_colored=True):
+def compare_images(image1, image1_height, image1_width, image2, image2_height, image2_width,
+                   threshold, acceptance, is_colored=True):
     pixels1 = np.array(image1)
     pixels2 = np.array(image2)
-    gray1, key_points1, descriptors1 = sift_method(image1, is_colored)
-    gray2, key_points2, descriptors2 = sift_method(image2, is_colored)
+    gray1, key_points1, descriptors1 = sift_method(image1, image1_height, image1_width, is_colored)
+    gray2, key_points2, descriptors2 = sift_method(image2, image2_height, image2_width, is_colored)
+    generated_image1 = cv2.drawKeypoints(gray1, key_points1, pixels1, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    cv2.imwrite(save_path + 'sift_keypoint1.jpg', generated_image1)
+    generated_image2 = cv2.drawKeypoints(gray2, key_points2, pixels2, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    cv2.imwrite(save_path + 'sift_keypoint2.jpg', generated_image2)
     # descriptors1[0][0] = descriptors1[0][0] + 10
     # descriptors1[0][1] = descriptors1[0][1] + 4
     bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
@@ -650,7 +663,8 @@ def compare_images(image1, image1_height, image1_width, image2, image2_height, i
     cv2.imshow('ventana', matching_image)
     min_dimension = min(len(descriptors1), len(descriptors2))
     matching_percentage = quantity / min_dimension
-    if matching_percentage >= 0.5:
+    cv2.imwrite(save_path + 'sift_matching_image.jpg', matching_image)
+    if matching_percentage >= acceptance:
         return True
     return False
 

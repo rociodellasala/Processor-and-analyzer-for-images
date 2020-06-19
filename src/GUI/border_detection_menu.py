@@ -263,17 +263,20 @@ def generate_sift_method_input(interface):
     image_2_button.grid(row=0, column=3, padx=3, pady=3)
     ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
     threshold = Entry(interface.buttons_frame)
-    threshold.grid(row=1, column=0)
+    threshold.grid(row=0, column=1)
+    ttk.Label(interface.buttons_frame, text="Acceptance percentage", background=constants.TOP_COLOR).grid(row=1,column=0)
+    acceptance = Entry(interface.buttons_frame)
+    acceptance.grid(row=1, column=1)
     add_button = ttk.Button(interface.buttons_frame, text="Compare",
-                            command=lambda: call_sift_method(interface, threshold))
+                            command=lambda: call_sift_method(interface, threshold, acceptance))
     add_button.grid(row=2, column=0, padx=3, pady=3)
 
 
-def call_sift_method(interface, threshold):
+def call_sift_method(interface, threshold, acceptance):
     if interface.left_image is not None and interface.right_image is not None:
         are_equals = compare_images(interface.left_image, constants.HEIGHT,
                        constants.WIDTH, interface.right_image,
-                       constants.HEIGHT, constants.WIDTH, int(threshold.get()), is_colored=False)
+                       constants.HEIGHT, constants.WIDTH, int(threshold.get()), float(acceptance.get()), is_colored=False)
         ttk.Label(interface.buttons_frame, text="Are images equal?:",
                   background=constants.TOP_COLOR).grid(row=0, column=4)
         if are_equals is True:
@@ -297,17 +300,20 @@ def generate_colored_sift_method_input(interface):
     image_2_button.grid(row=0, column=3, padx=3, pady=3)
     ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
     threshold = Entry(interface.buttons_frame)
-    threshold.grid(row=1, column=0)
+    threshold.grid(row=0, column=1)
+    ttk.Label(interface.buttons_frame, text="Acceptance percentage", background=constants.TOP_COLOR).grid(row=1, column=0)
+    acceptance = Entry(interface.buttons_frame)
+    acceptance.grid(row=1, column=1)
     add_button = ttk.Button(interface.buttons_frame, text="Compare",
-                            command=lambda: call_colored_sift_method(interface, threshold))
+                            command=lambda: call_colored_sift_method(interface, threshold, acceptance))
     add_button.grid(row=2, column=0, padx=3, pady=3)
 
 
-def call_colored_sift_method(interface, threshold):
+def call_colored_sift_method(interface, threshold, acceptance):
     if interface.left_image is not None and interface.right_image is not None:
         are_equals = compare_images(interface.left_image, constants.HEIGHT,
                        constants.WIDTH, interface.right_image,
-                       constants.HEIGHT, constants.WIDTH, int(threshold.get()), is_colored=True)
+                       constants.HEIGHT, constants.WIDTH, int(threshold.get()), float(acceptance.get()), is_colored=True)
         ttk.Label(interface.buttons_frame, text="Are images equal?:",
                   background=constants.TOP_COLOR).grid(row=0, column=4)
         if are_equals is True:
@@ -321,16 +327,32 @@ def call_colored_sift_method(interface, threshold):
         messagebox.showerror(title="Error", message="You must upload two images to apply sift method")
 
 
+def generate_colored_harris_method_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
+        threshold = Entry(interface.buttons_frame)
+        threshold.grid(row=0, column=1)
+        apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: harris_method(interface.current_image, constants.HEIGHT,
+                                                                constants.WIDTH, float(threshold.get()), True))
+        apply_filter.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to apply harris method")
+
+
 def generate_harris_method_input():
     interface = InterfaceInfo.get_instance()
     if interface.current_image is not None:
         interface.delete_widgets(interface.buttons_frame)
-        ttk.Label(interface.buttons_frame, text="Percentage", background=constants.TOP_COLOR).grid(row=0, column=0)
-        percentage = Entry(interface.buttons_frame)
-        percentage.grid(row=0, column=1)
+        ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
+        threshold = Entry(interface.buttons_frame)
+        threshold.grid(row=0, column=1)
         apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
                                   command=lambda: harris_method(interface.current_image, constants.HEIGHT,
-                                                                constants.WIDTH, float(percentage.get())))
+                                                                constants.WIDTH, float(threshold.get()), False))
         apply_filter.grid(row=2, column=0)
     else:
         interface.reset_parameters()
@@ -367,4 +389,7 @@ class BorderDetectionMenu:
         border_detection_menu.add_cascade(label="Sift Comparison", menu=sift_menu)
         sift_menu.add_command(label="Grey", command=generate_sift_method_wrapper)
         sift_menu.add_command(label="Color", command=generate_colored_sift_method_wrapper)
-        border_detection_menu.add_command(label="Harris", command=generate_harris_method_input)
+        harris_menu = Menu(border_detection_menu, tearoff=0)
+        border_detection_menu.add_cascade(label="Harris", menu=harris_menu)
+        harris_menu.add_command(label="Grey", command=generate_harris_method_input)
+        harris_menu.add_command(label="Color", command=generate_colored_harris_method_input)
