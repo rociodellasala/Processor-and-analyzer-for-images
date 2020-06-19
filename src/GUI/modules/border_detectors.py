@@ -639,7 +639,8 @@ def compare_images(image1, image1_height, image1_width, image2, image2_height, i
     pixels2 = np.array(image2)
     gray1, key_points1, descriptors1 = sift_method(image1, is_colored)
     gray2, key_points2, descriptors2 = sift_method(image2, is_colored)
-    descriptors1[0][0] = descriptors1[0][0] + 10
+    # descriptors1[0][0] = descriptors1[0][0] + 10
+    # descriptors1[0][1] = descriptors1[0][1] + 4
     bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
     matches = bf.match(descriptors1, descriptors2)
     matches = sorted(matches, key=lambda x: x.distance)
