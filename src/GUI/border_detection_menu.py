@@ -7,7 +7,7 @@ from border_detectors import prewit_detection, sobel_detection, \
 from filters import border_enhancement_filter
 from border_detectors import laplacian_method, laplacian_method_with_slope_evaluation,\
     laplacian_gaussian_method, four_direction_border_detection, canny_method, susan_method, colored_canny_method, \
-    compare_images
+    compare_images, harris_method
 
 
 def load_left_image(interface):
@@ -105,7 +105,7 @@ def generate_laplacian_input():
         apply_filter.grid(row=2, column=0)
     else:
         interface.reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image to apply isotropic diffusion filter")
+        messagebox.showerror(title="Error", message="You must upload an image to apply laplacian")
 
 
 def generate_laplacian_gaussian_input():
@@ -134,7 +134,7 @@ def generate_laplacian_gaussian_input():
         apply_filter.grid(row=2, column=0)
     else:
         interface.reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image to apply isotropic diffusion filter")
+        messagebox.showerror(title="Error", message="You must upload an image to apply laplacian gaussian")
 
 
 def generate_laplacian_with_slope_input():
@@ -160,7 +160,7 @@ def generate_laplacian_with_slope_input():
         apply_filter.grid(row=2, column=0)
     else:
         interface.reset_parameters()
-        messagebox.showerror(title="Error", message="You must upload an image to apply isotropic diffusion filter")
+        messagebox.showerror(title="Error", message="You must upload an image to apply laplacian with slope")
 
 
 def generate_canny_method_input():
@@ -321,6 +321,22 @@ def call_colored_sift_method(interface, threshold):
         messagebox.showerror(title="Error", message="You must upload two images to apply sift method")
 
 
+def generate_harris_method_input():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None:
+        interface.delete_widgets(interface.buttons_frame)
+        ttk.Label(interface.buttons_frame, text="Percentage", background=constants.TOP_COLOR).grid(row=0, column=0)
+        percentage = Entry(interface.buttons_frame)
+        percentage.grid(row=0, column=1)
+        apply_filter = ttk.Button(interface.buttons_frame, text="Apply",
+                                  command=lambda: harris_method(interface.current_image, constants.HEIGHT,
+                                                                constants.WIDTH, float(percentage.get())))
+        apply_filter.grid(row=2, column=0)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload an image to apply harris method")
+
+
 class BorderDetectionMenu:
     def __init__(self, menubar):
         interface = InterfaceInfo.get_instance()
@@ -351,3 +367,4 @@ class BorderDetectionMenu:
         border_detection_menu.add_cascade(label="Sift Comparison", menu=sift_menu)
         sift_menu.add_command(label="Grey", command=generate_sift_method_wrapper)
         sift_menu.add_command(label="Color", command=generate_colored_sift_method_wrapper)
+        border_detection_menu.add_command(label="Harris", command=generate_harris_method_input)
