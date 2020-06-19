@@ -239,9 +239,18 @@ def generate_susan_method_input():
 
 def generate_sift_method_wrapper():
     interface = InterfaceInfo.get_instance()
-    if interface.current_image is not None or interface.image_to_copy is not None:
+    if interface.current_image is not None or interface.image_to_copy is not None or interface.left_image is not None\
+            or interface.right_image is not None:
         interface.reset_parameters()
     generate_sift_method_input(interface)
+
+
+def generate_colored_sift_method_wrapper():
+    interface = InterfaceInfo.get_instance()
+    if interface.current_image is not None or interface.image_to_copy is not None or interface.left_image is not None\
+            or interface.right_image is not None:
+        interface.reset_parameters()
+    generate_colored_sift_method_input(interface)
 
 
 def generate_sift_method_input(interface):
@@ -250,21 +259,63 @@ def generate_sift_method_input(interface):
                                     command=lambda: load_left_image(interface))
     image_2_button = ttk.Button(interface.buttons_frame, text="Load Image 2",
                                     command=lambda: load_right_image(interface))
-    image_1_button.grid(row=0, column=0)
-    image_2_button.grid(row=0, column=1)
-    ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=2)
+    image_1_button.grid(row=0, column=2, padx=3, pady=3)
+    image_2_button.grid(row=0, column=3, padx=3, pady=3)
+    ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
     threshold = Entry(interface.buttons_frame)
-    threshold.grid(row=1, column=2)
+    threshold.grid(row=1, column=0)
     add_button = ttk.Button(interface.buttons_frame, text="Compare",
                             command=lambda: call_sift_method(interface, threshold))
-    add_button.grid(row=1, column=0)
+    add_button.grid(row=2, column=0, padx=3, pady=3)
 
 
 def call_sift_method(interface, threshold):
     if interface.left_image is not None and interface.right_image is not None:
-        compare_images(interface.left_image, constants.HEIGHT,
+        are_equals = compare_images(interface.left_image, constants.HEIGHT,
                        constants.WIDTH, interface.right_image,
-                       constants.HEIGHT, constants.WIDTH, int(threshold.get()))
+                       constants.HEIGHT, constants.WIDTH, int(threshold.get()), is_colored=False)
+        ttk.Label(interface.buttons_frame, text="Are images equal?:",
+                  background=constants.TOP_COLOR).grid(row=0, column=4)
+        if are_equals is True:
+            ttk.Label(interface.buttons_frame, text="Yes",
+                      background=constants.TOP_COLOR).grid(row=0, column=5)
+        else:
+            ttk.Label(interface.buttons_frame, text="No",
+                      background=constants.TOP_COLOR).grid(row=0, column=5)
+    else:
+        interface.reset_parameters()
+        messagebox.showerror(title="Error", message="You must upload two images to apply sift method")
+
+
+def generate_colored_sift_method_input(interface):
+    interface.delete_widgets(interface.buttons_frame)
+    image_1_button = ttk.Button(interface.buttons_frame, text="Load Image 1",
+                                    command=lambda: load_left_image(interface))
+    image_2_button = ttk.Button(interface.buttons_frame, text="Load Image 2",
+                                    command=lambda: load_right_image(interface))
+    image_1_button.grid(row=0, column=2, padx=3, pady=3)
+    image_2_button.grid(row=0, column=3, padx=3, pady=3)
+    ttk.Label(interface.buttons_frame, text="Threshold", background=constants.TOP_COLOR).grid(row=0, column=0)
+    threshold = Entry(interface.buttons_frame)
+    threshold.grid(row=1, column=0)
+    add_button = ttk.Button(interface.buttons_frame, text="Compare",
+                            command=lambda: call_colored_sift_method(interface, threshold))
+    add_button.grid(row=2, column=0, padx=3, pady=3)
+
+
+def call_colored_sift_method(interface, threshold):
+    if interface.left_image is not None and interface.right_image is not None:
+        are_equals = compare_images(interface.left_image, constants.HEIGHT,
+                       constants.WIDTH, interface.right_image,
+                       constants.HEIGHT, constants.WIDTH, int(threshold.get()), is_colored=True)
+        ttk.Label(interface.buttons_frame, text="Are images equal?:",
+                  background=constants.TOP_COLOR).grid(row=0, column=4)
+        if are_equals is True:
+            ttk.Label(interface.buttons_frame, text="Yes",
+                      background=constants.TOP_COLOR).grid(row=0, column=5)
+        else:
+            ttk.Label(interface.buttons_frame, text="No",
+                      background=constants.TOP_COLOR).grid(row=0, column=5)
     else:
         interface.reset_parameters()
         messagebox.showerror(title="Error", message="You must upload two images to apply sift method")
@@ -296,6 +347,7 @@ class BorderDetectionMenu:
         canny_menu.add_command(label="Grey", command=generate_canny_method_input)
         canny_menu.add_command(label="Color", command=generate_canny_color_method_input)
         border_detection_menu.add_command(label="Susan Detector", command=generate_susan_method_input)
-        border_detection_menu.add_command(label="Sift Comparison", command=generate_sift_method_wrapper)
-
-
+        sift_menu = Menu(border_detection_menu, tearoff=0)
+        border_detection_menu.add_cascade(label="Sift Comparison", menu=sift_menu)
+        sift_menu.add_command(label="Grey", command=generate_sift_method_wrapper)
+        sift_menu.add_command(label="Color", command=generate_colored_sift_method_wrapper)

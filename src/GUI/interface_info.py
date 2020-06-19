@@ -82,3 +82,5 @@ class InterfaceInfo:
         self.remove_images()
         self.delete_widgets(self.buttons_frame)
 
+
+
